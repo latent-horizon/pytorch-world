@@ -69,6 +69,23 @@ Subclass `JEPA` (representation learning) or `WorldModel` (action-conditioned dy
 pytest
 ```
 
+## Contributors
+
+<a href="https://github.com/latent-horizon/pytorch-world/graphs/contributors">
+  <img alt="Contributors" src="https://contrib.rocks/image?repo=latent-horizon/pytorch-world">
+</a>
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Supported by
+
+<a href="https://github.com/latent-horizon">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/latent-horizon/logo-cream.svg">
+    <img alt="Latent Horizon" src="docs/assets/latent-horizon/logo-black.svg" height="40">
+  </picture>
+</a>
+
 ## License
 
 Apache 2.0
