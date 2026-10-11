@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.png">
-    <img alt="pytorch-world" src="docs/assets/banner-light.png">
-  </picture>
+  <img alt="pytorch-world" src="docs/assets/banner-sky.png">
 </p>
 
 PyTorch World (`torch_world`) is a library of world models for PyTorch. Like PyTorch Geometric did for graph neural networks, it gives world-model research shared parts (layers, masking, objectives, planners, environments) so that a new model is a short file and existing models are easy to compare.
