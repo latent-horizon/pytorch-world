@@ -1,0 +1,205 @@
+site_name: pytorch-world
+site_description: World models library for PyTorch
+# site_url: https://<user>.github.io/pytorch-world/
+# repo_url: https://github.com/<user>/pytorch-world
+copyright: © 2026 Latent Horizon
+
+docs_dir: docs
+
+theme:
+  name: material
+  custom_dir: overrides
+  logo: assets/logo-white.png
+  favicon: assets/logo-light.png
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/weather-sunset
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/white-balance-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to system preference
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+  - stylesheets/sunset.css
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+      ignore_h1_titles: true
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_signature_annotations: true
+            separate_signature: true
+            signature_crossrefs: true
+            members_order: source
+            merge_init_into_class: true
+            filters: ["!^_"]
+            heading_level: 2
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_javascript:
+  - javascripts/katex.js
+  - javascripts/water.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
+
+extra:
+  generator: false
+  footer:
+    tagline: World models for PyTorch. Shared layers, objectives, planners and environments, so every model is short and easy to compare.
+    install: uv add torch_world
+    columns:
+      - title: Learn
+        links:
+          - {name: Installation, url: getting-started/installation/}
+          - {name: Quick start, url: getting-started/quickstart/}
+          - {name: Concepts, url: getting-started/concepts/}
+          - {name: Build your own model, url: guides/custom-model/}
+      - title: Models
+        links:
+          - {name: All models, url: models/}
+          - {name: JEPA family, url: models/jepa/}
+          - {name: LeWM, url: models/jepa/lewm/}
+          - {name: DINO-WM, url: models/jepa/dinowm/}
+          - {name: RoboJEPA, url: models/jepa/robojepa/}
+      - title: Build
+        links:
+          - {name: Environments, url: guides/environments/}
+          - {name: Datasets, url: datasets/}
+          - {name: Planning, url: guides/planning/}
+          - {name: Notebooks, url: examples/intro/}
+          - {name: API reference, url: api/}
+      - title: Project
+        repo: true
+        links:
+          - {name: Contributing, url: contributing/}
+          - {name: Apache 2.0 license, url: "https://www.apache.org/licenses/LICENSE-2.0"}
+    legal:
+      - {name: Released under the Apache 2.0 license, url: "https://www.apache.org/licenses/LICENSE-2.0"}
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Installation: getting-started/installation.md
+      - Quick start: getting-started/quickstart.md
+      - Concepts: getting-started/concepts.md
+  - Guides:
+      - Masking: guides/masking.md
+      - Training: guides/training.md
+      - Planning: guides/planning.md
+      - Metrics: guides/metrics.md
+      - Environments: guides/environments.md
+      - Figures: guides/plots.md
+      - Build your own model: guides/custom-model.md
+  - Models:
+      - models/index.md
+      - JEPA:
+          - models/jepa/index.md
+          - Images:
+              - I-JEPA: models/jepa/ijepa.md
+              - LeJEPA: models/jepa/lejepa.md
+          - Video:
+              - V-JEPA: models/jepa/vjepa.md
+          - Vision-language:
+              - VL-JEPA: models/jepa/vljepa.md
+          - World models:
+              - LeWM: models/jepa/lewm.md
+              - DINO-WM: models/jepa/dinowm.md
+          - Robotics:
+              - RoboJEPA: models/jepa/robojepa.md
+  - Datasets:
+      - datasets/index.md
+      - Trajectories: datasets/trajectories.md
+      - MedMNIST: datasets/medmnist.md
+      - Medical VQA: datasets/medical-vqa.md
+  - Notebooks:
+      - Tour: examples/intro.ipynb
+      - Custom model: examples/custom_model.ipynb
+      - Vision:
+          - I-JEPA: examples/vision/ijepa.ipynb
+          - V-JEPA: examples/vision/vjepa.ipynb
+          - LeJEPA: examples/vision/lejepa.ipynb
+      - Action:
+          - LeWM: examples/action/lewm.ipynb
+          - DINO-WM: examples/action/dinowm.ipynb
+          - RoboJEPA: examples/action/robojepa.ipynb
+      - VQA:
+          - VL-JEPA: examples/vqa/vljepa.ipynb
+  - API:
+      - api/index.md
+      - torch_world.nn: api/nn.md
+      - torch_world.masks: api/masks.md
+      - torch_world.losses: api/losses.md
+      - torch_world.models: api/models.md
+      - torch_world.planning: api/planning.md
+      - torch_world.envs: api/envs.md
+      - torch_world.datasets: api/datasets.md
+      - torch_world.evaluation: api/evaluation.md
+      - torch_world.metrics: api/metrics.md
+      - torch_world.utils: api/utils.md
+      - torch_world.plots: api/plots.md
+  - Contributing: contributing.md

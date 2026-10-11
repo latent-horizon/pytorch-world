@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+site/
+.cache/
+.claude
+
+MUJOCO_LOG.TXT
+
+.DS_Store

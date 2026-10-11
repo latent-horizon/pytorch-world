@@ -1,0 +1,58 @@
+# Contributing
+
+Thanks for helping build pytorch-world. Bug reports, fixes, new models, environments, datasets and documentation are all welcome.
+
+## Development setup
+
+```bash
+git clone <repository-url> pytorch-world
+cd pytorch-world
+uv sync --extra examples --extra action --extra test
+```
+
+| extra | adds |
+|---|---|
+| `examples` | matplotlib, for the notebooks and `torch_world.plots` |
+| `action` | MuJoCo, for the `RobotCube` arms |
+| `test` | pytest |
+
+## Checks
+
+Run these before opening a pull request:
+
+```bash
+uvx ruff format .
+uvx ruff check .
+uv run pytest
+```
+
+Code is formatted and linted with [ruff](https://docs.astral.sh/ruff/) at a line length of 120.
+
+## Adding a model
+
+1. Subclass `JEPA` or `WorldModel` in a new file in its family's folder, for example `torch_world/models/jepa/_mymodel.py`. Build it from the shared modules in `nn`, `masks` and `losses`. See [Build your own model](guides/custom-model.md).
+2. Write the docstring: what the model predicts, its loss, and the paper and reference code. It becomes the model's [API reference](api/models.md).
+3. Export it from the family's `__init__.py` and from `torch_world.models`.
+4. Add tests under `tests/models/`: output shapes, a finite loss, gradients and, for world models, a planning call.
+5. Add a notebook under `examples/` that trains it on one of the [environments](guides/environments.md) and shows what it learned.
+6. Add a page in its family's folder under `docs/models/` (for example `docs/models/jepa/`), link it from the family page and list it in `mkdocs.yml`.
+
+A new family gets its own folder, `torch_world/models/<family>/` and `docs/models/<family>/`, with an index page that says what the family has in common.
+
+## Documentation
+
+The site is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/`. API pages are generated from docstrings and the notebooks are rendered with their saved outputs, so run a notebook before committing it.
+
+```bash
+uv run --only-group docs mkdocs serve
+```
+
+Pushes to `main` deploy the site to GitHub Pages. This page and `CONTRIBUTING.md` at the repository root say the same thing; update both.
+
+## Pull requests
+
+- Keep each pull request to one change: a fix, a model, a feature.
+- Add or update tests for the code you touch, and docs for anything user-facing.
+- For a model, say how you checked it against the paper or the reference code.
+
+By contributing, you agree that your contributions are licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).

@@ -1,0 +1,13 @@
+<div class="md-copyright">
+  <div class="tw-footer__legal">
+    {% if config.copyright %}<span>{{ config.copyright }}</span>{% endif %}
+    {% for item in config.extra.footer.legal %}
+      <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>
+    {% endfor %}
+  </div>
+  <div class="tw-powered">
+    <span class="tw-powered__label">Powered by</span>
+    <img class="tw-powered__logo tw-powered__logo--light" src="{{ 'assets/latent-horizon/logo-black.svg' | url }}" alt="Latent Horizon" width="361" height="64">
+    <img class="tw-powered__logo tw-powered__logo--dark" src="{{ 'assets/latent-horizon/logo-cream.svg' | url }}" alt="Latent Horizon" width="361" height="64">
+  </div>
+</div>
