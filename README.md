@@ -2,7 +2,7 @@
   <img alt="pytorch-world" src="docs/assets/banner-sky.png">
 </p>
 
-PyTorch World (`torch_world`) is a library of world models for PyTorch. Like PyTorch Geometric did for graph neural networks, it gives world-model research shared parts (layers, masking, objectives, planners, environments) so that a new model is a short file and existing models are easy to compare.
+PyTorch World (`torch_world`) is a library of world models for PyTorch. It gives world-model research shared parts (layers, masking, objectives, planners, environments) so that a new model is a short file and existing models are easy to compare.
 
 ```bash
 uv add torch_world                 # core: depends only on torch

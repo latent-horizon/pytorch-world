@@ -31,7 +31,7 @@ uv add torch_world
 
 A **world model** learns how an environment evolves: from an observation and an action, it predicts what happens next. With one, an agent can plan by imagining the outcomes of its actions before taking them.
 
-`torch_world` does for world models what PyTorch Geometric did for graph neural networks. Models are organized into **families** that share a way of learning, and every model is built from the same layers, objectives, planners, environments and datasets. The first family is **JEPA**, which predicts the future in a learned representation space instead of in pixels. More families and models are on the way.
+`torch_world` gives world-model research shared parts. Models are organized into **families** that share a way of learning, and every model is built from the same layers, objectives, planners, environments and datasets. The first family is **JEPA**, which predicts the future in a learned representation space instead of in pixels. More families and models are on the way.
 
 <div class="grid cards" markdown>
 
