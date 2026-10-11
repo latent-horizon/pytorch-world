@@ -1,0 +1,91 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  # The tag is the release trigger, so it is also the release's version claim.
+  # Verify it against the source before anything is built or published.
+  verify-version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check the tag matches the source
+        run: |
+          set -euo pipefail
+          tagged="${GITHUB_REF_NAME#v}"
+          declared="$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' torch_world/__init__.py)"
+          echo "tag=${GITHUB_REF_NAME}  tagged=${tagged}  declared=${declared}"
+          if [ "${declared}" != "${tagged}" ]; then
+            echo "::error::torch_world.__version__ is ${declared}, but the tag is ${GITHUB_REF_NAME}. Bump torch_world/__init__.py and retag."
+            exit 1
+          fi
+
+  ci:
+    needs: verify-version
+    uses: ./.github/workflows/ci.yml
+
+  # Built without any write permission or cache, then handed to the publishing jobs as an artifact.
+  build:
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          enable-cache: false
+      - name: Build
+        run: uv build
+      - name: Check metadata
+        run: uvx twine check --strict dist/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/p/torch-world/
+    permissions:
+      # PyPI Trusted Publishing (OIDC): no long-lived API token in secrets.
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          attestations: true
+
+  github-release:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          # v0.2.0a1, v0.2.0b1, v0.2.0rc1 are pre-releases.
+          prerelease: ${{ contains(github.ref_name, 'a') || contains(github.ref_name, 'b') || contains(github.ref_name, 'rc') }}
+          files: dist/*

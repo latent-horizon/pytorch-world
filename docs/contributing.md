@@ -21,8 +21,8 @@ uv sync --extra examples --extra action --extra test
 Run these before opening a pull request:
 
 ```bash
-uvx ruff format .
-uvx ruff check .
+uvx ruff@0.17.0 format .
+uvx ruff@0.17.0 check .
 uv run pytest
 ```
 

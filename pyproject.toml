@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "torch-world"
-version = "0.1.0"
+dynamic = ["version"]
 description = "World models library for PyTorch"
 readme = "README.md"
 license = "Apache-2.0"
@@ -25,6 +25,9 @@ docs = [
     "ruff",
 ]
 
+[tool.hatch.version]
+path = "torch_world/__init__.py"
+
 [tool.hatch.build.targets.wheel]
 packages = ["torch_world"]
 
@@ -33,3 +36,10 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.format]
+# Code blocks in the docs and notebooks keep their hand-aligned comments.
+exclude = ["*.md", "*.ipynb"]
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["C408", "PLC0206"]
