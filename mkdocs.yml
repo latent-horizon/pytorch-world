@@ -1,7 +1,9 @@
 site_name: pytorch-world
 site_description: World models library for PyTorch
-# site_url: https://<user>.github.io/pytorch-world/
-# repo_url: https://github.com/<user>/pytorch-world
+site_url: https://latent-horizon.github.io/pytorch-world/
+repo_url: https://github.com/latent-horizon/pytorch-world
+repo_name: latent-horizon/pytorch-world
+edit_uri: ""
 copyright: © 2026 Latent Horizon
 
 docs_dir: docs
@@ -11,6 +13,8 @@ theme:
   custom_dir: overrides
   logo: assets/logo-white.png
   favicon: assets/logo-light.png
+  icon:
+    repo: fontawesome/brands/github
   font:
     text: Inter
     code: JetBrains Mono
