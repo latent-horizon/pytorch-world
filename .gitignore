@@ -17,3 +17,5 @@ results/
 examples/action/checkpoints/
 
 /examples/envs/media/
+/examples/envs/records/
+examples/action/reports/
