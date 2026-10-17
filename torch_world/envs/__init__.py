@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from torch_world.envs.benchmark import BenchmarkEnv, Transition
-from torch_world.envs.catalog import register_builtins
+from torch_world.envs.catalog import CATEGORIES, register_builtins
 from torch_world.envs.macaw import Macaw
 from torch_world.envs.physics_scenes import Scene
 from torch_world.envs.point_mass import PointMass
@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     )
 
 __all__ = [
+    "CATEGORIES",
     "QUALITY_PRESETS",
     "BenchmarkEnv",
     "EnvSpec",

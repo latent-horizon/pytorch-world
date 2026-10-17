@@ -52,10 +52,10 @@ def main():
             pass
     record.update(packages=packages, library_source_sha256=library_fingerprint())
     (output / "reference.json").write_text(json.dumps(record, indent=2) + "\n")
-    paths = list(folder.glob(f"[0-9][0-9]_{spec.id.lower().replace('-', '_')}.ipynb"))
-    if len(paths) != 1:
-        raise ValueError(f"Expected one notebook for {spec.id}, found {len(paths)}")
-    notebook = nbformat.read(paths[0], as_version=4)
+    path = folder / spec.category / f"{spec.id.lower().replace('-', '_')}.ipynb"
+    if not path.is_file():
+        raise ValueError(f"Expected a notebook for {spec.id} at {path}")
+    notebook = nbformat.read(path, as_version=4)
     next_execution = max((cell.get("execution_count") or 0 for cell in notebook.cells), default=0) + 1
     for cell in notebook.cells:
         if cell.cell_type == "markdown" and cell.source.startswith("## GT reference"):
@@ -71,7 +71,7 @@ def main():
                 for item in captured.outputs
             ]
             cell.metadata["reference"] = record
-    nbformat.write(notebook, paths[0])
+    nbformat.write(notebook, path)
     print(json.dumps({**record, "output": str(output)}, sort_keys=True))
 
 

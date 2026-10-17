@@ -1,6 +1,6 @@
 # Environments
 
-For the 43 registered planning, MuJoCo, Newton, and Isaac Lab tasks, the contributor API, and reproducible LeWM notebooks, see [Benchmark environments](benchmark-environments.md). This page describes the original pixel-world interface.
+For the 43 registered planning, MuJoCo, Newton, and Isaac Lab tasks, the contributor API, and reproducible LeWM notebooks, see [Benchmark environments](benchmark-environments.md). Tasks are grouped into planning puzzles, control, navigation and locomotion, and manipulation; see the [Environments](../environments/index.md) page. This page describes the original pixel-world interface.
 
 `torch_world.envs` holds worlds to train and test world models in: two light pixel worlds that run on the GPU with nothing but PyTorch, and a MuJoCo pick-and-place task with real robot arms. All are batched (one object steps `batch_size` worlds at once) and return RGB images in `[0, 1]`.
 

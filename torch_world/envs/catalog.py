@@ -2,9 +2,30 @@
 
 from torch_world.envs.registry import EnvSpec, register_env
 
+CATEGORIES = {
+    "puzzles": "Planning puzzles",
+    "control": "Control",
+    "navigation": "Navigation and locomotion",
+    "manipulation": "Manipulation",
+}
+"""Built-in categories, in display order, mapped to their titles."""
+
+_CATEGORY = {
+    **dict.fromkeys(("Maze", "KeyDoor", "Sokoban", "IceMaze", "Checkpoints"), "puzzles"),
+    **dict.fromkeys(
+        ("CartpoleSwingup", "DoubleCartpole", "ReactionWheel", "BallPlate", "NewtonPendulum", "NewtonAcrobot"),
+        "control",
+    ),
+    **dict.fromkeys(
+        ("PointMass", "Macaw", "PlanarQuadrotor", "PayloadTransport", "DifferentialParking", "HurdleHopper"),
+        "navigation",
+    ),
+}
+
 
 def _add(id, entry, backend, description, tags, reference, **kwargs):
-    register_env(EnvSpec(id, f"torch_world.envs.{entry}", backend, description, tags, kwargs, reference))
+    category = _CATEGORY.get(id.removesuffix("-v0"), "manipulation")
+    register_env(EnvSpec(id, f"torch_world.envs.{entry}", backend, description, tags, kwargs, reference, category))
 
 
 def register_builtins():

@@ -113,7 +113,7 @@ HAS_GYM = importlib.util.find_spec("mujoco") is not None
 @pytest.mark.skipif(not HAS_GYM, reason="requires benchmark extra")
 @pytest.mark.parametrize("spec", list_envs(backend="mujoco"), ids=lambda spec: spec.id)
 def test_mujoco_seeded_episode_and_boundaries(spec):
-    with make(spec.id, batch_size=2, max_episode_steps=2, observation="state") as env:
+    with make(spec.id, batch_size=2, max_episode_steps=2, observation="state", quality="low") as env:
         first = env.reset(seed=17)
         second = env.reset(seed=17)
         assert torch.equal(first, second)
@@ -312,6 +312,21 @@ def test_contributors_can_register_a_scene_without_editing_dispatch():
         env.reset(seed=7)
         env.step(torch.ones(1, 1))
         assert env.state[0, 0] > 0
+
+
+def test_builtins_are_grouped_into_categories():
+    from torch_world.envs import CATEGORIES
+
+    builtins = [s for s in list_envs() if not s.id.startswith(("Test", "Contributor"))]
+    assert {s.category for s in builtins} == set(CATEGORIES)
+    assert sum(len(list_envs(category=c)) for c in CATEGORIES) == len(builtins)
+    assert {s.id for s in list_envs(category="puzzles")} == {
+        "Maze-v0",
+        "KeyDoor-v0",
+        "Sokoban-v0",
+        "IceMaze-v0",
+        "Checkpoints-v0",
+    }
 
 
 def test_named_classes_cover_catalogue_without_loading_simulators():

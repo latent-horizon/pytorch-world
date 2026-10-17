@@ -15,6 +15,8 @@
 
 ::: torch_world.envs.list_envs
 
+`CATEGORIES` maps each built-in category to its title, in display order: `"puzzles"` (Planning puzzles), `"control"` (Control), `"navigation"` (Navigation and locomotion), `"manipulation"` (Manipulation). Each `EnvSpec.category` holds one of these names; `list_envs(category="control")` selects that group.
+
 ::: torch_world.envs.make
 
 ::: torch_world.envs.register_env

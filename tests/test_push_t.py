@@ -41,8 +41,8 @@ def test_coverage_of_the_goal_region():
     assert env.coverage(torch.stack([goal, shifted], 1), goal).tolist() == [[1.0, 0.0], [1.0, 0.0]]
 
 
-def test_actions_from_a_recorded_state_replay_the_episode():
-    env = PushT(batch_size=8, size=16)
+def test_actions_from_a_recorded_state_replay_the_episode(without_shadows):
+    env = without_shadows(PushT(batch_size=8, size=16))
     data = env.collect(30, generator=torch.Generator().manual_seed(0))
     env.reset(data["states"][:, 10])
     for t in range(10, 20):

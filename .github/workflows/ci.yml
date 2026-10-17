@@ -64,4 +64,5 @@ jobs:
           uv venv
           uv pip install --torch-backend cpu -e ".[test,examples,action,benchmark,newton,notebooks]"
       - name: Test
-        run: uv run --no-sync pytest -q --durations=5
+        # One worker per core; software rendering dominates, so tests run in parallel processes.
+        run: uv run --no-sync pytest -q -n auto --durations=5

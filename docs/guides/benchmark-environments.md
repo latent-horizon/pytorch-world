@@ -2,6 +2,8 @@
 
 The registry adds **28 original task implementations**: five planning puzzles, 18 MuJoCo scenes, two Newton control systems, and three Isaac Lab tabletop tasks. Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used. Existing `PointMass`, `Macaw`, `PushT` and `RobotCube` interfaces remain available.
 
+Every task belongs to one of four categories: **planning puzzles**, **control**, **navigation and locomotion**, and **manipulation**. The [Environments](../environments/index.md) page lists every task by category.
+
 The registry also includes **five benchmark recipes for the original environments**: `PointMass-v0`, `Macaw-v0`, `PushT-v0`, `RobotCube-v0` (UR10e) and `RobotCubeSO101-v0`. Their notebooks use the same imported LeWM/CEM baseline, replaceable factories, result tables, GT panels and episode GIFs. Use the classes directly:
 
 ```python
@@ -46,7 +48,7 @@ Every new benchmark task has a named class exported from `torch_world.envs`, inc
 
 Classes, registry IDs and `EnvSpec` recipes remain supported for configuration files and benchmark sweeps. With `run_experiment(KeyDoor, env_kwargs={"quality": "high"})`, the runner creates and closes its own world. `get_spec(world)` and `get_spec(KeyDoor)` expose the same metadata.
 
-Listing environments imports no optional simulator. `make(id, **overrides)` applies constructor overrides to the registered defaults. All new environments support context managers and `close()`.
+Listing environments imports no optional simulator. Filter with `list_envs(category="manipulation")`, `backend=` or `tag=`; `CATEGORIES` lists the categories in display order. `make(id, **overrides)` applies constructor overrides to the registered defaults. All new environments support context managers and `close()`.
 
 | Member | Contract |
 |---|---|
@@ -109,11 +111,11 @@ with Maze(quality="high", size=32, render_size=512) as world:
 
 Puzzles use antialiased, cached sprites with distinct silhouettes and square cells. MuJoCo uses model cameras fitted to the start/GT geometry and contrasting task objects. Free-flight presentation cameras expand to include the current robot pose when it leaves those bounds; model observations retain their fixed view. Free-flight scenes use directional lights so vehicles remain illuminated as they gain altitude. Franka uses Isaac Lab's Newton Warp camera renderer with the articulated robot meshes. These settings improve visual detail; they do not change the physics timestep, solver accuracy, collision geometry, rewards, or success thresholds. Newton pendulum/acrobot views remain schematic.
 
-[Rendering-quality comparison notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/envs/render_quality_comparison.ipynb) runs LeWM on Maze, BallPlate, and RGB FrankaCubeLift at all three qualities, with a fixed-capacity encoder. Saved configurations and summary rows record quality, effective sizes, and camera; do not pool configurations when building a benchmark. Presentation frames are stored as `uint8`, independently of floating-point model observations.
+Presentation frames are stored as `uint8`, independently of floating-point model observations.
 
 ## LeWM experiments and interchangeable models
 
-The [notebook index](../examples/envs/README.md) contains one concise notebook per task. The index records execution status for every task; each executed notebook links its measured run artifacts and episode visuals. All use the same library runner and plots. The [custom model notebook](../examples/envs/custom_model_three_envs.ipynb) defines a small residual world model and compares it with the imported LeWM baseline on Maze, KeyDoor, and Sokoban, with GT references, episode GIFs, and a campaign summary CSV.
+`examples/envs/` contains one concise notebook per task, in one folder per category (`puzzles/`, `control/`, `navigation/`, `manipulation/`); the [Environments](../environments/index.md) page links each one. Each executed notebook links its measured run artifacts and episode visuals. All use the same library runner and plots. The [custom model notebook](../examples/envs/custom_model_three_envs.ipynb) defines a small residual world model and compares it with the imported LeWM baseline on Maze, KeyDoor, and Sokoban, with GT references, episode GIFs, and a campaign summary CSV.
 
 ```python
 from torch_world.benchmarks import observation_encoder, run_experiment, show_results
@@ -149,18 +151,6 @@ Native puzzle data enumerates reachable nonterminal states and samples random ac
 Goal-renderable tasks plan against a goal embedding. Other tasks fit a reward head on frozen model embeddings, then plan the predicted rewards and report actual simulator returns. Sparse-reward data can contain no successes, so that head may be uninformative; inspect measured returns rather than assuming a working controller. Latent MSE values are comparable against persistence **within** a model, not across differently scaled latent spaces.
 
 The default 400 updates, four evaluation seeds, and 60 steps are a pipeline-validation budget. Fixed puzzles repeat a single initial state; confidence intervals reflect policy randomness on that level, not generalization to new levels. `show_results` uses `plots.curves`, `plots.bars`, `plots.images`, and `plots.episodes`; all 28 built-in tasks have RGB presentation frames and GIFs, including state-trained Franka tasks. User environments without a visual renderer retain vector trajectories. GIF subsampling always retains the final observation and labels frames with their original episode steps. Tasks without a success signal omit success metrics instead of reporting failure.
-
-## Generate notebook results
-
-Execute all environment notebooks in fresh kernels with the shared protocol:
-
-```bash
-python examples/envs/run_notebooks.py --output-dir runs/benchmarks/my-campaign
-```
-
-Use `--backends torch mujoco` to select backends. Pass `--physics-python /path/to/isaaclab/.venv/bin/python` for a separate Isaac Lab/Newton runtime with `ipykernel` installed. The default interpreter needs the notebook tools and the selected simulators. On Linux, the runner defaults MuJoCo rendering to EGL; an existing `MUJOCO_GL` setting takes precedence.
-
-Campaign paths are relative to `examples/envs`. Each campaign contains `execution.json`, a checksum-verified `summary.csv`, and append-only experiment artifacts. The runner records failures and continues to the next notebook. Repeat the same command to retry failed notebooks while skipping completed notebooks with unchanged experiment code. Use a new campaign name after changing library code or simulator runtimes. Notebook outputs are replaced with the new measured run; earlier saved artifact directories remain available.
 
 ## Procedural result storage
 
@@ -208,6 +198,7 @@ register_env(EnvSpec(
     backend="torch",
     description="A custom maze with a winding corridor",
     tags=("planning", "navigation"),
+    category="puzzles",
     kwargs={"task": "maze", "level": ("#######", "#A#..G#", "#.#.#.#", "#...#.#", "#######")},
 ))
 register_task("MyMazeLong-v0", "MyMaze-v0", description="Longer planning budget", max_episode_steps=300)
@@ -255,33 +246,4 @@ For a new MuJoCo task, add a `Scene` builder with geometry, controls, initial/ta
 
 ## Catalogue
 
-| ID | Backend | Task |
-|---|---|---|
-| `BallPlate-v0` | mujoco | Tilt a plate to position a constrained ball |
-| `BlockStack-v0` | mujoco | Place a grasped cube on a raised block |
-| `BoxGate-v0` | mujoco | Push a box through a narrow gate |
-| `CartpoleSwingup-v0` | mujoco | Torque-limited cart-pole swing-up |
-| `Checkpoints-v0` | torch | Visit two checkpoints in order before reaching the exit |
-| `DifferentialParking-v0` | mujoco | Park a differential-drive robot between barriers |
-| `DoorOpen-v0` | mujoco | Push a hinged door open |
-| `DoubleCartpole-v0` | mujoco | Underactuated double-pole stabilization |
-| `DrawerOpen-v0` | mujoco | Contact a handle and pull a sliding drawer |
-| `FrankaCubeLift-v0` | isaaclab | Franka grasping and lifting a free cube |
-| `FrankaObstacleReach-v0` | isaaclab | Franka reaching around a tabletop barrier |
-| `FrankaTablePush-v0` | isaaclab | Franka contact pushing on a tabletop |
-| `HurdleHopper-v0` | mujoco | Hop a single articulated leg across a hurdle |
-| `IceMaze-v0` | torch | Slide until blocked; plan stopping positions |
-| `KeyDoor-v0` | torch | Collect a key before crossing a locked door |
-| `Maze-v0` | torch | Route around walls and dead ends |
-| `NewtonAcrobot-v0` | newton | Underactuated two-link swing-up with Newton physics |
-| `NewtonPendulum-v0` | newton | Torque-limited swing-up with Newton physics |
-| `ObstacleArm-v0` | mujoco | Two-link arm positioning around an obstacle |
-| `PayloadTransport-v0` | mujoco | Transport a suspended payload without swing |
-| `PegInsertion-v0` | mujoco | Insert a Cartesian peg into a clearance fixture |
-| `PickPlace-v0` | mujoco | Grasp and relocate a free cube with a parallel gripper |
-| `PlanarQuadrotor-v0` | mujoco | Differential-thrust planar flight |
-| `PuckPush-v0` | mujoco | Contact-only planar object pushing |
-| `PuckSlide-v0` | mujoco | Slide an object beyond the tool workspace by releasing momentum |
-| `ReactionWheel-v0` | mujoco | Reaction-wheel pendulum balance |
-| `Sokoban-v0` | torch | Push a box to a target without trapping it |
-| `SpatialArm-v0` | mujoco | Three-axis spatial arm positioning |
+The [Environments](../environments/index.md) page lists every task by category, with its backend and notebook.
