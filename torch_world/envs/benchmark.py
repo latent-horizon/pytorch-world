@@ -117,6 +117,24 @@ class BenchmarkEnv:
             out["pixels"] = out["observations"]
         return out
 
+    def show_env(self, *, seed=7) -> None:
+        """Reset and display this world's first batch lane beside GT; leave it open."""
+        from torch_world.benchmarks.visualization import show_env
+
+        show_env(self, seed=seed)
+
+    def show_success(self, *, policy=None, seed=7, steps=None, path=None) -> None:
+        """Display a verified successful episode GIF beside GT, optionally saving to path."""
+        from torch_world.benchmarks.visualization import show_success
+
+        show_success(self, policy=policy, seed=seed, steps=steps, path=path)
+
+    def reference_policy(self):
+        """Return a fresh reference controller after reset; override for custom tasks."""
+        from torch_world.envs.references import reference_policy
+
+        return reference_policy(self)
+
     def render_target(self):
         """GT success-condition observation, kept separate from measured episodes."""
         return self.render(self.goal)

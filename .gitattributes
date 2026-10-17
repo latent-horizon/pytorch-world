@@ -1,0 +1,2 @@
+examples/envs/records/** linguist-generated=true
+torch_world/envs/assets/** linguist-vendored=true

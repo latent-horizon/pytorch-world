@@ -7,7 +7,7 @@ Thanks for helping build pytorch-world. Bug reports, fixes, new models, environm
 ```bash
 git clone <repository-url> pytorch-world
 cd pytorch-world
-uv sync --extra examples --extra action --extra test
+uv sync --extra examples --extra action --extra benchmark --extra newton --extra test
 ```
 
 | extra | adds |
@@ -38,6 +38,12 @@ Code is formatted and linted with [ruff](https://docs.astral.sh/ruff/) at a line
 6. Add a page in its family's folder under `docs/models/` (for example `docs/models/jepa/`), link it from the family page and list it in `mkdocs.yml`.
 
 A new family gets its own folder, `torch_world/models/<family>/` and `docs/models/<family>/`, with an index page that says what the family has in common.
+
+## Adding environments and tasks
+
+Use `EnvSpec` and `register_env` for lazy discovery; use `register_task` for a configuration variant. New dynamics can subclass `BenchmarkEnv`, which supplies collection, action validation, and cleanup. Keep optional simulator imports inside their adapters.
+
+See the [benchmark environment guide](docs/guides/benchmark-environments.md) for the exact contract, a custom maze example, backend setup, and the shared experiment runner. Add seeded dynamics and terminal-boundary tests, a task description/reference, and a notebook using the library's interchangeable model and planner factories. Save measured runs through `run_experiment(output_dir=...)`; do not put invented results in unexecuted notebooks.
 
 ## Documentation
 

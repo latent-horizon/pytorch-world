@@ -1,0 +1,52 @@
+{
+  "29_pusht_v0.ipynb": {
+    "environment": "PushT-v0",
+    "backend": "mujoco",
+    "python": "/clusterhome/kleyton/pytorch-world/.venv/bin/python",
+    "notebook_source_sha256": "0c02726e243d99bf3e97a18cf61c1ddf7fc2ad09c18c957f72cc012de69907dd",
+    "started_utc": "2026-10-17T01:46:12.474899+00:00",
+    "status": "complete",
+    "last_cell": 10,
+    "finished_utc": "2026-10-17T01:47:48.691256+00:00"
+  },
+  "30_robotcube_v0.ipynb": {
+    "environment": "RobotCube-v0",
+    "backend": "mujoco",
+    "python": "/clusterhome/kleyton/pytorch-world/.venv/bin/python",
+    "notebook_source_sha256": "53e800886d377c5f87f8a1ccb53a11680ea11c27f74f9efa5730e029e9026372",
+    "started_utc": "2026-10-17T01:47:48.926895+00:00",
+    "status": "complete",
+    "last_cell": 10,
+    "finished_utc": "2026-10-17T01:49:40.046712+00:00"
+  },
+  "31_robotcubeso101_v0.ipynb": {
+    "environment": "RobotCubeSO101-v0",
+    "backend": "mujoco",
+    "python": "/clusterhome/kleyton/pytorch-world/.venv/bin/python",
+    "notebook_source_sha256": "6bdd842c6a45ef8331c1afa51a855242407eacb45c7233d77dcabe7e38406c17",
+    "started_utc": "2026-10-17T01:49:40.456901+00:00",
+    "status": "complete",
+    "last_cell": 10,
+    "finished_utc": "2026-10-17T01:51:29.527961+00:00"
+  },
+  "32_macaw_v0.ipynb": {
+    "environment": "Macaw-v0",
+    "backend": "torch",
+    "python": "/clusterhome/kleyton/pytorch-world/.venv/bin/python",
+    "notebook_source_sha256": "d6a26c570b6f4817ad63bd3e30b2f6084ef3395c4a53fb555b1d3cc10f32f5b9",
+    "started_utc": "2026-10-17T01:51:30.082426+00:00",
+    "status": "complete",
+    "last_cell": 10,
+    "finished_utc": "2026-10-17T01:56:29.227202+00:00"
+  },
+  "33_pointmass_v0.ipynb": {
+    "environment": "PointMass-v0",
+    "backend": "torch",
+    "python": "/clusterhome/kleyton/pytorch-world/.venv/bin/python",
+    "notebook_source_sha256": "6ed8eb1628a33931d37d7eb4d5ba86bd9ca1e28a748b86f46bed1ef7c7aef6a0",
+    "started_utc": "2026-10-17T01:56:29.968789+00:00",
+    "status": "complete",
+    "last_cell": 10,
+    "finished_utc": "2026-10-17T01:57:58.036628+00:00"
+  }
+}

@@ -62,11 +62,32 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `VJEPA` (and V-JEPA 2) | [Bardes et al., 2024](https://arxiv.org/abs/2404.08471), [Assran et al., 2025](https://arxiv.org/abs/2506.09985) | [facebookresearch/jepa](https://github.com/facebookresearch/jepa), [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) | [vision/vjepa](examples/vision/vjepa.ipynb) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) | [vision/lejepa](examples/vision/lejepa.ipynb) |
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released | [vqa/vljepa](examples/vqa/vljepa.ipynb) |
+| `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) | [action/lewam](examples/action/lewam.ipynb) |
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) | [action/lewm](examples/action/lewm.ipynb) |
 | `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) | [action/dinowm](examples/action/dinowm.ipynb) |
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) | [action/robojepa](examples/action/robojepa.ipynb) |
 
 Joint-embedding predictive architectures (JEPAs) predict the *representation* of a target from the representation of a context, instead of reconstructing pixels. Action-conditioned JEPAs are world models: they predict the next latent state from the current one and an action, and planning searches for the actions that bring the imagined latent closest to a goal.
+
+## Environment benchmarks
+
+Discover **28 new tasks plus five benchmark recipes for the original environments** with `torch_world.envs.list_envs()` and create them with `make(id)`: planning puzzles, MuJoCo manipulation and control, Newton articulated dynamics, and Isaac Lab robotics. [Setup and contributor API](docs/guides/benchmark-environments.md).
+
+```python
+from torch_world.envs import KeyDoor
+from torch_world.benchmarks import run_experiment
+
+world = KeyDoor()
+world.show_env()  # initial state and GT
+result = run_experiment(world, output_dir="runs/benchmarks")
+world.show_success()
+world.close()
+```
+
+
+[One notebook per task](examples/envs/README.md) uses LeWM and CEM from the library, with replaceable model/planner factories. Executed notebooks include measured results, tables, GT references, and episode GIFs for all 28 tasks, including actual Franka camera views. The [notebook index](examples/envs/README.md) also includes PointMass, Macaw, PushT, and both RobotCube arms, with their own [recorded results](examples/envs/LEGACY_RESULTS.md). `torch_world.benchmarks.run_experiment(..., output_dir="runs/benchmarks")` saves versioned run artifacts; `write_summary` combines completed runs into a benchmark CSV.
+
+Visual quality defaults to `high` (128-pixel RGB inputs, 512-pixel previews/GIFs). Use `quality="low"` or `"medium"`, or set `size` and `render_size` separately. Franka supports `camera="task"` / `"overview"` and `observation="rgb"` / `"state"`. See the [executed quality comparison](examples/envs/render_quality_comparison.ipynb).
 
 ## Adding a model
 

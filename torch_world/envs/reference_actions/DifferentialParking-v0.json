@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "environment": "DifferentialParking-v0",
+  "seed": 7,
+  "backend": "mujoco",
+  "engine_version": "3.6.0",
+  "control_dt": 0.02,
+  "description": "Feedback controller correcting wheel and heading drift; verified on every rollout.",
+  "controller": "parking",
+  "max_steps": 1200
+}

@@ -37,7 +37,7 @@ class MujocoTask(BenchmarkEnv):
             import mujoco
             import numpy as np
         except ImportError as exc:
-            raise ImportError("Install physics with pip install 'torch-world[lewam]'") from exc
+            raise ImportError("Install physics with pip install 'torch-world[benchmark]'") from exc
         self.mj, self._np = mujoco, np
         if (task is None) == (scene is None):
             raise ValueError("Provide exactly one of task or scene")

@@ -5,6 +5,7 @@ One visual system across figures: a fixed categorical order, one sequential hue 
 """
 
 from contextlib import contextmanager
+from itertools import pairwise
 
 import torch
 from torch import Tensor
@@ -376,11 +377,13 @@ def episodes(
     fps: int = 4,
     hold: int = 4,
     dpi: int = 100,
+    frame_steps: list[int] | None = None,
 ) -> Animation:
     """Videos of episodes ``(N, T, 3, H, W)`` as an animated grid, one tile per episode.
 
     With ``success`` ``(N,)``, each tile is labeled ✓ success or ✗ failure and framed in the matching status color.
     ``titles`` add a line per tile; the last frame is held for ``hold`` extra frames.
+    ``frame_steps`` preserves episode step labels when displaying subsampled frames.
     """
     import io
     import tempfile
@@ -388,6 +391,9 @@ def episodes(
     from matplotlib.animation import FuncAnimation, PillowWriter
 
     n, steps = frames.shape[:2]
+    frame_steps = list(range(steps)) if frame_steps is None else list(frame_steps)
+    if len(frame_steps) != steps or not steps or any(b <= a for a, b in pairwise(frame_steps)):
+        raise ValueError("frame_steps must contain one strictly increasing step number per frame")
     with style() as plt:
         nrows = -(-n // ncols)
         fig, axes = plt.subplots(
@@ -411,14 +417,14 @@ def episodes(
                 for side in ax.spines.values():
                     side.set(visible=True, color=GRID)
             ax.set_title(label, loc="left", fontsize=8, color=INK)
-        clock = fig.suptitle(f"step 0 / {steps - 1}", x=0.01, ha="left", fontsize=9, color=INK_2)
+        clock = fig.suptitle(f"step {frame_steps[0]} / {frame_steps[-1]}", x=0.01, ha="left", fontsize=9, color=INK_2)
         fig.get_layout_engine().set(w_pad=0.04, h_pad=0.04)
 
         def update(t):
             t = min(t, steps - 1)
             for i, im in enumerate(images):
                 im.set_data(_image(frames[i, t]))
-            clock.set_text(f"step {t} / {steps - 1}")
+            clock.set_text(f"step {frame_steps[t]} / {frame_steps[-1]}")
             return [*images, clock]
 
         animation = FuncAnimation(fig, update, frames=steps + hold, interval=1000 / fps, blit=False)

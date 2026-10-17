@@ -1,17 +1,5 @@
-"""Library-owned torque-controlled arm reaching around a fixed obstacle."""
+"""Compatibility import for the registered robotic-arm environment."""
 
-from torch_world.envs.physics_tasks import MujocoTask
+from torch_world.envs.tasks import ObstacleArm
 
-
-class ObstacleArm(MujocoTask):
-    """Two-joint MuJoCo arm with RGB observations and pose-and-velocity success.
-
-    Actions are normalized shoulder/elbow torques. States contain their joint
-    positions followed by velocities. Rendering a target never advances physics.
-    Install ``torch-world[lewam]`` for the recorded simulator version.
-    """
-
-    env_id = "ObstacleArm-v0"
-
-    def __init__(self, **kwargs):
-        super().__init__("ObstacleArm", **kwargs)
+__all__ = ["ObstacleArm"]
