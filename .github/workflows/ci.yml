@@ -62,6 +62,6 @@ jobs:
         # CPU wheels of torch: a fraction of the size of the default CUDA build.
         run: |
           uv venv
-          uv pip install --torch-backend cpu -e ".[test,examples,action]"
+          uv pip install --torch-backend cpu -e ".[test,examples,action,lewam,notebooks]"
       - name: Test
         run: uv run --no-sync pytest -q --durations=5

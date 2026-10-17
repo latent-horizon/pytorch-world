@@ -1,0 +1,108 @@
+{
+  "replay": [
+    {
+      "seed": 17,
+      "max_state_error": 0.0,
+      "max_pixel_error_uint8": 0.0,
+      "goal_render_state_error": 0.0,
+      "final_success": true
+    },
+    {
+      "seed": 18,
+      "max_state_error": 0.0,
+      "max_pixel_error_uint8": 0.0,
+      "goal_render_state_error": 0.0,
+      "final_success": true
+    },
+    {
+      "seed": 19,
+      "max_state_error": 0.0,
+      "max_pixel_error_uint8": 0.0,
+      "goal_render_state_error": 0.0,
+      "final_success": true
+    }
+  ],
+  "physics": {
+    "timestep": 0.002,
+    "control_period": 0.02,
+    "pose_tolerance": [
+      0.12,
+      0.12
+    ],
+    "velocity_tolerance": 0.5
+  },
+  "launch_phases": [
+    {
+      "step": 0,
+      "pixel_change_rms": 0.02589578367769718,
+      "expert_action_mean": [
+        -0.4082672595977783,
+        -0.10031291842460632
+      ],
+      "expert_action_std": [
+        0.18115435540676117,
+        0.1314179003238678
+      ]
+    },
+    {
+      "step": 1,
+      "pixel_change_rms": 0.027448860928416252,
+      "expert_action_mean": [
+        -0.403266042470932,
+        -0.11845726519823074
+      ],
+      "expert_action_std": [
+        0.15313762426376343,
+        0.02818354032933712
+      ]
+    },
+    {
+      "step": 2,
+      "pixel_change_rms": 0.027267910540103912,
+      "expert_action_mean": [
+        -0.40782788395881653,
+        -0.1073371097445488
+      ],
+      "expert_action_std": [
+        0.14828608930110931,
+        0.013463463634252548
+      ]
+    },
+    {
+      "step": 3,
+      "pixel_change_rms": 0.02634132094681263,
+      "expert_action_mean": [
+        -0.4099316895008087,
+        -0.10438568890094757
+      ],
+      "expert_action_std": [
+        0.1442483365535736,
+        0.012106794863939285
+      ]
+    },
+    {
+      "step": 4,
+      "pixel_change_rms": 0.025801006704568863,
+      "expert_action_mean": [
+        -0.41132521629333496,
+        -0.10353201627731323
+      ],
+      "expert_action_std": [
+        0.14061303436756134,
+        0.011797204613685608
+      ]
+    },
+    {
+      "step": 5,
+      "pixel_change_rms": 0.02522367238998413,
+      "expert_action_mean": [
+        -0.4124852418899536,
+        -0.10333868861198425
+      ],
+      "expert_action_std": [
+        0.13707026839256287,
+        0.011288369074463844
+      ]
+    }
+  ]
+}
