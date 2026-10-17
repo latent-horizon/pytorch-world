@@ -128,6 +128,7 @@ extra:
           - {name: All models, url: models/}
           - {name: JEPA family, url: models/jepa/}
           - {name: LeWM, url: models/jepa/lewm/}
+          - {name: LeWAM, url: models/jepa/lewam/}
           - {name: DINO-WM, url: models/jepa/dinowm/}
           - {name: RoboJEPA, url: models/jepa/robojepa/}
       - title: Build
@@ -172,6 +173,7 @@ nav:
               - VL-JEPA: models/jepa/vljepa.md
           - World models:
               - LeWM: models/jepa/lewm.md
+              - LeWAM: models/jepa/lewam.md
               - DINO-WM: models/jepa/dinowm.md
           - Robotics:
               - RoboJEPA: models/jepa/robojepa.md
@@ -189,6 +191,7 @@ nav:
           - LeJEPA: examples/vision/lejepa.ipynb
       - Action:
           - LeWM: examples/action/lewm.ipynb
+          - LeWAM: examples/action/lewam.ipynb
           - DINO-WM: examples/action/dinowm.ipynb
           - RoboJEPA: examples/action/robojepa.ipynb
       - VQA:

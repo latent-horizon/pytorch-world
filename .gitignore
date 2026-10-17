@@ -11,3 +11,4 @@ site/
 MUJOCO_LOG.TXT
 
 .DS_Store
+runs/

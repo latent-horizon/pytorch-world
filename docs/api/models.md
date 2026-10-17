@@ -12,6 +12,8 @@
 
 ::: torch_world.models.VLJEPA
 
+::: torch_world.models.LeWAM
+
 ::: torch_world.models.LeWM
 
 ::: torch_world.models.DINOWM

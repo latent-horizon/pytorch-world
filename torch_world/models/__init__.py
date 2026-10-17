@@ -1,4 +1,16 @@
 from torch_world.models.base import JEPA, WorldModel
-from torch_world.models.jepa import DINOWM, IJEPA, VJEPA, VLJEPA, LeJEPA, LeWM, RoboJEPA
+from torch_world.models.jepa import DINOWM, IJEPA, VJEPA, VLJEPA, LeJEPA, LeWAM, LeWAMEncoder, LeWM, RoboJEPA
 
-__all__ = ["DINOWM", "IJEPA", "JEPA", "VJEPA", "VLJEPA", "LeJEPA", "LeWM", "RoboJEPA", "WorldModel"]
+__all__ = [
+    "DINOWM",
+    "IJEPA",
+    "JEPA",
+    "VJEPA",
+    "VLJEPA",
+    "LeJEPA",
+    "LeWAM",
+    "LeWAMEncoder",
+    "LeWM",
+    "RoboJEPA",
+    "WorldModel",
+]

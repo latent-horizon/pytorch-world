@@ -1,0 +1,1011 @@
+{
+  "protocol": "lewam-owned-arm-matched-v1",
+  "config": {
+    "seed": 17,
+    "train_episodes": 128,
+    "validation_episodes": 16,
+    "test_episodes": 8,
+    "steps": 100,
+    "size": 224,
+    "history": 2,
+    "chunk_size": 10,
+    "updates": 1000,
+    "batch_size": 128,
+    "flow_steps": 8,
+    "mean_samples": 16,
+    "validation_interval": 200,
+    "reference": true,
+    "frameskip": 5,
+    "history_stride": 5,
+    "launch_fraction": 0.0,
+    "phase_validation": true,
+    "execution_interval": 5,
+    "expert_gain": 2,
+    "recovery_fraction": 0.0,
+    "goal_mode": "sampled",
+    "goal_horizon": 10,
+    "goal_marker": true,
+    "diverse_motion": false,
+    "test_seed_offset": 40000
+  },
+  "epochs": 50,
+  "batch_size": 128,
+  "warmup_epochs": 5,
+  "precision": "bf16",
+  "latent_boundary": "fp32 for both models",
+  "initialization": "identical active weights, from scratch",
+  "data_path": "/clusterhome/kleyton/lewam-goal-planning-20261017/run/episodes.pt",
+  "reference_source_sha256": {
+    "lewam/models/module.py": "72e2cede7ee62138fe36f605f18e077d6dcc04417aaca9c3c2da31ce4b64de3d",
+    "lewam/models/encoders.py": "bf9285d1f70b650bd435fb1bbdbf99f475ed9144bb03afd733773ffb3281c34f",
+    "lewam/models/lewam.py": "eab57177f3af581615494d8485cb13dd86e55cbea471d31195126009fb1fdd86",
+    "scripts/train_lewam.py": "6eea738b65998cf82a20f1dc377b8a538c5d84bf22e1b4aa2f826a704770377c"
+  },
+  "host": "spark-9017",
+  "torch_version": "2.14.1+cu130",
+  "curve": [
+    {
+      "epoch": 1,
+      "updates_per_model": 96,
+      "elapsed_seconds": 333.460810279008,
+      "upstream": {
+        "loss": 2.4448749609291553,
+        "action_loss": 1.3166182643423479,
+        "pred_loss": 0.33907212037593126,
+        "sigreg_loss": 19.731119791666668,
+        "validation_flow": 0.6167007684707642
+      },
+      "local": {
+        "loss": 2.4484204662342868,
+        "action_loss": 1.3206796546777089,
+        "pred_loss": 0.3431542220835884,
+        "sigreg_loss": 19.620442708333332,
+        "validation_flow": 0.6606917381286621
+      }
+    },
+    {
+      "epoch": 2,
+      "updates_per_model": 192,
+      "elapsed_seconds": 749.7442927859956,
+      "upstream": {
+        "loss": 1.2973761980732281,
+        "action_loss": 0.4789115423336625,
+        "pred_loss": 0.33400827335814637,
+        "sigreg_loss": 12.110026041666666,
+        "validation_flow": 0.34884244203567505
+      },
+      "local": {
+        "loss": 1.28536161283652,
+        "action_loss": 0.46979995009799796,
+        "pred_loss": 0.337900525269409,
+        "sigreg_loss": 11.938802083333334,
+        "validation_flow": 0.3787784278392792
+      }
+    },
+    {
+      "epoch": 3,
+      "updates_per_model": 288,
+      "elapsed_seconds": 1192.5029610320053,
+      "upstream": {
+        "loss": 1.0720669478178024,
+        "action_loss": 0.3522206684574485,
+        "pred_loss": 0.301409594869862,
+        "sigreg_loss": 10.459635416666666,
+        "validation_flow": 0.34880131483078003
+      },
+      "local": {
+        "loss": 1.1006871238350868,
+        "action_loss": 0.36615997878834605,
+        "pred_loss": 0.31535803495595854,
+        "sigreg_loss": 10.479166666666666,
+        "validation_flow": 0.4148203730583191
+      }
+    },
+    {
+      "epoch": 4,
+      "updates_per_model": 384,
+      "elapsed_seconds": 1570.1375865729933,
+      "upstream": {
+        "loss": 0.8686787467449903,
+        "action_loss": 0.29252968278403085,
+        "pred_loss": 0.1955948630347848,
+        "sigreg_loss": 9.513671875,
+        "validation_flow": 0.21776068210601807
+      },
+      "local": {
+        "loss": 0.9075491006175677,
+        "action_loss": 0.30699343979358673,
+        "pred_loss": 0.21635969588533044,
+        "sigreg_loss": 9.606119791666666,
+        "validation_flow": 0.2574845254421234
+      }
+    },
+    {
+      "epoch": 5,
+      "updates_per_model": 480,
+      "elapsed_seconds": 1855.942668010015,
+      "upstream": {
+        "loss": 0.7569685305158297,
+        "action_loss": 0.2526690918020904,
+        "pred_loss": 0.13342948195834956,
+        "sigreg_loss": 9.272135416666666,
+        "validation_flow": 0.31239211559295654
+      },
+      "local": {
+        "loss": 0.7827667637417713,
+        "action_loss": 0.2644841472307841,
+        "pred_loss": 0.14814508721853295,
+        "sigreg_loss": 9.251302083333334,
+        "validation_flow": 0.2342168241739273
+      }
+    },
+    {
+      "epoch": 6,
+      "updates_per_model": 576,
+      "elapsed_seconds": 2224.9317920840112,
+      "upstream": {
+        "loss": 0.6383902784436941,
+        "action_loss": 0.21176649009188017,
+        "pred_loss": 0.08560002890105049,
+        "sigreg_loss": 8.526041666666666,
+        "validation_flow": 0.218891441822052
+      },
+      "local": {
+        "loss": 0.6527192586412033,
+        "action_loss": 0.21100933275495967,
+        "pred_loss": 0.09734957106411457,
+        "sigreg_loss": 8.608723958333334,
+        "validation_flow": 0.213354229927063
+      }
+    },
+    {
+      "epoch": 7,
+      "updates_per_model": 672,
+      "elapsed_seconds": 2804.9152485030063,
+      "upstream": {
+        "loss": 0.5177742301796874,
+        "action_loss": 0.1547738988107691,
+        "pred_loss": 0.06067285935084025,
+        "sigreg_loss": 7.55859375,
+        "validation_flow": 0.12223828583955765
+      },
+      "local": {
+        "loss": 0.5481276214122772,
+        "action_loss": 0.17188594366113344,
+        "pred_loss": 0.0655930758997177,
+        "sigreg_loss": 7.766276041666667,
+        "validation_flow": 0.13686612248420715
+      }
+    },
+    {
+      "epoch": 8,
+      "updates_per_model": 768,
+      "elapsed_seconds": 3388.8069104579918,
+      "upstream": {
+        "loss": 0.47636006213724613,
+        "action_loss": 0.1465606737571458,
+        "pred_loss": 0.05013630252021054,
+        "sigreg_loss": 6.9921875,
+        "validation_flow": 0.08667533099651337
+      },
+      "local": {
+        "loss": 0.484270120660464,
+        "action_loss": 0.1426235557689021,
+        "pred_loss": 0.055818926892243326,
+        "sigreg_loss": 7.145182291666667,
+        "validation_flow": 0.12493959069252014
+      }
+    },
+    {
+      "epoch": 9,
+      "updates_per_model": 864,
+      "elapsed_seconds": 4018.7918098419905,
+      "upstream": {
+        "loss": 0.4318233843271931,
+        "action_loss": 0.12756532539303103,
+        "pred_loss": 0.04393294535111636,
+        "sigreg_loss": 6.5078125,
+        "validation_flow": 0.10162787139415741
+      },
+      "local": {
+        "loss": 0.4415018294627468,
+        "action_loss": 0.12901669919180372,
+        "pred_loss": 0.044795107445679605,
+        "sigreg_loss": 6.6923828125,
+        "validation_flow": 0.09181015193462372
+      }
+    },
+    {
+      "epoch": 10,
+      "updates_per_model": 960,
+      "elapsed_seconds": 4496.378604386991,
+      "upstream": {
+        "loss": 0.40023175595949095,
+        "action_loss": 0.12086571628848712,
+        "pred_loss": 0.04177652318806698,
+        "sigreg_loss": 5.9404296875,
+        "validation_flow": 0.07224184274673462
+      },
+      "local": {
+        "loss": 0.4173969201122721,
+        "action_loss": 0.12627029279246926,
+        "pred_loss": 0.04314078821334988,
+        "sigreg_loss": 6.197591145833333,
+        "validation_flow": 0.08997264504432678
+      }
+    },
+    {
+      "epoch": 11,
+      "updates_per_model": 1056,
+      "elapsed_seconds": 4959.32409121099,
+      "upstream": {
+        "loss": 0.3734865104779601,
+        "action_loss": 0.11687541745292644,
+        "pred_loss": 0.036528491822537035,
+        "sigreg_loss": 5.502278645833333,
+        "validation_flow": 0.07858029007911682
+      },
+      "local": {
+        "loss": 0.39174908585846424,
+        "action_loss": 0.12360233149956912,
+        "pred_loss": 0.03887836270344754,
+        "sigreg_loss": 5.731119791666667,
+        "validation_flow": 0.09390205889940262
+      }
+    },
+    {
+      "epoch": 12,
+      "updates_per_model": 1152,
+      "elapsed_seconds": 5403.244044855004,
+      "upstream": {
+        "loss": 0.3584130108356476,
+        "action_loss": 0.11134799612530817,
+        "pred_loss": 0.035852856371396534,
+        "sigreg_loss": 5.281901041666667,
+        "validation_flow": 0.07763248682022095
+      },
+      "local": {
+        "loss": 0.3693256378173828,
+        "action_loss": 0.1146938131035616,
+        "pred_loss": 0.03502733425314849,
+        "sigreg_loss": 5.489583333333333,
+        "validation_flow": 0.09704658389091492
+      }
+    },
+    {
+      "epoch": 13,
+      "updates_per_model": 1248,
+      "elapsed_seconds": 5867.844792418007,
+      "upstream": {
+        "loss": 0.33844611793756485,
+        "action_loss": 0.10311108944006264,
+        "pred_loss": 0.031325020148263626,
+        "sigreg_loss": 5.099934895833333,
+        "validation_flow": 0.050266116857528687
+      },
+      "local": {
+        "loss": 0.34892939527829486,
+        "action_loss": 0.10516579837227862,
+        "pred_loss": 0.03285661343640337,
+        "sigreg_loss": 5.273763020833333,
+        "validation_flow": 0.08661365509033203
+      }
+    },
+    {
+      "epoch": 14,
+      "updates_per_model": 1344,
+      "elapsed_seconds": 6311.345777445997,
+      "upstream": {
+        "loss": 0.3262844638278087,
+        "action_loss": 0.09768888726830482,
+        "pred_loss": 0.029854936253589887,
+        "sigreg_loss": 4.968098958333333,
+        "validation_flow": 0.05216067656874657
+      },
+      "local": {
+        "loss": 0.337481537523369,
+        "action_loss": 0.10167409867669146,
+        "pred_loss": 0.03045465659427767,
+        "sigreg_loss": 5.135091145833333,
+        "validation_flow": 0.09319860488176346
+      }
+    },
+    {
+      "epoch": 15,
+      "updates_per_model": 1440,
+      "elapsed_seconds": 6724.713190835988,
+      "upstream": {
+        "loss": 0.3177084584409992,
+        "action_loss": 0.09715375405115385,
+        "pred_loss": 0.028517758008092642,
+        "sigreg_loss": 4.799479166666667,
+        "validation_flow": 0.0684286504983902
+      },
+      "local": {
+        "loss": 0.32792901744445163,
+        "action_loss": 0.10065870336256921,
+        "pred_loss": 0.029475718387402594,
+        "sigreg_loss": 4.944661458333333,
+        "validation_flow": 0.09230495989322662
+      }
+    },
+    {
+      "epoch": 16,
+      "updates_per_model": 1536,
+      "elapsed_seconds": 7164.075338652008,
+      "upstream": {
+        "loss": 0.30977194135387737,
+        "action_loss": 0.09602463198825717,
+        "pred_loss": 0.027122146954449516,
+        "sigreg_loss": 4.665364583333333,
+        "validation_flow": 0.04565788432955742
+      },
+      "local": {
+        "loss": 0.3174430246775349,
+        "action_loss": 0.09577022465722014,
+        "pred_loss": 0.029218781293214608,
+        "sigreg_loss": 4.810872395833333,
+        "validation_flow": 0.08629000931978226
+      }
+    },
+    {
+      "epoch": 17,
+      "updates_per_model": 1632,
+      "elapsed_seconds": 7482.851530032989,
+      "upstream": {
+        "loss": 0.30530464462935925,
+        "action_loss": 0.09584000559213261,
+        "pred_loss": 0.02716279906841616,
+        "sigreg_loss": 4.557291666666667,
+        "validation_flow": 0.03884192183613777
+      },
+      "local": {
+        "loss": 0.3082821766535441,
+        "action_loss": 0.0946459179588904,
+        "pred_loss": 0.027529893908649683,
+        "sigreg_loss": 4.652669270833333,
+        "validation_flow": 0.07539213448762894
+      }
+    },
+    {
+      "epoch": 18,
+      "updates_per_model": 1728,
+      "elapsed_seconds": 7777.716588645009,
+      "upstream": {
+        "loss": 0.2918473002500832,
+        "action_loss": 0.09025232412386686,
+        "pred_loss": 0.02445060711276407,
+        "sigreg_loss": 4.430989583333333,
+        "validation_flow": 0.04360315203666687
+      },
+      "local": {
+        "loss": 0.29133282291392487,
+        "action_loss": 0.08525231457315385,
+        "pred_loss": 0.025487653251426916,
+        "sigreg_loss": 4.514973958333333,
+        "validation_flow": 0.10372568666934967
+      }
+    },
+    {
+      "epoch": 19,
+      "updates_per_model": 1824,
+      "elapsed_seconds": 8074.024019809993,
+      "upstream": {
+        "loss": 0.29260326363146305,
+        "action_loss": 0.09279028869544466,
+        "pred_loss": 0.02589329770610978,
+        "sigreg_loss": 4.3486328125,
+        "validation_flow": 0.08368953317403793
+      },
+      "local": {
+        "loss": 0.2968405556554596,
+        "action_loss": 0.09287143087324996,
+        "pred_loss": 0.027506314470277477,
+        "sigreg_loss": 4.412109375,
+        "validation_flow": 0.07549397647380829
+      }
+    },
+    {
+      "epoch": 20,
+      "updates_per_model": 1920,
+      "elapsed_seconds": 8373.345897716004,
+      "upstream": {
+        "loss": 0.27676744759082794,
+        "action_loss": 0.08194129285402596,
+        "pred_loss": 0.024426168645732105,
+        "sigreg_loss": 4.259114583333333,
+        "validation_flow": 0.07608873397111893
+      },
+      "local": {
+        "loss": 0.2837417386472225,
+        "action_loss": 0.08546573587227613,
+        "pred_loss": 0.026492555858567357,
+        "sigreg_loss": 4.293619791666667,
+        "validation_flow": 0.08373479545116425
+      }
+    },
+    {
+      "epoch": 21,
+      "updates_per_model": 2016,
+      "elapsed_seconds": 8668.048422677995,
+      "upstream": {
+        "loss": 0.27455097576603293,
+        "action_loss": 0.08509910230835278,
+        "pred_loss": 0.02235796017339453,
+        "sigreg_loss": 4.17626953125,
+        "validation_flow": 0.04870281741023064
+      },
+      "local": {
+        "loss": 0.27071908457825583,
+        "action_loss": 0.08095875409586976,
+        "pred_loss": 0.023144526542940486,
+        "sigreg_loss": 4.165201822916667,
+        "validation_flow": 0.085419662296772
+      }
+    },
+    {
+      "epoch": 22,
+      "updates_per_model": 2112,
+      "elapsed_seconds": 8968.376937644003,
+      "upstream": {
+        "loss": 0.2717347536236048,
+        "action_loss": 0.08227217352638642,
+        "pred_loss": 0.024006443466835965,
+        "sigreg_loss": 4.136393229166667,
+        "validation_flow": 0.06751389801502228
+      },
+      "local": {
+        "loss": 0.2726443015659849,
+        "action_loss": 0.08312947349622846,
+        "pred_loss": 0.024262143434801448,
+        "sigreg_loss": 4.132649739583333,
+        "validation_flow": 0.06534688174724579
+      }
+    },
+    {
+      "epoch": 23,
+      "updates_per_model": 2208,
+      "elapsed_seconds": 9269.930614454002,
+      "upstream": {
+        "loss": 0.27075995427245897,
+        "action_loss": 0.08436309926522274,
+        "pred_loss": 0.022863326807661604,
+        "sigreg_loss": 4.0869140625,
+        "validation_flow": 0.04934253171086311
+      },
+      "local": {
+        "loss": 0.2641966484176616,
+        "action_loss": 0.07895523309707642,
+        "pred_loss": 0.02288790012244135,
+        "sigreg_loss": 4.058268229166667,
+        "validation_flow": 0.07130040228366852
+      }
+    },
+    {
+      "epoch": 24,
+      "updates_per_model": 2304,
+      "elapsed_seconds": 9564.469261674996,
+      "upstream": {
+        "loss": 0.26330417301505804,
+        "action_loss": 0.0796699629087622,
+        "pred_loss": 0.022287775451938312,
+        "sigreg_loss": 4.032877604166667,
+        "validation_flow": 0.05268252640962601
+      },
+      "local": {
+        "loss": 0.26677794226755697,
+        "action_loss": 0.08463985414709896,
+        "pred_loss": 0.022500637142608564,
+        "sigreg_loss": 3.9908854166666665,
+        "validation_flow": 0.0792752355337143
+      }
+    },
+    {
+      "epoch": 25,
+      "updates_per_model": 2400,
+      "elapsed_seconds": 9859.251672718994,
+      "upstream": {
+        "loss": 0.2595813114506503,
+        "action_loss": 0.07885293654787044,
+        "pred_loss": 0.020572126125140738,
+        "sigreg_loss": 4.00341796875,
+        "validation_flow": 0.06635850667953491
+      },
+      "local": {
+        "loss": 0.25854689239834744,
+        "action_loss": 0.07846503596132,
+        "pred_loss": 0.021990629048862804,
+        "sigreg_loss": 3.9519856770833335,
+        "validation_flow": 0.07739095389842987
+      }
+    },
+    {
+      "epoch": 26,
+      "updates_per_model": 2496,
+      "elapsed_seconds": 10157.820787166012,
+      "upstream": {
+        "loss": 0.25249426579102874,
+        "action_loss": 0.07383159288049986,
+        "pred_loss": 0.020540928041252,
+        "sigreg_loss": 3.9532877604166665,
+        "validation_flow": 0.03799602761864662
+      },
+      "local": {
+        "loss": 0.2521202093921602,
+        "action_loss": 0.07568471366539598,
+        "pred_loss": 0.02136550967892011,
+        "sigreg_loss": 3.8759765625,
+        "validation_flow": 0.07688550651073456
+      }
+    },
+    {
+      "epoch": 27,
+      "updates_per_model": 2592,
+      "elapsed_seconds": 10453.405092914007,
+      "upstream": {
+        "loss": 0.24974608918031058,
+        "action_loss": 0.0732679582045724,
+        "pred_loss": 0.02019761297075699,
+        "sigreg_loss": 3.90625,
+        "validation_flow": 0.039447031915187836
+      },
+      "local": {
+        "loss": 0.2442659499744574,
+        "action_loss": 0.07085760818639149,
+        "pred_loss": 0.020179581517974537,
+        "sigreg_loss": 3.8317057291666665,
+        "validation_flow": 0.08216433972120285
+      }
+    },
+    {
+      "epoch": 28,
+      "updates_per_model": 2688,
+      "elapsed_seconds": 10746.33796723801,
+      "upstream": {
+        "loss": 0.24682190952201685,
+        "action_loss": 0.07371005575017382,
+        "pred_loss": 0.018703081926408533,
+        "sigreg_loss": 3.8601888020833335,
+        "validation_flow": 0.05540701746940613
+      },
+      "local": {
+        "loss": 0.24311316277210912,
+        "action_loss": 0.07127476863873501,
+        "pred_loss": 0.019830336115167786,
+        "sigreg_loss": 3.80126953125,
+        "validation_flow": 0.06891943514347076
+      }
+    },
+    {
+      "epoch": 29,
+      "updates_per_model": 2784,
+      "elapsed_seconds": 11042.950212250988,
+      "upstream": {
+        "loss": 0.24320570395017663,
+        "action_loss": 0.07219233592816938,
+        "pred_loss": 0.017764261448367808,
+        "sigreg_loss": 3.83154296875,
+        "validation_flow": 0.05819041654467583
+      },
+      "local": {
+        "loss": 0.23600311670452356,
+        "action_loss": 0.06658885131279628,
+        "pred_loss": 0.019125365021560963,
+        "sigreg_loss": 3.7568359375,
+        "validation_flow": 0.07767148315906525
+      }
+    },
+    {
+      "epoch": 30,
+      "updates_per_model": 2880,
+      "elapsed_seconds": 11349.917445722007,
+      "upstream": {
+        "loss": 0.23616365032891432,
+        "action_loss": 0.0658431490107129,
+        "pred_loss": 0.01800726820753577,
+        "sigreg_loss": 3.8082682291666665,
+        "validation_flow": 0.03293872997164726
+      },
+      "local": {
+        "loss": 0.2373094248274962,
+        "action_loss": 0.07027096392509218,
+        "pred_loss": 0.018061816362508882,
+        "sigreg_loss": 3.72412109375,
+        "validation_flow": 0.0818171426653862
+      }
+    },
+    {
+      "epoch": 31,
+      "updates_per_model": 2976,
+      "elapsed_seconds": 11642.612971219001,
+      "upstream": {
+        "loss": 0.23588807617003718,
+        "action_loss": 0.06745276355650276,
+        "pred_loss": 0.01725123009722059,
+        "sigreg_loss": 3.7799479166666665,
+        "validation_flow": 0.04150814563035965
+      },
+      "local": {
+        "loss": 0.23744387474531928,
+        "action_loss": 0.07204770537403722,
+        "pred_loss": 0.017884369435099263,
+        "sigreg_loss": 3.6865234375,
+        "validation_flow": 0.07974083721637726
+      }
+    },
+    {
+      "epoch": 32,
+      "updates_per_model": 3072,
+      "elapsed_seconds": 11934.984188945004,
+      "upstream": {
+        "loss": 0.23262840990598002,
+        "action_loss": 0.06449255810972924,
+        "pred_loss": 0.017206083129470546,
+        "sigreg_loss": 3.7737630208333335,
+        "validation_flow": 0.04524414241313934
+      },
+      "local": {
+        "loss": 0.23096692950154343,
+        "action_loss": 0.06553132116096094,
+        "pred_loss": 0.01834088269000252,
+        "sigreg_loss": 3.6767578125,
+        "validation_flow": 0.05998334288597107
+      }
+    },
+    {
+      "epoch": 33,
+      "updates_per_model": 3168,
+      "elapsed_seconds": 12241.620289995015,
+      "upstream": {
+        "loss": 0.22783936373889446,
+        "action_loss": 0.06240089227988695,
+        "pred_loss": 0.01677717610922021,
+        "sigreg_loss": 3.7179361979166665,
+        "validation_flow": 0.038259588181972504
+      },
+      "local": {
+        "loss": 0.22558844027419886,
+        "action_loss": 0.06268946356916179,
+        "pred_loss": 0.017269094668639202,
+        "sigreg_loss": 3.64208984375,
+        "validation_flow": 0.06488359719514847
+      }
+    },
+    {
+      "epoch": 34,
+      "updates_per_model": 3264,
+      "elapsed_seconds": 12544.024405886012,
+      "upstream": {
+        "loss": 0.23020507752274474,
+        "action_loss": 0.06566858456547682,
+        "pred_loss": 0.016709344529469188,
+        "sigreg_loss": 3.6959635416666665,
+        "validation_flow": 0.030461911112070084
+      },
+      "local": {
+        "loss": 0.22561486313740411,
+        "action_loss": 0.06431063631316647,
+        "pred_loss": 0.017088324229310576,
+        "sigreg_loss": 3.60595703125,
+        "validation_flow": 0.05875459313392639
+      }
+    },
+    {
+      "epoch": 35,
+      "updates_per_model": 3360,
+      "elapsed_seconds": 12836.695527976,
+      "upstream": {
+        "loss": 0.22917801483223835,
+        "action_loss": 0.0656429275792713,
+        "pred_loss": 0.01645053277995127,
+        "sigreg_loss": 3.67724609375,
+        "validation_flow": 0.04632813110947609
+      },
+      "local": {
+        "loss": 0.22091462773581347,
+        "action_loss": 0.06108697038143873,
+        "pred_loss": 0.016476420326701675,
+        "sigreg_loss": 3.5830078125,
+        "validation_flow": 0.06272153556346893
+      }
+    },
+    {
+      "epoch": 36,
+      "updates_per_model": 3456,
+      "elapsed_seconds": 13128.744828190014,
+      "upstream": {
+        "loss": 0.22383510942260423,
+        "action_loss": 0.06229541190744688,
+        "pred_loss": 0.01542153290938586,
+        "sigreg_loss": 3.6529947916666665,
+        "validation_flow": 0.028345786035060883
+      },
+      "local": {
+        "loss": 0.2201580099451045,
+        "action_loss": 0.062012705796708666,
+        "pred_loss": 0.015852010304418702,
+        "sigreg_loss": 3.5553385416666665,
+        "validation_flow": 0.05656914412975311
+      }
+    },
+    {
+      "epoch": 37,
+      "updates_per_model": 3552,
+      "elapsed_seconds": 13437.749259519012,
+      "upstream": {
+        "loss": 0.22081045294180512,
+        "action_loss": 0.05969657671327392,
+        "pred_loss": 0.01534157777011084,
+        "sigreg_loss": 3.6453450520833335,
+        "validation_flow": 0.03524848446249962
+      },
+      "local": {
+        "loss": 0.21529217530041933,
+        "action_loss": 0.05781711936773112,
+        "pred_loss": 0.015690388322885458,
+        "sigreg_loss": 3.5441080729166665,
+        "validation_flow": 0.054281268268823624
+      }
+    },
+    {
+      "epoch": 38,
+      "updates_per_model": 3648,
+      "elapsed_seconds": 13741.590902227996,
+      "upstream": {
+        "loss": 0.21952471525097886,
+        "action_loss": 0.06031916707676525,
+        "pred_loss": 0.014613262823938081,
+        "sigreg_loss": 3.6158854166666665,
+        "validation_flow": 0.03637205809354782
+      },
+      "local": {
+        "loss": 0.21264501614496112,
+        "action_loss": 0.05708335594196493,
+        "pred_loss": 0.015058731165481731,
+        "sigreg_loss": 3.5107421875,
+        "validation_flow": 0.05575684830546379
+      }
+    },
+    {
+      "epoch": 39,
+      "updates_per_model": 3744,
+      "elapsed_seconds": 14035.09132964001,
+      "upstream": {
+        "loss": 0.2155276951380074,
+        "action_loss": 0.055764515864818044,
+        "pred_loss": 0.01495727114767457,
+        "sigreg_loss": 3.62060546875,
+        "validation_flow": 0.032247815281152725
+      },
+      "local": {
+        "loss": 0.21300214187552532,
+        "action_loss": 0.05682082697361087,
+        "pred_loss": 0.015363037595913434,
+        "sigreg_loss": 3.5198567708333335,
+        "validation_flow": 0.05624789372086525
+      }
+    },
+    {
+      "epoch": 40,
+      "updates_per_model": 3840,
+      "elapsed_seconds": 14329.60208126399,
+      "upstream": {
+        "loss": 0.21276537623877326,
+        "action_loss": 0.05412927766640981,
+        "pred_loss": 0.014593129812662179,
+        "sigreg_loss": 3.6009114583333335,
+        "validation_flow": 0.04053141921758652
+      },
+      "local": {
+        "loss": 0.21473086842646202,
+        "action_loss": 0.059809888169790305,
+        "pred_loss": 0.014845297700958326,
+        "sigreg_loss": 3.501953125,
+        "validation_flow": 0.05144024267792702
+      }
+    },
+    {
+      "epoch": 41,
+      "updates_per_model": 3936,
+      "elapsed_seconds": 14631.493296620989,
+      "upstream": {
+        "loss": 0.2119082729332149,
+        "action_loss": 0.054216374934185296,
+        "pred_loss": 0.013730309340947619,
+        "sigreg_loss": 3.5994466145833335,
+        "validation_flow": 0.034716952592134476
+      },
+      "local": {
+        "loss": 0.21123513005053005,
+        "action_loss": 0.057385145007477455,
+        "pred_loss": 0.014181203790940344,
+        "sigreg_loss": 3.4915364583333335,
+        "validation_flow": 0.06027323380112648
+      }
+    },
+    {
+      "epoch": 42,
+      "updates_per_model": 4032,
+      "elapsed_seconds": 14928.605644758005,
+      "upstream": {
+        "loss": 0.21421752326811352,
+        "action_loss": 0.057598214014433324,
+        "pred_loss": 0.01376652632219096,
+        "sigreg_loss": 3.5714518229166665,
+        "validation_flow": 0.03733855485916138
+      },
+      "local": {
+        "loss": 0.20499193156138062,
+        "action_loss": 0.05193601853291815,
+        "pred_loss": 0.014068689672664428,
+        "sigreg_loss": 3.4754231770833335,
+        "validation_flow": 0.05523529648780823
+      }
+    },
+    {
+      "epoch": 43,
+      "updates_per_model": 4128,
+      "elapsed_seconds": 15226.290960518003,
+      "upstream": {
+        "loss": 0.20941777791207036,
+        "action_loss": 0.052572599049502365,
+        "pred_loss": 0.01373808282854346,
+        "sigreg_loss": 3.5784505208333335,
+        "validation_flow": 0.03790366277098656
+      },
+      "local": {
+        "loss": 0.2045914956058065,
+        "action_loss": 0.051687293666570135,
+        "pred_loss": 0.01400853034768564,
+        "sigreg_loss": 3.4715169270833335,
+        "validation_flow": 0.051986537873744965
+      }
+    },
+    {
+      "epoch": 44,
+      "updates_per_model": 4224,
+      "elapsed_seconds": 15527.089299991989,
+      "upstream": {
+        "loss": 0.21090973106523356,
+        "action_loss": 0.05435767236243313,
+        "pred_loss": 0.013322891968224818,
+        "sigreg_loss": 3.5810546875,
+        "validation_flow": 0.024881742894649506
+      },
+      "local": {
+        "loss": 0.20659793121740222,
+        "action_loss": 0.05429365982611974,
+        "pred_loss": 0.013551015930715948,
+        "sigreg_loss": 3.4680989583333335,
+        "validation_flow": 0.053220804780721664
+      }
+    },
+    {
+      "epoch": 45,
+      "updates_per_model": 4320,
+      "elapsed_seconds": 15830.869504475006,
+      "upstream": {
+        "loss": 0.20954248495399952,
+        "action_loss": 0.05347017485958835,
+        "pred_loss": 0.013484012306435034,
+        "sigreg_loss": 3.5641276041666665,
+        "validation_flow": 0.03218252211809158
+      },
+      "local": {
+        "loss": 0.2035428467206657,
+        "action_loss": 0.05143595673143864,
+        "pred_loss": 0.013689327519387007,
+        "sigreg_loss": 3.4602864583333335,
+        "validation_flow": 0.05104807764291763
+      }
+    },
+    {
+      "epoch": 46,
+      "updates_per_model": 4416,
+      "elapsed_seconds": 16126.613784860005,
+      "upstream": {
+        "loss": 0.20576562965288758,
+        "action_loss": 0.05032787184851865,
+        "pred_loss": 0.01305291125512061,
+        "sigreg_loss": 3.5595703125,
+        "validation_flow": 0.030450165271759033
+      },
+      "local": {
+        "loss": 0.2014027681822578,
+        "action_loss": 0.04964407971904924,
+        "pred_loss": 0.013290263595990837,
+        "sigreg_loss": 3.4620768229166665,
+        "validation_flow": 0.050820812582969666
+      }
+    },
+    {
+      "epoch": 47,
+      "updates_per_model": 4512,
+      "elapsed_seconds": 16422.70050961399,
+      "upstream": {
+        "loss": 0.20833434630185366,
+        "action_loss": 0.053457014582818374,
+        "pred_loss": 0.013153699973675733,
+        "sigreg_loss": 3.5426432291666665,
+        "validation_flow": 0.03178010880947113
+      },
+      "local": {
+        "loss": 0.2057296416411797,
+        "action_loss": 0.05461817857576534,
+        "pred_loss": 0.013446668560694283,
+        "sigreg_loss": 3.44091796875,
+        "validation_flow": 0.04869481176137924
+      }
+    },
+    {
+      "epoch": 48,
+      "updates_per_model": 4608,
+      "elapsed_seconds": 16719.825564494007,
+      "upstream": {
+        "loss": 0.20861015546446046,
+        "action_loss": 0.05320522602414712,
+        "pred_loss": 0.013020082784350961,
+        "sigreg_loss": 3.5584309895833335,
+        "validation_flow": 0.03113839030265808
+      },
+      "local": {
+        "loss": 0.1984810718956093,
+        "action_loss": 0.046908877654156335,
+        "pred_loss": 0.013236012494113917,
+        "sigreg_loss": 3.4588216145833335,
+        "validation_flow": 0.049502789974212646
+      }
+    },
+    {
+      "epoch": 49,
+      "updates_per_model": 4704,
+      "elapsed_seconds": 17017.703734401992,
+      "upstream": {
+        "loss": 0.20746231094623604,
+        "action_loss": 0.05269656404076765,
+        "pred_loss": 0.012970905227120966,
+        "sigreg_loss": 3.54443359375,
+        "validation_flow": 0.03194805234670639
+      },
+      "local": {
+        "loss": 0.20050567900761962,
+        "action_loss": 0.04954378062393516,
+        "pred_loss": 0.013276758826881027,
+        "sigreg_loss": 3.44189453125,
+        "validation_flow": 0.04840865358710289
+      }
+    },
+    {
+      "epoch": 50,
+      "updates_per_model": 4800,
+      "elapsed_seconds": 17312.570893414988,
+      "upstream": {
+        "loss": 0.20860370031247535,
+        "action_loss": 0.05333528328143681,
+        "pred_loss": 0.013036157499300316,
+        "sigreg_loss": 3.5564778645833335,
+        "validation_flow": 0.03154583275318146
+      },
+      "local": {
+        "loss": 0.20369633100926876,
+        "action_loss": 0.05222640159384658,
+        "pred_loss": 0.01341857849426257,
+        "sigreg_loss": 3.451171875,
+        "validation_flow": 0.04830215498805046
+      }
+    }
+  ],
+  "selected_epochs": {
+    "upstream": 44,
+    "local": 50
+  },
+  "best_validation": {
+    "upstream": 0.024881742894649506,
+    "local": 0.04830215498805046
+  },
+  "checkpoint_sha256": {
+    "upstream": "228689b58fbea199c077c17cb46fb7ba4cac98a4f4212b6de3fc9a8064706549",
+    "local": "ad339e24d660acd679b9ce7013ffe6605cabc4cbe580e5b25bf97d74e34ac114"
+  },
+  "complete": true
+}
