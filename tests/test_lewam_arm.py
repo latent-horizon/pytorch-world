@@ -65,9 +65,10 @@ def test_archived_matched_tasks_are_disjoint_and_controllers_are_paired():
     import json
     from pathlib import Path
 
-    report = json.loads(
-        (Path(__file__).resolve().parents[1] / "examples/action/reports/lewam-matched.json").read_text()
-    )
+    path = Path(__file__).resolve().parents[1] / "examples/action/reports/lewam-matched.json"
+    if not path.exists():
+        pytest.skip("the matched LeWAM report is a local archive, not tracked in git")
+    report = json.loads(path.read_text())
     assert report["complete"]
     config = ArmConfig(**report["training"]["config"])
     training_seeds = set(range(config.seed, config.seed + config.train_episodes))
