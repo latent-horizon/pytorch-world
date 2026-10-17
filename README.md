@@ -85,9 +85,9 @@ world.close()
 ```
 
 
-[One notebook per task](examples/envs/README.md) uses LeWM and CEM from the library, with replaceable model/planner factories. Executed notebooks include measured results, tables, GT references, and episode GIFs for all 28 tasks, including actual Franka camera views. The [notebook index](examples/envs/README.md) also includes PointMass, Macaw, PushT, and both RobotCube arms, with their own [recorded results](examples/envs/LEGACY_RESULTS.md). `torch_world.benchmarks.run_experiment(..., output_dir="runs/benchmarks")` saves versioned run artifacts; `write_summary` combines completed runs into a benchmark CSV.
+[One notebook per task](examples/envs/), grouped by category folder (`puzzles/`, `control/`, `navigation/`, `manipulation/`), uses LeWM and CEM from the library, with replaceable model/planner factories. Executed notebooks include measured results, tables, GT references, and episode GIFs for all 28 tasks, including actual Franka camera views. The folders also include PointMass, Macaw, PushT, and both RobotCube arms. `torch_world.benchmarks.run_experiment(..., output_dir="runs/benchmarks")` saves versioned run artifacts; `write_summary` combines completed runs into a benchmark CSV.
 
-Visual quality defaults to `high` (128-pixel RGB inputs, 512-pixel previews/GIFs). Use `quality="low"` or `"medium"`, or set `size` and `render_size` separately. Franka supports `camera="task"` / `"overview"` and `observation="rgb"` / `"state"`. See the [executed quality comparison](examples/envs/render_quality_comparison.ipynb).
+Visual quality defaults to `high` (128-pixel RGB inputs, 512-pixel previews/GIFs). Use `quality="low"` or `"medium"`, or set `size` and `render_size` separately. Franka supports `camera="task"` / `"overview"` and `observation="rgb"` / `"state"`.
 
 ## Adding a model
 

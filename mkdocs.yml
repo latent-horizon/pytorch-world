@@ -133,7 +133,7 @@ extra:
           - {name: RoboJEPA, url: models/jepa/robojepa/}
       - title: Build
         links:
-          - {name: Environments, url: guides/environments/}
+          - {name: Environments, url: environments/}
           - {name: Datasets, url: datasets/}
           - {name: Planning, url: guides/planning/}
           - {name: Notebooks, url: examples/intro/}
@@ -157,7 +157,7 @@ nav:
       - Training: guides/training.md
       - Planning: guides/planning.md
       - Metrics: guides/metrics.md
-      - Environments: guides/environments.md
+      - Pixel worlds: guides/environments.md
       - Environment benchmarks: guides/benchmark-environments.md
       - Figures: guides/plots.md
       - Build your own model: guides/custom-model.md
@@ -178,6 +178,45 @@ nav:
               - DINO-WM: models/jepa/dinowm.md
           - Robotics:
               - RoboJEPA: models/jepa/robojepa.md
+  - Environments:
+      - environments/index.md
+      - Planning puzzles:
+          - Checkpoints: examples/envs/puzzles/checkpoints_v0.ipynb
+          - IceMaze: examples/envs/puzzles/icemaze_v0.ipynb
+          - KeyDoor: examples/envs/puzzles/keydoor_v0.ipynb
+          - Maze: examples/envs/puzzles/maze_v0.ipynb
+          - Sokoban: examples/envs/puzzles/sokoban_v0.ipynb
+      - Control:
+          - BallPlate: examples/envs/control/ballplate_v0.ipynb
+          - CartpoleSwingup: examples/envs/control/cartpoleswingup_v0.ipynb
+          - DoubleCartpole: examples/envs/control/doublecartpole_v0.ipynb
+          - ReactionWheel: examples/envs/control/reactionwheel_v0.ipynb
+          - NewtonAcrobot: examples/envs/control/newtonacrobot_v0.ipynb
+          - NewtonPendulum: examples/envs/control/newtonpendulum_v0.ipynb
+      - Navigation and locomotion:
+          - Macaw: examples/envs/navigation/macaw_v0.ipynb
+          - PointMass: examples/envs/navigation/pointmass_v0.ipynb
+          - DifferentialParking: examples/envs/navigation/differentialparking_v0.ipynb
+          - HurdleHopper: examples/envs/navigation/hurdlehopper_v0.ipynb
+          - PayloadTransport: examples/envs/navigation/payloadtransport_v0.ipynb
+          - PlanarQuadrotor: examples/envs/navigation/planarquadrotor_v0.ipynb
+      - Manipulation:
+          - BlockStack: examples/envs/manipulation/blockstack_v0.ipynb
+          - BoxGate: examples/envs/manipulation/boxgate_v0.ipynb
+          - DoorOpen: examples/envs/manipulation/dooropen_v0.ipynb
+          - DrawerOpen: examples/envs/manipulation/draweropen_v0.ipynb
+          - ObstacleArm: examples/envs/manipulation/obstaclearm_v0.ipynb
+          - PegInsertion: examples/envs/manipulation/peginsertion_v0.ipynb
+          - PickPlace: examples/envs/manipulation/pickplace_v0.ipynb
+          - PuckPush: examples/envs/manipulation/puckpush_v0.ipynb
+          - PuckSlide: examples/envs/manipulation/puckslide_v0.ipynb
+          - PushT: examples/envs/manipulation/pusht_v0.ipynb
+          - RobotCube: examples/envs/manipulation/robotcube_v0.ipynb
+          - RobotCubeSO101: examples/envs/manipulation/robotcubeso101_v0.ipynb
+          - SpatialArm: examples/envs/manipulation/spatialarm_v0.ipynb
+          - FrankaCubeLift: examples/envs/manipulation/frankacubelift_v0.ipynb
+          - FrankaObstacleReach: examples/envs/manipulation/frankaobstaclereach_v0.ipynb
+          - FrankaTablePush: examples/envs/manipulation/frankatablepush_v0.ipynb
   - Datasets:
       - datasets/index.md
       - Trajectories: datasets/trajectories.md
@@ -191,9 +230,7 @@ nav:
           - V-JEPA: examples/vision/vjepa.ipynb
           - LeJEPA: examples/vision/lejepa.ipynb
       - Environments:
-          - Task index: examples/envs/README.md
           - Custom model: examples/envs/custom_model_three_envs.ipynb
-          - Rendering quality: examples/envs/render_quality_comparison.ipynb
       - Action:
           - LeWM: examples/action/lewm.ipynb
           - LeWAM: examples/action/lewam.ipynb

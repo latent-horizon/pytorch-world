@@ -24,6 +24,7 @@ class EnvSpec:
     tags: tuple[str, ...] = ()
     kwargs: Mapping[str, Any] = field(default_factory=dict)
     reference: str = ""
+    category: str = ""
 
     def __post_init__(self):
         if not self.id or not self.backend or not self.description:
@@ -45,12 +46,16 @@ def register_env(spec: EnvSpec) -> EnvSpec:
     return spec
 
 
-def list_envs(*, backend: str | None = None, tag: str | None = None) -> tuple[EnvSpec, ...]:
-    """Sorted specs, optionally filtered by backend and a capability tag."""
+def list_envs(
+    *, backend: str | None = None, tag: str | None = None, category: str | None = None
+) -> tuple[EnvSpec, ...]:
+    """Sorted specs, optionally filtered by backend, a capability tag, and a category from `CATEGORIES`."""
     return tuple(
         s
         for _, s in sorted(_REGISTRY.items())
-        if (backend is None or s.backend == backend) and (tag is None or tag in s.tags)
+        if (backend is None or s.backend == backend)
+        and (tag is None or tag in s.tags)
+        and (category is None or s.category == category)
     )
 
 

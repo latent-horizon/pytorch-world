@@ -314,6 +314,21 @@ def test_contributors_can_register_a_scene_without_editing_dispatch():
         assert env.state[0, 0] > 0
 
 
+def test_builtins_are_grouped_into_categories():
+    from torch_world.envs import CATEGORIES
+
+    builtins = [s for s in list_envs() if not s.id.startswith(("Test", "Contributor"))]
+    assert {s.category for s in builtins} == set(CATEGORIES)
+    assert sum(len(list_envs(category=c)) for c in CATEGORIES) == len(builtins)
+    assert {s.id for s in list_envs(category="puzzles")} == {
+        "Maze-v0",
+        "KeyDoor-v0",
+        "Sokoban-v0",
+        "IceMaze-v0",
+        "Checkpoints-v0",
+    }
+
+
 def test_named_classes_cover_catalogue_without_loading_simulators():
     from torch_world import envs
 
