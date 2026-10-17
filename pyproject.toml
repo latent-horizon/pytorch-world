@@ -17,8 +17,14 @@ action = ["mujoco>=3.3"]
 benchmark = ["mujoco==3.6.0"]
 newton = ["newton>=1.7,<1.8"]
 lewam = ["mujoco==3.15.0", "matplotlib", "pillow"]
-notebooks = ["matplotlib", "nbclient", "nbformat", "ipykernel"]
+sim2real = ["mujoco>=3.6,<3.7"]
+so101 = [
+    "mujoco>=3.6,<3.7",
+    "opencv-python-headless>=4.9,<5",
+    "lerobot[feetech]==0.6.1; python_version >= '3.12'",
+]
 test = ["pytest"]
+notebooks = ["matplotlib", "nbclient", "nbformat", "ipykernel"]
 
 [dependency-groups]
 docs = [
@@ -49,4 +55,8 @@ exclude = ["*.md", "*.ipynb"]
 "*.ipynb" = ["C408", "PLC0206"]
 
 [tool.uv]
-conflicts = [[{ extra = "lewam" }, { extra = "benchmark" }]]
+conflicts = [
+    [{ extra = "lewam" }, { extra = "benchmark" }],
+    [{ extra = "lewam" }, { extra = "sim2real" }],
+    [{ extra = "lewam" }, { extra = "so101" }],
+]

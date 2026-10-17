@@ -1,0 +1,47 @@
+{
+  "stage": "evaluation",
+  "policy": "learned",
+  "episode": 1,
+  "total": 12,
+  "success": false,
+  "placed": false,
+  "distance": 0.11100206622564758,
+  "upright": true,
+  "lifted": false,
+  "truncated": false,
+  "piece_position": [
+    0.19550223479215983,
+    -0.06937706620315116,
+    0.015356719891445617
+  ],
+  "seed": 10007,
+  "piece": "pawn",
+  "color": "white",
+  "source": "c2",
+  "target": "c6",
+  "steps": 48,
+  "failure": "Unreachable Cartesian target (IK residual 0.0057 m)",
+  "randomization": {
+    "dimension_scale": 1.0,
+    "mass_scale": 1.0,
+    "friction_scale": 1.0,
+    "gain_scale": 1.0,
+    "light_scale": 1.0,
+    "camera_translation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "camera_rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "appearance": 1.0,
+    "action_delay": 0,
+    "observation_delay": 0
+  },
+  "mean_planning_seconds": 1.2247104126944002,
+  "max_planning_seconds": 1.375523016002262,
+  "domain": "nominal"
+}

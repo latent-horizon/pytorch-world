@@ -1,0 +1,27 @@
+{
+  "windows": 72,
+  "sampling": "4 equally spaced 11-frame windows per held-out episode; 18 episodes; last context frame one-step and 8-step rollout; actual applied actions",
+  "metrics": {
+    "model_one_step_visual_mse": 0.8846010946565204,
+    "model_one_step_proprio_mse": 0.009902374307987176,
+    "zero_actions_one_step_visual_mse": 0.8949984113375345,
+    "zero_actions_one_step_proprio_mse": 0.010168699470038215,
+    "reversed_actions_one_step_visual_mse": 0.9187084353632398,
+    "reversed_actions_one_step_proprio_mse": 0.010794828969260884,
+    "persistence_one_step_visual_mse": 1.0115468257831202,
+    "persistence_one_step_proprio_mse": 0.00012839772957927586,
+    "action_reversal_prediction_visual_mse": 0.029416254005860135,
+    "model_eight_step_visual_mse": 1.960053574707773,
+    "persistence_eight_step_visual_mse": 2.7297098512450853
+  },
+  "schema": 1,
+  "source_run": "runs/so101-rest-view/20261015T232745-e0a6601b",
+  "model": "dinowm",
+  "date": "2026-10-16",
+  "notes": [
+    "Frozen checkpoint in evaluation mode; no training during diagnostics.",
+    "MSE is measured in latent features, not pixels or physical joint units.",
+    "Action ablation measures sensitivity on recorded trajectories, not counterfactual simulator accuracy.",
+    "Metrics use sampled windows, not every held-out transition."
+  ]
+}

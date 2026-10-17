@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "model": "lewm",
+  "source_run": "runs/so101-lewm-rest-view/training/20261016T000148-139dd428",
+  "windows": 72,
+  "sampling": "Same 4 equally spaced 11-frame windows per each of 18 held-out episodes as DINO-WM diagnostics; last context frame one-step and 8-step rollout; actual applied actions",
+  "metrics": {
+    "model_one_step_visual_mse": 0.011213637720276084,
+    "zero_actions_one_step_visual_mse": 0.015110444009122957,
+    "reversed_actions_one_step_visual_mse": 0.023456590525003977,
+    "persistence_one_step_visual_mse": 0.011454101284572162,
+    "action_reversal_prediction_visual_mse": 0.01162096150231504,
+    "model_eight_step_visual_mse": 0.23769578479954767,
+    "persistence_eight_step_visual_mse": 0.35602787421278964
+  },
+  "mean_embedding_std_across_windows": 0.858640193939209,
+  "notes": [
+    "Model in eval mode; no gradients or training during diagnostics.",
+    "MSE is in each model's own latent space and cannot be compared directly across architectures.",
+    "Action ablations measure sensitivity on recorded trajectories, not counterfactual simulator accuracy."
+  ]
+}

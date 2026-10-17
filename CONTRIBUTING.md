@@ -14,6 +14,8 @@ uv sync --extra examples --extra action --extra benchmark --extra newton --extra
 |---|---|
 | `examples` | matplotlib, for the notebooks and `torch_world.plots` |
 | `action` | MuJoCo, for the `RobotCube` arms |
+| `sim2real` | MuJoCo SO101 chess simulation and model experiments |
+| `so101` | LeRobot 0.6.1, Feetech and OpenCV for physical SO101 control (Python 3.12+) |
 | `test` | pytest |
 
 ## Checks

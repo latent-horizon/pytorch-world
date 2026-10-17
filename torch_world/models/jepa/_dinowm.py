@@ -12,7 +12,9 @@ class DINOWM(WorldModel):
 
     Proprioception and action embeddings are tiled over every patch and concatenated on the feature dim. A ViT
     predictor with frame-level causal attention predicts the next frame's visual and proprio features, trained with
-    MSE against detached targets. Latents from ``encode`` are ``(B, T, P, D + proprio_emb_dim)``.
+    MSE against detached targets. Latents from ``encode`` are ``(B, T, P, D + proprio_emb_dim)``. The planning
+    ``cost`` is the paper's: MSE over the visual features plus ``proprio_weight`` times MSE over the proprio
+    embedding, on the last predicted step, so proprioception counts as much as the whole image at the default 1.
 
     Zhou et al., "DINO-WM: World Models on Pre-trained Visual Features enable Zero-shot Planning", ICML 2025.
     Paper: https://arxiv.org/abs/2411.04983
@@ -37,9 +39,11 @@ class DINOWM(WorldModel):
         head_dim: int = 64,
         mlp_dim: int = 2048,
         dropout: float = 0.1,
+        proprio_weight: float = 1.0,
     ):
         super().__init__()
         self.history = history
+        self.proprio_weight = proprio_weight
         self.num_patches = num_patches
         self.action_emb_dim = action_emb_dim
         self.encoder = encoder.requires_grad_(False).eval()
@@ -73,6 +77,14 @@ class DINOWM(WorldModel):
         x = torch.cat([z, self._tile(self.action_encoder(actions))], dim=-1).flatten(1, 2)
         x = self.predictor(x + self.pos_embed[:, : T * P], attn_mask=self.attn_mask[: T * P, : T * P])
         return x.unflatten(1, (T, P))[..., : -self.action_emb_dim]
+
+    def cost(self, z: Tensor, goal: Tensor) -> Tensor:
+        error = (z[:, -1] - goal).square()
+        if self.proprio_encoder is None:
+            return error.flatten(1).mean(1)
+        d = self.proprio_encoder.out_features
+        visual, proprio = error[..., :-d].flatten(1).mean(1), error[..., -d:].flatten(1).mean(1)
+        return visual + self.proprio_weight * proprio
 
     def forward(self, pixels: Tensor, actions: Tensor, proprio: Tensor | None = None) -> dict[str, Tensor]:
         """``pixels`` ``(B, history + 1, C, H, W)``, ``actions`` ``(B, history + 1, action_dim)``."""

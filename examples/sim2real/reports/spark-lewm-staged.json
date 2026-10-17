@@ -1,0 +1,2601 @@
+{
+  "schema": 1,
+  "model": {
+    "kind": "lewm",
+    "size": 140,
+    "history": 3,
+    "smoke": false,
+    "encoder": "cnn",
+    "proprioception": true,
+    "rollout_steps": 8
+  },
+  "config": {
+    "control_dt": 0.1,
+    "max_step": 0.005,
+    "max_joint_step": 0.15,
+    "max_gripper_step": 0.15,
+    "size": 140,
+    "arm_color": [
+      0.92,
+      0.93,
+      0.94
+    ],
+    "wrist_view": {
+      "eye": [
+        -0.045027,
+        0.054578,
+        -0.01496
+      ],
+      "target": [
+        0.0331596,
+        -0.00856035,
+        -0.01432363
+      ],
+      "up": [
+        0.54775127,
+        0.83660463,
+        -0.00782521
+      ],
+      "fovy": 54.6595806,
+      "aspect": 1.7777777777777777
+    },
+    "approach_pitch": 1.2,
+    "workspace_low": [
+      0.12,
+      -0.2,
+      0.006
+    ],
+    "workspace_high": [
+      0.4,
+      0.2,
+      0.21
+    ],
+    "max_observation_age": 0.5,
+    "ik_tolerance": 0.004,
+    "seed": 7
+  },
+  "task": {
+    "square_size": 0.0255867424,
+    "board_origin": [
+      0.304881946,
+      -0.040383449,
+      0.016
+    ],
+    "board_yaw": 0.0,
+    "appearance": {
+      "border": 0.0226530304,
+      "thickness": 0.015,
+      "surface": 0.001,
+      "light": [
+        0.83,
+        0.73,
+        0.6
+      ],
+      "dark": [
+        0.38,
+        0.17,
+        0.1
+      ],
+      "frame": [
+        0.48,
+        0.23,
+        0.13
+      ],
+      "grain": 0.12
+    },
+    "pieces": {
+      "pawn": {
+        "height": 0.04,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.019,
+        "mass": 0.012,
+        "friction": 1.2
+      },
+      "rook": {
+        "height": 0.042,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.02,
+        "mass": 0.015,
+        "friction": 1.2
+      },
+      "knight": {
+        "height": 0.05,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.023,
+        "mass": 0.016,
+        "friction": 1.2
+      },
+      "bishop": {
+        "height": 0.052,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.025,
+        "mass": 0.017,
+        "friction": 1.2
+      },
+      "queen": {
+        "height": 0.06,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.027,
+        "mass": 0.02,
+        "friction": 1.2
+      },
+      "king": {
+        "height": 0.065,
+        "diameter": 0.022,
+        "neck_diameter": 0.012,
+        "grasp_height": 0.029,
+        "mass": 0.022,
+        "friction": 1.2
+      }
+    },
+    "placement_tolerance": 0.005,
+    "upright_tolerance": 0.15,
+    "settle_steps": 5,
+    "max_steps": 240,
+    "hover_height": 0.08,
+    "measured": false
+  },
+  "randomization": {
+    "enabled": true,
+    "dimension_scale": [
+      0.95,
+      1.05
+    ],
+    "mass_scale": [
+      0.8,
+      1.2
+    ],
+    "friction_scale": [
+      0.8,
+      1.2
+    ],
+    "gain_scale": [
+      0.85,
+      1.15
+    ],
+    "light_scale": [
+      0.7,
+      1.2
+    ],
+    "camera_translation": 0.002,
+    "camera_rotation": 0.02,
+    "pixel_noise": 0.015,
+    "max_action_delay": 1,
+    "max_observation_delay": 1
+  },
+  "training_run": "/clusterhome/kleyton/so101-chess-20261015/runs/so101-lewm-state-rollout/training/20261016T003634-7157983b",
+  "goal_protocol": "scripted_keyframes",
+  "smoke": false,
+  "physical_results": null,
+  "evaluation": {
+    "nominal": {
+      "staged": {
+        "episodes": [
+          {
+            "seed": 10007,
+            "piece": "pawn",
+            "color": "white",
+            "source": "b2",
+            "target": "a5",
+            "reference": {
+              "success": true,
+              "source": "b2",
+              "target": "a5",
+              "steps": 105,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 30,
+            "mean_planning_seconds": 0.05570640812642993,
+            "max_planning_seconds": 0.5410739489889238,
+            "placed": false,
+            "distance": 0.10909541564278165,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3653783568309349,
+              -0.028821907695767996,
+              0.015912268631674047
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10008,
+            "piece": "rook",
+            "color": "white",
+            "source": "b1",
+            "target": "a6",
+            "reference": {
+              "success": false,
+              "source": "b1",
+              "target": "a6",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10009,
+            "piece": "knight",
+            "color": "white",
+            "source": "a3",
+            "target": "b4",
+            "reference": {
+              "success": true,
+              "source": "a3",
+              "target": "b4",
+              "steps": 89,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 31,
+            "mean_planning_seconds": 0.03991003596865994,
+            "max_planning_seconds": 0.04570375199546106,
+            "placed": false,
+            "distance": 0.0459996929722937,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3049190192826755,
+              -0.001874838256569801,
+              0.027603659657967922
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10010,
+            "piece": "bishop",
+            "color": "white",
+            "source": "a1",
+            "target": "a8",
+            "reference": {
+              "success": true,
+              "source": "a1",
+              "target": "a8",
+              "steps": 175,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": true,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 29,
+            "mean_planning_seconds": 0.04929136810048173,
+            "max_planning_seconds": 0.07705926700145938,
+            "placed": false,
+            "distance": 0.211283390329208,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.2849152142087346,
+              -0.07161407725907046,
+              0.028571569109237485
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10011,
+            "piece": "queen",
+            "color": "white",
+            "source": "b1",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "b1",
+              "target": "a3",
+              "steps": 90,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": true,
+            "failure": "Unreachable Cartesian target (IK residual 0.0077 m)",
+            "failure_type": "controller_rejection",
+            "steps": 19,
+            "mean_planning_seconds": 0.050381398300669386,
+            "max_planning_seconds": 0.07056554999144282,
+            "placed": false,
+            "distance": 0.07175073503563952,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.33366728616769853,
+              -0.054933416403794275,
+              0.029784166876180677
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10012,
+            "piece": "king",
+            "color": "white",
+            "source": "a7",
+            "target": "b4",
+            "reference": {
+              "success": false,
+              "source": "a7",
+              "target": "b4",
+              "steps": 95,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10013,
+            "piece": "pawn",
+            "color": "black",
+            "source": "b2",
+            "target": "b1",
+            "reference": {
+              "success": true,
+              "source": "b2",
+              "target": "b1",
+              "steps": 86,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 29,
+            "mean_planning_seconds": 0.05244627433324543,
+            "max_planning_seconds": 0.07073155100806616,
+            "placed": false,
+            "distance": 0.025584470658320164,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3304680965998805,
+              -0.014798978348524368,
+              0.015359867514813134
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10014,
+            "piece": "rook",
+            "color": "black",
+            "source": "a8",
+            "target": "b3",
+            "reference": {
+              "success": false,
+              "source": "a8",
+              "target": "b3",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10015,
+            "piece": "knight",
+            "color": "black",
+            "source": "b1",
+            "target": "b3",
+            "reference": {
+              "success": true,
+              "source": "b1",
+              "target": "b3",
+              "steps": 92,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 144,
+            "mean_planning_seconds": 0.03880484731785616,
+            "max_planning_seconds": 0.05362580801011063,
+            "placed": false,
+            "distance": 0.051139693335782145,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3306380954293536,
+              -0.04034937694336504,
+              0.015502784530394765
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10016,
+            "piece": "bishop",
+            "color": "black",
+            "source": "b1",
+            "target": "a7",
+            "reference": {
+              "success": true,
+              "source": "b1",
+              "target": "a7",
+              "steps": 156,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": null,
+            "failure_type": null,
+            "steps": 240,
+            "mean_planning_seconds": 0.0384038536156974,
+            "max_planning_seconds": 0.06312407199584413,
+            "placed": false,
+            "distance": 0.15564070686371398,
+            "upright": true,
+            "truncated": true,
+            "piece_position": [
+              0.3304718198418271,
+              -0.04038559225192849,
+              0.015532974059049253
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10017,
+            "piece": "queen",
+            "color": "black",
+            "source": "b2",
+            "target": "b3",
+            "reference": {
+              "success": false,
+              "source": "b2",
+              "target": "b3",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10018,
+            "piece": "king",
+            "color": "black",
+            "source": "a3",
+            "target": "a2",
+            "reference": {
+              "success": true,
+              "source": "a3",
+              "target": "a2",
+              "steps": 80,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 34,
+            "mean_planning_seconds": 0.03887347499881538,
+            "max_planning_seconds": 0.057573395999497734,
+            "placed": false,
+            "distance": 0.025586705051574482,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3048820259757004,
+              0.010789998451449491,
+              0.015594174495632296
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10019,
+            "piece": "pawn",
+            "color": "white",
+            "source": "a2",
+            "target": "a4",
+            "reference": {
+              "success": true,
+              "source": "a2",
+              "target": "a4",
+              "steps": 94,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 16,
+            "mean_planning_seconds": 0.041221724293256344,
+            "max_planning_seconds": 0.0554600350005785,
+            "placed": false,
+            "distance": 0.06238538357348698,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3081634255387401,
+              -0.02592224246363427,
+              0.02751284820471336
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10020,
+            "piece": "rook",
+            "color": "white",
+            "source": "b6",
+            "target": "b2",
+            "reference": {
+              "success": false,
+              "source": "b6",
+              "target": "b2",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10021,
+            "piece": "knight",
+            "color": "white",
+            "source": "b5",
+            "target": "b1",
+            "reference": {
+              "success": true,
+              "source": "b5",
+              "target": "b1",
+              "steps": 114,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Unreachable Cartesian target (IK residual 0.0168 m)",
+            "failure_type": "controller_rejection",
+            "steps": 9,
+            "mean_planning_seconds": 0.04010650420241291,
+            "max_planning_seconds": 0.049359420998371206,
+            "placed": false,
+            "distance": 0.10177762918951241,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.33142559691184403,
+              0.06138968168554907,
+              0.012102624518772963
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10022,
+            "piece": "bishop",
+            "color": "white",
+            "source": "a7",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "a7",
+              "target": "a3",
+              "steps": 127,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 35,
+            "mean_planning_seconds": 0.037729247251667805,
+            "max_planning_seconds": 0.04677818701020442,
+            "placed": false,
+            "distance": 0.09784620859702067,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.31106863904861065,
+              0.10844046009981528,
+              0.011577126378458593
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10023,
+            "piece": "queen",
+            "color": "white",
+            "source": "b4",
+            "target": "a5",
+            "reference": {
+              "success": true,
+              "source": "b4",
+              "target": "a5",
+              "steps": 85,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 25,
+            "mean_planning_seconds": 0.037038020229374524,
+            "max_planning_seconds": 0.05217473600350786,
+            "placed": false,
+            "distance": 0.04605813420885616,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3358754975696028,
+              0.027893717432042303,
+              0.01858409954013171
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10024,
+            "piece": "king",
+            "color": "white",
+            "source": "a8",
+            "target": "b1",
+            "reference": {
+              "success": false,
+              "source": "a8",
+              "target": "b1",
+              "steps": 39,
+              "failure": "Unreachable Cartesian target (IK residual 0.0072 m)",
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10025,
+            "piece": "pawn",
+            "color": "black",
+            "source": "b1",
+            "target": "a4",
+            "reference": {
+              "success": true,
+              "source": "b1",
+              "target": "a4",
+              "steps": 104,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": null,
+            "failure_type": null,
+            "steps": 240,
+            "mean_planning_seconds": 0.037161406091945536,
+            "max_planning_seconds": 0.04529610699682962,
+            "placed": false,
+            "distance": 0.08091780429473971,
+            "upright": true,
+            "truncated": true,
+            "piece_position": [
+              0.3304646566856552,
+              -0.04039050627623936,
+              0.015364745565988823
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10026,
+            "piece": "rook",
+            "color": "black",
+            "source": "a8",
+            "target": "a1",
+            "reference": {
+              "success": true,
+              "source": "a8",
+              "target": "a1",
+              "steps": 154,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": null,
+            "failure_type": null,
+            "steps": 240,
+            "mean_planning_seconds": 0.036827010741217234,
+            "max_planning_seconds": 0.04526567499851808,
+            "placed": false,
+            "distance": 0.19738332487599602,
+            "upright": true,
+            "truncated": true,
+            "piece_position": [
+              0.33283068468786553,
+              0.15501113880851738,
+              0.015545902111091818
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10027,
+            "piece": "knight",
+            "color": "black",
+            "source": "b3",
+            "target": "b4",
+            "reference": {
+              "success": true,
+              "source": "b3",
+              "target": "b4",
+              "steps": 81,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 73,
+            "mean_planning_seconds": 0.03777620698619521,
+            "max_planning_seconds": 0.07668264899984933,
+            "placed": false,
+            "distance": 0.04234357064567766,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3653046030496481,
+              0.012305280000928034,
+              0.027186947568790573
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10028,
+            "piece": "bishop",
+            "color": "black",
+            "source": "b2",
+            "target": "a5",
+            "reference": {
+              "success": true,
+              "source": "b2",
+              "target": "a5",
+              "steps": 103,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 43,
+            "mean_planning_seconds": 0.03696789647735634,
+            "max_planning_seconds": 0.04222026400384493,
+            "placed": false,
+            "distance": 0.08091404334030633,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3304669156244839,
+              -0.014799046703284009,
+              0.015512802286270642
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10029,
+            "piece": "queen",
+            "color": "black",
+            "source": "a4",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "a4",
+              "target": "a3",
+              "steps": 81,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": true,
+            "failure": null,
+            "failure_type": null,
+            "steps": 240,
+            "mean_planning_seconds": 0.03648577569171418,
+            "max_planning_seconds": 0.04680052600451745,
+            "placed": false,
+            "distance": 0.025963396049491484,
+            "upright": false,
+            "truncated": true,
+            "piece_position": [
+              0.28181567570940796,
+              0.022708303681873623,
+              0.02882602558780482
+            ],
+            "stages_reached": 2,
+            "final_stage": "lift",
+            "stage_transitions": [
+              {
+                "stage": "approach",
+                "timestamp": 4.699999999999704
+              },
+              {
+                "stage": "grasp",
+                "timestamp": 5.599999999999605
+              }
+            ]
+          },
+          {
+            "seed": 10030,
+            "piece": "king",
+            "color": "black",
+            "source": "a7",
+            "target": "a4",
+            "reference": {
+              "success": false,
+              "source": "a7",
+              "target": "a4",
+              "steps": 81,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 1.0,
+                "mass_scale": 1.0,
+                "friction_scale": 1.0,
+                "gain_scale": 1.0,
+                "light_scale": 1.0,
+                "camera_translation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "camera_rotation": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "appearance": 1.0,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          }
+        ],
+        "success_rate": 0.0
+      }
+    },
+    "randomized": {
+      "staged": {
+        "episodes": [
+          {
+            "seed": 10007,
+            "piece": "pawn",
+            "color": "white",
+            "source": "a2",
+            "target": "a5",
+            "reference": {
+              "success": true,
+              "source": "a2",
+              "target": "a5",
+              "steps": 105,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0323302760755177,
+                "mass_scale": 0.8207990309800912,
+                "friction_scale": 0.9545341914098512,
+                "gain_scale": 1.0884665786265018,
+                "light_scale": 0.9146413075164616,
+                "camera_translation": [
+                  0.0010255371694953483,
+                  -0.0011102231577289935,
+                  -0.0019098334182596974
+                ],
+                "camera_rotation": [
+                  0.0056145263540940855,
+                  0.017979284965444393,
+                  -0.0049034351091556475
+                ],
+                "appearance": 0.8203551713158095,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 16,
+            "mean_planning_seconds": 0.036272339409847254,
+            "max_planning_seconds": 0.04529069999989588,
+            "placed": false,
+            "distance": 0.07655114286931436,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.30478576339522084,
+              -0.01458756184502305,
+              0.015339813599227795
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10008,
+            "piece": "rook",
+            "color": "white",
+            "source": "a2",
+            "target": "b6",
+            "reference": {
+              "success": false,
+              "source": "a2",
+              "target": "b6",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 1.0076393078420083,
+                "mass_scale": 0.9807389811752196,
+                "friction_scale": 1.0542430663284432,
+                "gain_scale": 1.108018922112861,
+                "light_scale": 1.165901130208442,
+                "camera_translation": [
+                  0.0001299762429696305,
+                  -0.0009796541544762052,
+                  -0.00017371128403880984
+                ],
+                "camera_rotation": [
+                  -0.011908929978557916,
+                  0.003922755671590207,
+                  -0.01912507538227565
+                ],
+                "appearance": 0.8268946865541271,
+                "action_delay": 1,
+                "observation_delay": 1
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10009,
+            "piece": "knight",
+            "color": "white",
+            "source": "a2",
+            "target": "b1",
+            "reference": {
+              "success": true,
+              "source": "a2",
+              "target": "b1",
+              "steps": 89,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.002233972791493,
+                "mass_scale": 1.024473749040335,
+                "friction_scale": 1.0414943376628323,
+                "gain_scale": 0.9812090091735177,
+                "light_scale": 1.0803184933891374,
+                "camera_translation": [
+                  -0.0002253868893962042,
+                  0.0007709210427464482,
+                  -0.0019240261647965333
+                ],
+                "camera_rotation": [
+                  -0.011269935027844201,
+                  -0.0036775501359585586,
+                  -0.010300217084627961
+                ],
+                "appearance": 1.077908895150306,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 28,
+            "mean_planning_seconds": 0.03704555455147658,
+            "max_planning_seconds": 0.0440610520017799,
+            "placed": false,
+            "distance": 0.02905624967315213,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.30219833321951406,
+              -0.04709557705581998,
+              0.027720996285271526
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10010,
+            "piece": "bishop",
+            "color": "white",
+            "source": "a6",
+            "target": "a1",
+            "reference": {
+              "success": false,
+              "source": "a6",
+              "target": "a1",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.962586795250911,
+                "mass_scale": 0.8165722515590288,
+                "friction_scale": 1.0904258115788352,
+                "gain_scale": 1.1484265179935194,
+                "light_scale": 1.1762988695002303,
+                "camera_translation": [
+                  -0.0005510294466669673,
+                  0.0004852682904283711,
+                  -0.00196644200725392
+                ],
+                "camera_rotation": [
+                  -0.00611926893439633,
+                  -0.00013078256958164516,
+                  -0.0009555540182596446
+                ],
+                "appearance": 0.9696982031818724,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10011,
+            "piece": "queen",
+            "color": "white",
+            "source": "a1",
+            "target": "a2",
+            "reference": {
+              "success": true,
+              "source": "a1",
+              "target": "a2",
+              "steps": 81,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9999189189805655,
+                "mass_scale": 1.1466653350368872,
+                "friction_scale": 0.9214651652754235,
+                "gain_scale": 0.9150540938711267,
+                "light_scale": 0.9726570185842974,
+                "camera_translation": [
+                  0.0008117150397577342,
+                  0.0017683220721342813,
+                  -0.001513204380199232
+                ],
+                "camera_rotation": [
+                  -0.012276195168420236,
+                  0.010541587713396527,
+                  0.005700794848530189
+                ],
+                "appearance": 1.033747250589048,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 26,
+            "mean_planning_seconds": 0.03566433303651003,
+            "max_planning_seconds": 0.04219863298931159,
+            "placed": false,
+            "distance": 0.09240949841180333,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.32131257750195685,
+              -0.10573377134902291,
+              0.01130067577723443
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10012,
+            "piece": "king",
+            "color": "white",
+            "source": "a2",
+            "target": "b6",
+            "reference": {
+              "success": true,
+              "source": "a2",
+              "target": "b6",
+              "steps": 109,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.959163168550679,
+                "mass_scale": 0.8798305846099603,
+                "friction_scale": 1.1405727399779841,
+                "gain_scale": 0.8809708443771299,
+                "light_scale": 0.8158654398532366,
+                "camera_translation": [
+                  0.0004511476154827644,
+                  -0.0007517950217097794,
+                  0.0011533870229066376
+                ],
+                "camera_rotation": [
+                  0.01006499131462784,
+                  -0.01880037535735845,
+                  -0.005574915183634687
+                ],
+                "appearance": 1.037434201691615,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Unreachable Cartesian target (IK residual 0.0050 m)",
+            "failure_type": "controller_rejection",
+            "steps": 17,
+            "mean_planning_seconds": 0.0364934831660422,
+            "max_planning_seconds": 0.043312123001669534,
+            "placed": false,
+            "distance": 0.10348012433725638,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3161215507035735,
+              -0.014930446271422478,
+              0.02704683544351889
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10013,
+            "piece": "pawn",
+            "color": "black",
+            "source": "b6",
+            "target": "b1",
+            "reference": {
+              "success": false,
+              "source": "b6",
+              "target": "b1",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 0.9943740698618234,
+                "mass_scale": 1.027179068939127,
+                "friction_scale": 1.0659266711746147,
+                "gain_scale": 0.9974820918884935,
+                "light_scale": 0.8838659399983028,
+                "camera_translation": [
+                  0.00031673819669597505,
+                  -0.0014764387046973105,
+                  -0.0013108765552473515
+                ],
+                "camera_rotation": [
+                  0.010797536195881176,
+                  -0.016121206184160252,
+                  -0.018320061148680372
+                ],
+                "appearance": 0.9877843549390857,
+                "action_delay": 1,
+                "observation_delay": 1
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10014,
+            "piece": "rook",
+            "color": "black",
+            "source": "a2",
+            "target": "a6",
+            "reference": {
+              "success": false,
+              "source": "a2",
+              "target": "a6",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 0.9625392010484316,
+                "mass_scale": 1.147665293198738,
+                "friction_scale": 0.9422045752243324,
+                "gain_scale": 1.129143967326117,
+                "light_scale": 0.8387855981684138,
+                "camera_translation": [
+                  0.0019683472965800666,
+                  0.00023771412474293124,
+                  0.0010829001913487553
+                ],
+                "camera_rotation": [
+                  -0.006258595194973441,
+                  -0.006166060350998887,
+                  -0.0053482376727748936
+                ],
+                "appearance": 1.0027637430070269,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10015,
+            "piece": "knight",
+            "color": "black",
+            "source": "a1",
+            "target": "b6",
+            "reference": {
+              "success": false,
+              "source": "a1",
+              "target": "b6",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 0.998320966769698,
+                "mass_scale": 0.9234305562407853,
+                "friction_scale": 0.8870132565687391,
+                "gain_scale": 0.9502315867534112,
+                "light_scale": 0.7260035946304011,
+                "camera_translation": [
+                  -0.0008472800762239668,
+                  -0.00028739662622793895,
+                  0.0013600992034179674
+                ],
+                "camera_rotation": [
+                  0.0008658642303511245,
+                  -0.011475524121942176,
+                  -0.018052202032516004
+                ],
+                "appearance": 1.0104600065273983,
+                "action_delay": 1,
+                "observation_delay": 1
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10016,
+            "piece": "bishop",
+            "color": "black",
+            "source": "b5",
+            "target": "a5",
+            "reference": {
+              "success": false,
+              "source": "b5",
+              "target": "a5",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9611727117723929,
+                "mass_scale": 0.9577742349381305,
+                "friction_scale": 0.8958347688896017,
+                "gain_scale": 0.9528199023584257,
+                "light_scale": 0.8374854568163557,
+                "camera_translation": [
+                  0.0015630183931282528,
+                  -0.0011427123454193443,
+                  5.56400821903804e-05
+                ],
+                "camera_rotation": [
+                  -0.009541961213937099,
+                  -0.009510529911703704,
+                  -0.0034247051753846097
+                ],
+                "appearance": 0.8753616740804101,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10017,
+            "piece": "queen",
+            "color": "black",
+            "source": "a4",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "a4",
+              "target": "a3",
+              "steps": 82,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.010027902292603,
+                "mass_scale": 0.9109016381127157,
+                "friction_scale": 1.0484167924146073,
+                "gain_scale": 0.9475947168375167,
+                "light_scale": 0.8593376531086976,
+                "camera_translation": [
+                  -0.0004569166641907182,
+                  -0.0008171697048706547,
+                  -0.00025489337566553705
+                ],
+                "camera_rotation": [
+                  0.01745658374469156,
+                  -0.01026166313161311,
+                  -0.003602548519378957
+                ],
+                "appearance": 0.9445704989618167,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 27,
+            "mean_planning_seconds": 0.03709098828403512,
+            "max_planning_seconds": 0.04746763099683449,
+            "placed": false,
+            "distance": 0.02558711809377562,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3048816697823921,
+              0.036377153892284714,
+              0.015563372665938217
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10018,
+            "piece": "king",
+            "color": "black",
+            "source": "b2",
+            "target": "b5",
+            "reference": {
+              "success": false,
+              "source": "b2",
+              "target": "b5",
+              "steps": 114,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 0.9941207798123317,
+                "mass_scale": 0.9257084390125422,
+                "friction_scale": 0.952043558538676,
+                "gain_scale": 1.038069990391777,
+                "light_scale": 1.1987748889416918,
+                "camera_translation": [
+                  0.0018851844959864189,
+                  -0.0017459626246380386,
+                  0.0006013385944704072
+                ],
+                "camera_rotation": [
+                  0.0163105425727593,
+                  -0.01420850523201807,
+                  -0.017491525301756298
+                ],
+                "appearance": 1.0466305986104931,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10019,
+            "piece": "pawn",
+            "color": "white",
+            "source": "a4",
+            "target": "a2",
+            "reference": {
+              "success": true,
+              "source": "a4",
+              "target": "a2",
+              "steps": 95,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0170679104430858,
+                "mass_scale": 1.0105127569600696,
+                "friction_scale": 0.8983221218392166,
+                "gain_scale": 0.8880111293488536,
+                "light_scale": 1.0845368540929008,
+                "camera_translation": [
+                  -0.0007811987701366286,
+                  0.0016096425589517886,
+                  0.0015342284222941626
+                ],
+                "camera_rotation": [
+                  -0.0065153590208285195,
+                  -0.010699733203244306,
+                  -0.01678709135618323
+                ],
+                "appearance": 1.117582465540663,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Unreachable Cartesian target (IK residual 0.0084 m)",
+            "failure_type": "controller_rejection",
+            "steps": 24,
+            "mean_planning_seconds": 0.03671503832214512,
+            "max_planning_seconds": 0.047421135008335114,
+            "placed": false,
+            "distance": 0.05114094412989171,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.30487156031004176,
+              0.03634423647533006,
+              0.015354575406314484
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10020,
+            "piece": "rook",
+            "color": "white",
+            "source": "b1",
+            "target": "b5",
+            "reference": {
+              "success": true,
+              "source": "b1",
+              "target": "b5",
+              "steps": 122,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9605142800168551,
+                "mass_scale": 1.1902517429010704,
+                "friction_scale": 0.9545196793777901,
+                "gain_scale": 0.8873523891522134,
+                "light_scale": 0.7411398578006423,
+                "camera_translation": [
+                  0.0006367460638388852,
+                  0.00010296989408605829,
+                  -0.0003473793380420736
+                ],
+                "camera_rotation": [
+                  -0.0011836442307306197,
+                  -0.00809543689740286,
+                  -0.012499380761686916
+                ],
+                "appearance": 0.9018416249014736,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 19,
+            "mean_planning_seconds": 0.037770098802866414,
+            "max_planning_seconds": 0.04245153100055177,
+            "placed": false,
+            "distance": 0.09359915352132389,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3377458309712038,
+              -0.031352312654098595,
+              0.02663613659380959
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10021,
+            "piece": "knight",
+            "color": "white",
+            "source": "a8",
+            "target": "a5",
+            "reference": {
+              "success": false,
+              "source": "a8",
+              "target": "a5",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 0.9664699745864987,
+                "mass_scale": 0.9120359222092917,
+                "friction_scale": 1.134175286463323,
+                "gain_scale": 0.9924187063583165,
+                "light_scale": 1.029758539154701,
+                "camera_translation": [
+                  0.0012860781550094271,
+                  5.812216990781511e-05,
+                  -0.0006795987964333334
+                ],
+                "camera_rotation": [
+                  0.007974402039446153,
+                  -0.01785734666366826,
+                  0.016499106427218097
+                ],
+                "appearance": 0.9255564496365376,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10022,
+            "piece": "bishop",
+            "color": "white",
+            "source": "a1",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "a1",
+              "target": "a3",
+              "steps": 91,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0217236040327757,
+                "mass_scale": 1.0952250608599667,
+                "friction_scale": 1.1024243827908378,
+                "gain_scale": 0.910593746746727,
+                "light_scale": 0.7141791355469618,
+                "camera_translation": [
+                  0.001462601811729017,
+                  0.001701566394269299,
+                  -0.0012904982756146981
+                ],
+                "camera_rotation": [
+                  -0.018245979141315993,
+                  0.005065083274640805,
+                  -0.006038814370992469
+                ],
+                "appearance": 1.1384352273000558,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Unreachable Cartesian target (IK residual 0.0047 m)",
+            "failure_type": "controller_rejection",
+            "steps": 25,
+            "mean_planning_seconds": 0.0364974994221344,
+            "max_planning_seconds": 0.043610283988527954,
+            "placed": false,
+            "distance": 0.051182305931174135,
+            "upright": true,
+            "truncated": false,
+            "piece_position": [
+              0.3048733922640867,
+              -0.04039226941641151,
+              0.01553852790923348
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10023,
+            "piece": "queen",
+            "color": "white",
+            "source": "b3",
+            "target": "b5",
+            "reference": {
+              "success": true,
+              "source": "b3",
+              "target": "b5",
+              "steps": 90,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 1.0159465194242023,
+                "mass_scale": 1.0940316665643688,
+                "friction_scale": 1.1011604507365105,
+                "gain_scale": 1.091312701750161,
+                "light_scale": 1.042073083291878,
+                "camera_translation": [
+                  0.001713771520209345,
+                  0.0018088174546338435,
+                  0.0019072722974213113
+                ],
+                "camera_rotation": [
+                  -0.009680281474777949,
+                  -0.010720041022871088,
+                  -0.010575489554190316
+                ],
+                "appearance": 1.031252902680219,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Unreachable Cartesian target (IK residual 0.0042 m)",
+            "failure_type": "controller_rejection",
+            "steps": 21,
+            "mean_planning_seconds": 0.03601719336504836,
+            "max_planning_seconds": 0.042678315003286116,
+            "placed": false,
+            "distance": 0.051764485871723415,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.34034578802929477,
+              0.011150088316037544,
+              0.027481291324738293
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10024,
+            "piece": "king",
+            "color": "white",
+            "source": "b4",
+            "target": "a1",
+            "reference": {
+              "success": true,
+              "source": "b4",
+              "target": "a1",
+              "steps": 100,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9524477299874279,
+                "mass_scale": 1.029592756532777,
+                "friction_scale": 1.0601995839252396,
+                "gain_scale": 0.8632598771488702,
+                "light_scale": 1.126255185449056,
+                "camera_translation": [
+                  0.0019206384511698807,
+                  -0.0011168604964640477,
+                  0.001417034967814383
+                ],
+                "camera_rotation": [
+                  -0.0006209528275249732,
+                  -0.0065511559775227966,
+                  -0.013582438560837996
+                ],
+                "appearance": 0.9244057483981883,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 30,
+            "mean_planning_seconds": 0.03592716677268336,
+            "max_planning_seconds": 0.04172722599469125,
+            "placed": false,
+            "distance": 0.07728733430116987,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3253112134235252,
+              0.034154977840917956,
+              0.022942216956629263
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10025,
+            "piece": "pawn",
+            "color": "black",
+            "source": "a6",
+            "target": "a7",
+            "reference": {
+              "success": false,
+              "source": "a6",
+              "target": "a7",
+              "steps": 93,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 1.0120381173563535,
+                "mass_scale": 1.1943979969579557,
+                "friction_scale": 1.118354146419733,
+                "gain_scale": 1.0318918676825177,
+                "light_scale": 0.8307139092875613,
+                "camera_translation": [
+                  0.00046289973012700976,
+                  -0.00183076340509185,
+                  -0.0011861270104683483
+                ],
+                "camera_rotation": [
+                  -0.0129690207832813,
+                  -0.006099003387154753,
+                  -0.0011208703727825543
+                ],
+                "appearance": 0.8640039662577004,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10026,
+            "piece": "rook",
+            "color": "black",
+            "source": "b2",
+            "target": "a8",
+            "reference": {
+              "success": false,
+              "source": "b2",
+              "target": "a8",
+              "steps": 13,
+              "failure": "Joint path penetrates the table or board",
+              "randomization": {
+                "dimension_scale": 1.0420853830777972,
+                "mass_scale": 0.8246173033022685,
+                "friction_scale": 1.1433607987607333,
+                "gain_scale": 1.0122671779057197,
+                "light_scale": 1.0530434697779596,
+                "camera_translation": [
+                  -0.001959846779374158,
+                  6.116638489572692e-05,
+                  0.0018202830377179306
+                ],
+                "camera_rotation": [
+                  -0.006851607921411245,
+                  -0.011337018154785944,
+                  -0.004914265451282379
+                ],
+                "appearance": 0.8462742469642861,
+                "action_delay": 1,
+                "observation_delay": 1
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10027,
+            "piece": "knight",
+            "color": "black",
+            "source": "a4",
+            "target": "b4",
+            "reference": {
+              "success": true,
+              "source": "a4",
+              "target": "b4",
+              "steps": 89,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9769935979993445,
+                "mass_scale": 0.8171385109595113,
+                "friction_scale": 1.1436062616525757,
+                "gain_scale": 0.9982128568204685,
+                "light_scale": 1.0293854399965698,
+                "camera_translation": [
+                  0.00016784628140792532,
+                  -0.0013045136751373497,
+                  0.001036104741115464
+                ],
+                "camera_rotation": [
+                  -0.013189399018817802,
+                  -0.01842644739919181,
+                  0.010809553377410377
+                ],
+                "appearance": 0.8813018388610705,
+                "action_delay": 0,
+                "observation_delay": 0
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 40,
+            "mean_planning_seconds": 0.03744417519547136,
+            "max_planning_seconds": 0.0660344040079508,
+            "placed": false,
+            "distance": 0.014673913979134067,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3157950150422003,
+              0.036460811857698165,
+              0.026877765675011232
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10028,
+            "piece": "bishop",
+            "color": "black",
+            "source": "b6",
+            "target": "a3",
+            "reference": {
+              "success": true,
+              "source": "b6",
+              "target": "a3",
+              "steps": 106,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9749111324610614,
+                "mass_scale": 1.1244929310973308,
+                "friction_scale": 0.8713740102880273,
+                "gain_scale": 0.9543151178222775,
+                "light_scale": 0.7037126941295438,
+                "camera_translation": [
+                  0.0008262253743971755,
+                  -0.00028662877221771635,
+                  -0.0010435983493864627
+                ],
+                "camera_rotation": [
+                  -0.0161143450963513,
+                  -0.017218471792691998,
+                  -0.0014316907721780084
+                ],
+                "appearance": 1.128020414573839,
+                "action_delay": 0,
+                "observation_delay": 1
+              }
+            },
+            "executed": true,
+            "success": false,
+            "lifted": false,
+            "failure": "Joint path penetrates the table or board",
+            "failure_type": "controller_rejection",
+            "steps": 31,
+            "mean_planning_seconds": 0.03681595109492264,
+            "max_planning_seconds": 0.042319852000218816,
+            "placed": false,
+            "distance": 0.07682756343637456,
+            "upright": false,
+            "truncated": false,
+            "piece_position": [
+              0.3381540454161735,
+              0.08003916506535919,
+              0.02724287812606782
+            ],
+            "stages_reached": 0,
+            "final_stage": "approach",
+            "stage_transitions": []
+          },
+          {
+            "seed": 10029,
+            "piece": "queen",
+            "color": "black",
+            "source": "a6",
+            "target": "a3",
+            "reference": {
+              "success": false,
+              "source": "a6",
+              "target": "a3",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9551667151766194,
+                "mass_scale": 1.1915658689626027,
+                "friction_scale": 0.8928965372467215,
+                "gain_scale": 1.0329163452410535,
+                "light_scale": 1.1474730513094507,
+                "camera_translation": [
+                  -0.0007068062415097151,
+                  -0.000775406674750585,
+                  0.0013362183288917837
+                ],
+                "camera_rotation": [
+                  -0.015048776149563592,
+                  -0.014710075481646729,
+                  0.00014139391526012124
+                ],
+                "appearance": 0.9721459473173125,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          },
+          {
+            "seed": 10030,
+            "piece": "king",
+            "color": "black",
+            "source": "a3",
+            "target": "b2",
+            "reference": {
+              "success": false,
+              "source": "a3",
+              "target": "b2",
+              "steps": 240,
+              "failure": null,
+              "randomization": {
+                "dimension_scale": 0.9764309373501506,
+                "mass_scale": 0.9207053634964862,
+                "friction_scale": 1.1387140108051699,
+                "gain_scale": 1.1162242390302397,
+                "light_scale": 0.9387613260230374,
+                "camera_translation": [
+                  -0.001436581264369433,
+                  -0.0013693600341958198,
+                  -0.0018650350454569638
+                ],
+                "camera_rotation": [
+                  0.002020817341803628,
+                  -0.009833127796613864,
+                  -0.010548454926317624
+                ],
+                "appearance": 0.8300358910420138,
+                "action_delay": 1,
+                "observation_delay": 0
+              }
+            },
+            "executed": false,
+            "success": false,
+            "lifted": false,
+            "failure": "No successful scripted goal reference",
+            "failure_type": "goal_reference_unavailable",
+            "steps": 0,
+            "mean_planning_seconds": 0.0,
+            "max_planning_seconds": 0.0
+          }
+        ],
+        "success_rate": 0.0
+      }
+    }
+  },
+  "execution": {
+    "host": "spark-9017",
+    "arguments": {
+      "training_run": "runs/so101-lewm-state-rollout/training/20261016T003634-7157983b",
+      "source_report": "runs/so101-rest-view/20261015T232745-e0a6601b/results.json",
+      "output": "runs/so101-lewm-staged",
+      "device": "cuda",
+      "samples": 64,
+      "iterations": 3,
+      "objective": "path"
+    },
+    "elapsed_seconds": 301.32815194129944,
+    "planner": {
+      "horizon": 8,
+      "samples": 64,
+      "iterations": 3,
+      "objective": "path"
+    },
+    "gate": {
+      "passed": false,
+      "reasons": [
+        "Scripted intermediate-goal assistance is a diagnostic, not autonomous final-goal validation.",
+        "nominal: need at least 24 held-out learned-policy episodes.",
+        "nominal: success 0.0% is below 90%.",
+        "randomized: need at least 24 held-out learned-policy episodes.",
+        "randomized: success 0.0% is below 80%."
+      ],
+      "physical_trial_enabled": false
+    }
+  },
+  "manifest": {
+    "complete": true,
+    "schema": 1,
+    "contract": "e6fcba73083da7d9092fb9123e6173313bdcd93266beaa58d28742b3dcb2049a"
+  },
+  "local_run_dir": "/Users/kcosta/repos/research/oss/pytorch-world/runs/so101-lewm-staged/20261016T005017-b1099dbc",
+  "remote_run_dir": "/clusterhome/kleyton/so101-chess-20261015/runs/so101-lewm-staged/20261016T005017-b1099dbc"
+}

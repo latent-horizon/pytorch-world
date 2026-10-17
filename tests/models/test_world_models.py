@@ -82,6 +82,17 @@ def test_dinowm_encoder_frozen_and_action_dims_dropped():
     assert {"visual_loss", "proprio_loss"} <= out.keys()
 
 
+def test_dinowm_cost_weights_proprio_like_the_image():
+    model = dinowm()
+    goal = torch.zeros(1, 4, 26)
+    visual, proprio = goal.clone(), goal.clone()
+    visual[..., :16], proprio[..., 16:] = 1.0, 1.0
+    assert torch.allclose(model.cost(visual[:, None], goal), torch.ones(1))
+    assert torch.allclose(model.cost(proprio[:, None], goal), torch.ones(1))
+    model.proprio_weight = 0.0
+    assert model.cost(proprio[:, None], goal).item() == 0.0
+
+
 @pytest.mark.parametrize("name", ["lewm", "dinowm"])
 def test_prediction_is_causal(name):
     model = {"lewm": lewm, "dinowm": dinowm}[name]().eval()

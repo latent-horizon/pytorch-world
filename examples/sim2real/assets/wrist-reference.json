@@ -1,0 +1,19 @@
+{
+  "device": "icspring camera",
+  "backend": "avfoundation",
+  "captured_at_utc": "2026-10-15T22:12:51.765646+00:00",
+  "width": 1280,
+  "height": 720,
+  "channels": "RGB",
+  "mean_rgb_0_255": [
+    205.48,
+    139.17,
+    103.73
+  ],
+  "mean_luma_0_1": 0.591,
+  "dark_pixel_fraction_luma_below_0_1": 0.0035,
+  "image": "wrist-reference.png",
+  "motor_connection": false,
+  "image_processing": "none",
+  "source_image": "wrist-native.png"
+}

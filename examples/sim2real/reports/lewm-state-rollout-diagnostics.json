@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "model": {
+    "kind": "lewm",
+    "size": 140,
+    "history": 3,
+    "smoke": false,
+    "encoder": "cnn",
+    "proprioception": true,
+    "rollout_steps": 8
+  },
+  "source_run": "runs/so101-lewm-state-rollout/training/20261016T003634-7157983b",
+  "windows": 72,
+  "sampling": "Same four equally spaced 11-frame windows per each of 18 held-out episodes used in prior DINO-WM and LeWM diagnostics.",
+  "metrics": {
+    "model_one_step_visual_mse": 0.014277015790058713,
+    "model_one_step_state_mse": 0.0022852933010047614,
+    "model_one_step_joint_mae_degrees": 6.225544835130374,
+    "model_one_step_opening_mae": 0.043526869855769396,
+    "zero_actions_one_step_visual_mse": 0.016897990248657555,
+    "zero_actions_one_step_state_mse": 0.002414846344739393,
+    "zero_actions_one_step_joint_mae_degrees": 6.494558165470759,
+    "zero_actions_one_step_opening_mae": 0.0398302907964939,
+    "reversed_actions_one_step_visual_mse": 0.023243211366611324,
+    "reversed_actions_one_step_state_mse": 0.003081045638080266,
+    "reversed_actions_one_step_joint_mae_degrees": 6.647457418342431,
+    "reversed_actions_one_step_opening_mae": 0.0459562212765579,
+    "persistence_one_step_visual_mse": 0.010851771337911487,
+    "persistence_one_step_state_mse": 0.0002089588351692484,
+    "persistence_one_step_joint_mae_degrees": 1.1585959492044315,
+    "persistence_one_step_opening_mae": 0.004780330436634284,
+    "model_eight_step_visual_mse": 0.06919129858175034,
+    "persistence_eight_step_visual_mse": 0.1142563565786582,
+    "model_eight_step_state_mse": 0.004160904478744164,
+    "persistence_eight_step_state_mse": 0.014763450732498344
+  },
+  "notes": [
+    "Frozen checkpoint in evaluation mode; no training during diagnostics.",
+    "Visual MSE uses each model's own latent space; absolute values cannot rank different learned encoders.",
+    "State MSE uses joints/pi and opening in [0,1]. Joint MAE is also reported in physical degrees.",
+    "Action ablations measure sensitivity, not counterfactual simulator accuracy."
+  ]
+}

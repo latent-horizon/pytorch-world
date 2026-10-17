@@ -159,6 +159,7 @@ nav:
       - Metrics: guides/metrics.md
       - Environments: guides/environments.md
       - Environment benchmarks: guides/benchmark-environments.md
+      - SO101 sim2real: guides/sim2real.md
       - Figures: guides/plots.md
       - Build your own model: guides/custom-model.md
   - Models:
@@ -199,6 +200,8 @@ nav:
           - LeWAM: examples/action/lewam.ipynb
           - DINO-WM: examples/action/dinowm.ipynb
           - RoboJEPA: examples/action/robojepa.ipynb
+      - Sim2real:
+          - SO101 chess: examples/sim2real/so101_chess.ipynb
       - VQA:
           - VL-JEPA: examples/vqa/vljepa.ipynb
   - API:
@@ -209,6 +212,7 @@ nav:
       - torch_world.models: api/models.md
       - torch_world.planning: api/planning.md
       - torch_world.envs: api/envs.md
+      - torch_world.sim2real: api/sim2real.md
       - torch_world.datasets: api/datasets.md
       - torch_world.evaluation: api/evaluation.md
       - torch_world.metrics: api/metrics.md
