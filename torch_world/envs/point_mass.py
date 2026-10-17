@@ -1,22 +1,45 @@
 import torch
 from torch import Tensor
 
+from torch_world.envs.legacy import LegacyEnvironment
 
-class PointMass:
+
+class PointMass(LegacyEnvironment):
     """Batched 2D point mass in the unit square, rendered as a Gaussian blob on an ``size x size`` RGB image.
 
     Actions are velocities in ``[-1, 1]^2`` scaled by ``max_step``; positions are clipped to ``[low, high]^2``.
     """
 
+    env_id = "PointMass-v0"
     action_dim = 2
     state_dim = 2
     low, high = 0.0, 1.0
     radius = 0.1
 
-    def __init__(self, batch_size: int = 1, size: int = 32, max_step: float = 0.1, sigma: float = 0.06, device=None):
+    def __init__(
+        self,
+        batch_size: int = 1,
+        size: int = 32,
+        max_step: float = 0.1,
+        sigma: float = 0.06,
+        device=None,
+        *,
+        quality="high",
+        render_size=None,
+        max_episode_steps=100,
+        observation="rgb",
+    ):
         self.batch_size, self.size, self.max_step, self.sigma = batch_size, size, max_step, sigma
         self.device = device
         self.state = torch.zeros(batch_size, 2, device=device)
+        self._configure_benchmark(
+            quality=quality,
+            render_size=render_size,
+            max_episode_steps=max_episode_steps,
+            observation=observation,
+            max_step=max_step,
+            sigma=sigma,
+        )
 
     def reset(self, state: Tensor | None = None, generator: torch.Generator | None = None) -> Tensor:
         if state is None:

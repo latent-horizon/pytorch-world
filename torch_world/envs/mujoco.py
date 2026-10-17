@@ -48,15 +48,16 @@ def studio(scale: float = 1.0, table_center=(0.0, 0.0), table_half: float = 1.0)
     )
     sky.rgb1, sky.rgb2, sky.width, sky.height = SKY, (0.9, 0.9, 0.88), 512, 3072
     world = spec.worldbody
-    world.add_light(
+    light = world.add_light(
         type=mujoco.mjtLightType.mjLIGHT_DIRECTIONAL,
         pos=[0.6 * scale, -scale, 2.5 * scale],
         dir=[-0.25, 0.4, -1],
         diffuse=[0.55] * 3,
         specular=[0.1] * 3,
         castshadow=True,
-        softness=0.3,
     )
+    if hasattr(light, "softness"):
+        light.softness = 0.3  # optional on older MuJoCo releases
     world.add_geom(type=mujoco.mjtGeom.mjGEOM_PLANE, size=[3, 3, 0.1], pos=[0, 0, -0.75], rgba=[*FLOOR, 1])
     world.add_geom(
         type=mujoco.mjtGeom.mjGEOM_BOX,
@@ -89,6 +90,7 @@ class MujocoEnv:
         self.model, self.batch_size, self.size, self.camera, self.device = model, batch_size, size, camera, device
         self.data = [self.mujoco.MjData(model) for _ in range(batch_size)]
         self.renderers: dict = {}
+        self.render_shadows = True
         self.ghost = self.mujoco.MjvOption()
         self.ghost.geomgroup[GHOST_GROUP] = 1
         self.hidden = self.mujoco.MjvOption()
@@ -101,7 +103,7 @@ class MujocoEnv:
     def render(
         self,
         state: Tensor | None = None,
-        camera: str | None = None,
+        camera=None,
         size: int | None = None,
         goal: Tensor | None = None,
     ) -> Tensor:
@@ -109,11 +111,13 @@ class MujocoEnv:
 
         With ``goal`` states ``(B, state_dim)``, a translucent marker shows each goal, for videos and figures; the
         model's observations never show it.
+        ``camera`` may be a named camera or a MuJoCo ``MjvCamera`` overview.
         """
         size, camera = size or self.size, camera or self.camera
-        if (size, camera) not in self.renderers:
-            self.renderers[size, camera] = self.mujoco.Renderer(self.model, size, size)
-        renderer = self.renderers[size, camera]
+        key = (size, camera if isinstance(camera, (str, int)) else id(camera))
+        if key not in self.renderers:
+            self.renderers[key] = self.mujoco.Renderer(self.model, size, size)
+        renderer = self.renderers[key]
         data = self.data if state is None else self._posed(state)
         goals = None if goal is None else goal.double().cpu().numpy()
         images = []
@@ -122,6 +126,7 @@ class MujocoEnv:
                 d.mocap_pos[0], d.mocap_quat[0] = self._ghost(goals[b])
                 self.mujoco.mj_kinematics(self.model, d)
             renderer.update_scene(d, camera, scene_option=self.hidden if goals is None else self.ghost)
+            renderer.scene.flags[self.mujoco.mjtRndFlag.mjRND_SHADOW] = self.render_shadows
             images.append(renderer.render())
         return torch.from_numpy(np.stack(images)).to(self.device).permute(0, 3, 1, 2).float() / 255
 

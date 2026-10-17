@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+from torch_world.envs.legacy import LegacyEnvironment
 from torch_world.envs.mujoco import TABLE, MujocoEnv, add_ghost, import_mujoco, look_at, studio
 
 
@@ -85,14 +86,17 @@ ROBOTS = {
 CUBE = (0.16, 0.47, 0.84, 1.0)
 
 
-class RobotCube(MujocoEnv):
+class RobotCube(MujocoEnv, LegacyEnvironment):
     """Single-cube pick-and-place with a real arm in MuJoCo, after OGBench ``cube-single``, in a light studio scene.
 
     ``robot`` is ``"ur10e"`` (Universal Robots UR10e with a Robotiq 2F-85 gripper) or ``"so101"`` (the open-source
     SO-101 arm), both from MuJoCo Menagerie and downloaded once into ``root``. Actions ``(dx, dy, dz, grip)`` in
-    ``[-1, 1]^4`` move the gripper target by up to ``max_step`` meters, solved by damped least-squares inverse
-    kinematics with the gripper pointing down, and open (``grip > 0``) or close the gripper. Each step lasts
-    ``control_dt`` seconds of simulation. The state is ``(gripper x, y, z, opening, cube x, y, z)``.
+    ``[-1, 1]^4`` set the gripper's target up to ``max_step`` meters from its current position, solved by damped
+    least-squares inverse kinematics with the gripper pointing down, and open (``grip > 0``) or close the gripper. Each
+    step lasts ``control_dt`` seconds of simulation. Targets are relative to the gripper rather than to the previous
+    target, and the arm is gravity-compensated so its joint servos hold their targets: the next state depends on the
+    state, not on a hidden command, and resetting to a recorded state replays its actions (up to the joint
+    velocities and finger positions, which the state omits). The state is ``(gripper x, y, z, opening, cube x, y, z)``.
 
     ``task`` sets what ``tasks``, ``distance``, ``success`` and ``position`` measure: ``"pick"`` carries the cube to a
     goal spot, ``"reach"`` moves the open gripper to a goal pose with the cube left in place.
@@ -106,6 +110,7 @@ class RobotCube(MujocoEnv):
     Models: https://github.com/google-deepmind/mujoco_menagerie
     """
 
+    env_id = "RobotCube-v0"
     action_dim = 4
     state_dim = 7
 
@@ -120,6 +125,12 @@ class RobotCube(MujocoEnv):
         task: str = "pick",
         root: str | Path | None = None,
         device=None,
+        *,
+        quality="high",
+        render_size=None,
+        max_episode_steps=100,
+        observation="rgb",
+        presentation_camera="overview",
     ):
         if task not in ("pick", "reach"):
             raise ValueError(f"task must be 'pick' or 'reach', not {task!r}")
@@ -148,6 +159,20 @@ class RobotCube(MujocoEnv):
         self.closed_for = np.zeros(batch_size)
         self.down = None
         self.state = torch.zeros(batch_size, self.state_dim, device=device)
+        self.env_id = "RobotCube-v0" if robot == "ur10e" else "RobotCubeSO101-v0"
+        self._configure_benchmark(
+            quality=quality,
+            render_size=render_size,
+            max_episode_steps=max_episode_steps,
+            observation=observation,
+            presentation_camera=presentation_camera,
+            robot=robot,
+            camera=camera,
+            control_dt=control_dt,
+            max_step=self.max_step,
+            task=task,
+            root=root,
+        )
 
     # simulation
 
@@ -174,7 +199,8 @@ class RobotCube(MujocoEnv):
         a = action.clamp(-1, 1).double().cpu().numpy()
         low = np.array([self.x_range[0] - 0.05, self.y_range[0] - 0.05, self.half * 0.6])
         high = np.array([self.x_range[1] + 0.05, self.y_range[1] + 0.05, self.hover + 0.1])
-        self.targets = np.clip(self.targets + self.max_step * a[:, :3], low, high)
+        gripper = np.stack([d.site_xpos[self.site] for d in self.data])
+        self.targets = np.clip(gripper + self.max_step * a[:, :3], low, high)
         self.opening = np.clip(self.opening + a[:, 3], 0, 1)
         self.closed_for = np.where(self.opening < 0.5, self.closed_for + 1, 0)
         for b, d in enumerate(self.data):
@@ -260,8 +286,8 @@ class RobotCube(MujocoEnv):
         """Clean expert actions ``(B, 4)`` toward goal states ``(B, 7)`` of the current ``task``."""
         if self.task == "pick":
             return self.expert(goal[:, 4:6])
-        command = torch.as_tensor(self.targets, dtype=goal.dtype, device=goal.device)
-        return torch.cat([((goal[:, :3] - command) / self.max_step).clamp(-1, 1), torch.ones_like(goal[:, :1])], -1)
+        move = (goal[:, :3] - self.state[:, :3].to(goal)) / self.max_step
+        return torch.cat([move.clamp(-1, 1), torch.ones_like(goal[:, :1])], -1)
 
     def position(self, states: Tensor) -> Tensor:
         """The cube's (``"pick"``) or the gripper's (``"reach"``) position on the table in the unit square of the
@@ -308,21 +334,20 @@ class RobotCube(MujocoEnv):
     def expert(self, target: Tensor, state: Tensor | None = None) -> Tensor:
         """Scripted pick-and-place actions ``(B, 4)`` that carry the cube to ``target`` ``(B, 2)`` and back off.
 
-        Motion is planned from the commanded gripper position of the running episode, or from ``state``.
+        Motion is planned from the gripper position of ``state``, by default the running episode's.
         """
         s = self.state if state is None else state
         ee, opening, cube = s[:, :3], s[:, 3], s[:, 4:7]
-        command = torch.as_tensor(self.targets, dtype=s.dtype, device=s.device) if state is None else ee
         settled = torch.as_tensor(self.closed_for >= self.config.settle, device=s.device) if state is None else True
         grasped = (opening < 0.5) & ((ee - cube).norm(dim=-1) < 2 * self.half) & settled
         placed = ~grasped & ((cube[:, :2] - target).norm(dim=-1) < self.radius) & (cube[:, 2] < self.half + 0.005)
         goal_xy = torch.where((grasped | placed)[:, None], target, cube[:, :2])
-        above = (command[:, :2] - goal_xy).norm(dim=-1) < 0.15 * self.radius + 0.002
-        low = (command[:, 2] - self.half).abs() < 0.005
+        above = (ee[:, :2] - goal_xy).norm(dim=-1) < 0.15 * self.radius + 0.002
+        low = (ee[:, 2] - self.half).abs() < 0.005
         down = above & ~placed
         z = torch.where(down, torch.full_like(ee[:, 2], self.half), torch.full_like(ee[:, 2], self.hover))
-        xy = torch.where(placed[:, None], command[:, :2], goal_xy)
-        move = ((torch.cat([xy, z[:, None]], -1) - command) / self.max_step).clamp(-1, 1)
+        xy = torch.where(placed[:, None], ee[:, :2], goal_xy)
+        move = ((torch.cat([xy, z[:, None]], -1) - ee) / self.max_step).clamp(-1, 1)
         close = torch.where(grasped, ~(down & low), down & low & ~grasped)
         return torch.cat([move, torch.where(close, -1.0, 1.0)[:, None]], dim=-1)
 
@@ -400,7 +425,7 @@ def _download(path: str, file: Path):
     urllib.request.urlretrieve(RAW.format(commit=MENAGERIE, path=path), file)
 
 
-def _build(robot: str, root: Path):
+def _build(robot: str, root: Path, scene=None):
     mujoco = import_mujoco()
     config = ROBOTS[robot]
     (x0, x1), (y0, y1) = config.workspace
@@ -410,17 +435,20 @@ def _build(robot: str, root: Path):
     world.add_geom(
         type=mujoco.mjtGeom.mjGEOM_BOX, size=[0.03, 0.03, 0.365], pos=[reach * 0.5, 0, -0.405], rgba=[*TABLE, 1]
     )
-    cube = world.add_body(name="cube", pos=[(x0 + x1) / 2, 0, config.cube])
-    cube.add_freejoint(name="cube")
-    h = config.cube
-    cube.add_geom(
-        type=mujoco.mjtGeom.mjGEOM_BOX,
-        size=[h, h, h],
-        rgba=list(CUBE),
-        mass=0.05 if robot == "ur10e" else 0.01,
-        friction=[1.5, 0.01, 0.001],
-    )
-    add_ghost(spec, [{"type": mujoco.mjtGeom.mjGEOM_BOX, "size": [h, h, h]}])
+    if scene is None:
+        cube = world.add_body(name="cube", pos=[(x0 + x1) / 2, 0, config.cube])
+        cube.add_freejoint(name="cube")
+        h = config.cube
+        cube.add_geom(
+            type=mujoco.mjtGeom.mjGEOM_BOX,
+            size=[h, h, h],
+            rgba=list(CUBE),
+            mass=0.05 if robot == "ur10e" else 0.01,
+            friction=[1.5, 0.01, 0.001],
+        )
+        add_ghost(spec, [{"type": mujoco.mjtGeom.mjGEOM_BOX, "size": [h, h, h]}])
+    else:
+        scene(spec)
     eye, target = config.camera
     world.add_camera(name="front", pos=list(eye), quat=look_at(eye, target), fovy=40)
     side = max(x1 - x0, y1 - y0) + 0.1
@@ -452,6 +480,8 @@ def _build(robot: str, root: Path):
         )
     if config.gripper is not None:
         arm.attach(parts[2], prefix="gripper/", site=arm.site("attachment_site"))
+    for link in arm.bodies:  # gravity compensation of arm and gripper, so the joint servos hold their targets
+        link.gravcomp = 1
     resolved = arm.compile()
     site_pos, site_quat = resolved.site(config.site).pos, resolved.site(config.site).quat
     body = arm.site(config.site).parent

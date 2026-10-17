@@ -158,6 +158,7 @@ nav:
       - Planning: guides/planning.md
       - Metrics: guides/metrics.md
       - Environments: guides/environments.md
+      - Environment benchmarks: guides/benchmark-environments.md
       - Figures: guides/plots.md
       - Build your own model: guides/custom-model.md
   - Models:
@@ -189,6 +190,10 @@ nav:
           - I-JEPA: examples/vision/ijepa.ipynb
           - V-JEPA: examples/vision/vjepa.ipynb
           - LeJEPA: examples/vision/lejepa.ipynb
+      - Environments:
+          - Task index: examples/envs/README.md
+          - Custom model: examples/envs/custom_model_three_envs.ipynb
+          - Rendering quality: examples/envs/render_quality_comparison.ipynb
       - Action:
           - LeWM: examples/action/lewm.ipynb
           - LeWAM: examples/action/lewam.ipynb

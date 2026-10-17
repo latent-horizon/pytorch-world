@@ -55,3 +55,24 @@ def test_pick_goals_are_finished_and_the_expert_meets_them(env):
     summary = results.summary()["expert"]
     assert summary["reached"] == 1.0 and 0 < summary["SPL"] <= 1
     assert results.positions["expert"].shape[-1] == 2
+
+
+def test_idle_actions_hold_the_gripper_still(env):
+    env.reset(generator=torch.Generator().manual_seed(0))
+    start = env.state.clone()
+    for _ in range(10):
+        env.step(torch.tensor([[0.0, 0.0, 0.0, 1.0]]).expand(env.batch_size, -1))
+    assert (env.state[:, :3] - start[:, :3]).norm(dim=-1).max() < 1e-3
+
+
+def test_actions_from_a_recorded_state_replay_the_step():
+    """Targets are relative to the gripper, so a reset to a recorded state replays its next step; with targets
+    accumulated over the episode, the gripper missed by about 9 mm."""
+    try:
+        env = RobotCube("ur10e", batch_size=8, size=16)
+    except OSError as error:
+        pytest.skip(f"cannot download the robot model: {error}")
+    data = env.collect(16, generator=torch.Generator().manual_seed(0))
+    env.reset(data["states"][:, 10])
+    env.step(data["actions"][:, 10])
+    assert (env.state[:, :3] - data["states"][:, 11, :3]).norm(dim=-1).median() < 3e-3

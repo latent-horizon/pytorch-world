@@ -1,13 +1,80 @@
+from typing import TYPE_CHECKING
+
+from torch_world.envs.benchmark import BenchmarkEnv, Transition
+from torch_world.envs.catalog import register_builtins
 from torch_world.envs.macaw import Macaw
-from torch_world.envs.obstacle_arm import ObstacleArm
+from torch_world.envs.physics_scenes import Scene
 from torch_world.envs.point_mass import PointMass
+from torch_world.envs.registry import EnvSpec, get_spec, list_envs, make, register_env, register_task
+from torch_world.envs.rendering import QUALITY_PRESETS, RenderQuality
 from torch_world.envs.utils import run_policy
 
-__all__ = ["Macaw", "ObstacleArm", "PointMass", "PushT", "RobotCube", "run_policy"]
+if TYPE_CHECKING:
+    from torch_world.envs.tasks import (  # noqa: F401
+        BallPlate,
+        BlockStack,
+        BoxGate,
+        CartpoleSwingup,
+        Checkpoints,
+        DifferentialParking,
+        DoorOpen,
+        DoubleCartpole,
+        DrawerOpen,
+        FrankaCubeLift,
+        FrankaObstacleReach,
+        FrankaTablePush,
+        HurdleHopper,
+        IceMaze,
+        KeyDoor,
+        Maze,
+        NewtonAcrobot,
+        NewtonPendulum,
+        ObstacleArm,
+        PayloadTransport,
+        PegInsertion,
+        PickPlace,
+        PlanarQuadrotor,
+        PuckPush,
+        PuckSlide,
+        ReactionWheel,
+        Sokoban,
+        SpatialArm,
+    )
+
+__all__ = [
+    "QUALITY_PRESETS",
+    "BenchmarkEnv",
+    "EnvSpec",
+    "Macaw",
+    "PointMass",
+    "PushT",
+    "RenderQuality",
+    "RobotCube",
+    "Scene",
+    "Transition",
+    "get_spec",
+    "list_envs",
+    "make",
+    "register_env",
+    "register_task",
+    "run_policy",
+]
+
+register_builtins()
+del register_builtins
+
+_TASK_NAMES = frozenset(spec.id.removesuffix("-v0") for spec in list_envs() if "legacy" not in spec.tags)
+__all__.extend(sorted(_TASK_NAMES))
 
 
 def __getattr__(name):
-    if name == "RobotCube":  # the MuJoCo environments need the optional ``mujoco`` dependency
+    if name in _TASK_NAMES:
+        from torch_world.envs import tasks
+
+        cls = getattr(tasks, name)
+        globals()[name] = cls
+        return cls
+    if name == "RobotCube":  # the MuJoCo environments need the optional dependency
         from torch_world.envs.robot_cube import RobotCube
 
         return RobotCube
@@ -16,3 +83,7 @@ def __getattr__(name):
 
         return PushT
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))

@@ -40,13 +40,34 @@ class Macaw(PointMass):
     as used for goal images. Rendering is resolution-free: a ``Macaw(size=192)`` draws the same states sharper.
     """
 
+    env_id = "Macaw-v0"
     low, high = 0.15, 0.85
 
-    def __init__(self, batch_size: int = 1, size: int = 64, max_step: float = 0.1, scale: float = 1.0, device=None):
+    def __init__(
+        self,
+        batch_size: int = 1,
+        size: int = 64,
+        max_step: float = 0.1,
+        scale: float = 1.0,
+        device=None,
+        *,
+        quality="high",
+        render_size=None,
+        max_episode_steps=100,
+        observation="rgb",
+    ):
         super().__init__(batch_size, size, max_step, device=device)
         self.scale = scale
         self.phase = torch.zeros(batch_size, device=device)
         self.landscape = landscape(size, device)
+        self._configure_benchmark(
+            quality=quality,
+            render_size=render_size,
+            max_episode_steps=max_episode_steps,
+            observation=observation,
+            max_step=max_step,
+            scale=scale,
+        )
 
     def reset(self, state: Tensor | None = None, generator: torch.Generator | None = None) -> Tensor:
         self.phase = torch.zeros(self.batch_size, device=self.device)
