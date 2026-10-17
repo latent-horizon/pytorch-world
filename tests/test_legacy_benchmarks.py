@@ -10,7 +10,7 @@ from torch_world.envs import BenchmarkEnv, Macaw, PointMass, get_spec, list_envs
 def test_legacy_reference_and_episode_contract(name):
     if name not in {"PointMass", "Macaw"}:
         pytest.importorskip("mujoco")
-    with make(name + "-v0", observation="state", size=8, render_size=24) as world:
+    with make(name + "-v0", observation="state", size=8, render_size=24, quality="low") as world:
         world.reset(seed=7)
         start, goal = world.state.clone(), world.goal.clone()
         assert not world.success(start, goal).any()
@@ -71,7 +71,7 @@ def test_named_world_uses_shared_experiment_and_artifacts(tmp_path, name):
 
     if name == "RobotCube":
         pytest.importorskip("mujoco")
-    with getattr(envs, name)(size=8, render_size=24) as world:
+    with getattr(envs, name)(size=8, render_size=24, quality="low") as world:
         result = run_experiment(
             world,
             samples=16,
@@ -143,7 +143,7 @@ def test_class_experiment_records_selected_robot(tmp_path):
 
     result = run_experiment(
         RobotCube,
-        env_kwargs={"robot": "so101", "size": 8, "render_size": 24},
+        env_kwargs={"robot": "so101", "size": 8, "render_size": 24, "quality": "low"},
         samples=8,
         updates=0,
         evaluation_seeds=1,

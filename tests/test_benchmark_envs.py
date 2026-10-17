@@ -113,7 +113,7 @@ HAS_GYM = importlib.util.find_spec("mujoco") is not None
 @pytest.mark.skipif(not HAS_GYM, reason="requires benchmark extra")
 @pytest.mark.parametrize("spec", list_envs(backend="mujoco"), ids=lambda spec: spec.id)
 def test_mujoco_seeded_episode_and_boundaries(spec):
-    with make(spec.id, batch_size=2, max_episode_steps=2, observation="state") as env:
+    with make(spec.id, batch_size=2, max_episode_steps=2, observation="state", quality="low") as env:
         first = env.reset(seed=17)
         second = env.reset(seed=17)
         assert torch.equal(first, second)
