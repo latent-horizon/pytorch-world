@@ -143,6 +143,7 @@ extra:
         repo: true
         links:
           - {name: Contributing, url: contributing/}
+          - {name: Changelog, url: changelog/}
           - {name: Apache 2.0 license, url: "https://www.apache.org/licenses/LICENSE-2.0"}
     legal:
       - {name: Released under the Apache 2.0 license, url: "https://www.apache.org/licenses/LICENSE-2.0"}
@@ -262,3 +263,4 @@ nav:
       - torch_world.utils: api/utils.md
       - torch_world.plots: api/plots.md
   - Contributing: contributing.md
+  - Changelog: changelog.md
