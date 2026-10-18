@@ -121,6 +121,7 @@ def test_episode_measures():
     reached = torch.tensor([[False, False, True, True], [False, False, False, False]])
     assert first_success(reached).tolist() == [2, -1]
     assert progress(torch.tensor([[2.0, 1.0, 0.5], [1.0, 1.0, 2.0]])).tolist() == [0.75, -1.0]
+    assert progress(torch.tensor([[0.0, 0.1]])).isnan().all()  # undefined when starting at the goal
     straight = torch.tensor([[[0.0, 0.0], [1.0, 0.0], [2.0, 0.0]]])
     detour = torch.tensor([[[0.0, 0.0], [0.0, 1.0], [2.0, 1.0], [2.0, 0.0]]])
     assert path_length(detour).item() == 4

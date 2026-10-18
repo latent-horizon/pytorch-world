@@ -48,3 +48,16 @@ def test_base_rollout_respects_history():
 
     out = LastOnly().rollout(torch.zeros(1, 1, 1), torch.ones(1, 3, 1))
     assert out.squeeze().tolist() == [0, 1, 2, 3]
+
+
+def test_receding_horizon_runs_chunks_and_replans():
+    from torch_world.planning import RecedingHorizon
+
+    def plan(obs):
+        # horizon 3, frameskip 2, action_dim 1: chunk k holds actions (k, k + 0.5)
+        steps = torch.tensor([[0.0, 0.5], [1.0, 1.5], [2.0, 2.5]])
+        return steps.expand(len(obs), -1, -1)
+
+    policy = RecedingHorizon(plan, action_dim=1, execute=2)
+    actions = [policy(torch.zeros(2, 1))[0, 0].item() for _ in range(6)]
+    assert actions == [0.0, 0.5, 1.0, 1.5, 0.0, 0.5] and policy.calls == 2

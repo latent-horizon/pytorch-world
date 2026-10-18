@@ -16,7 +16,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from torch_world.envs import ObstacleArm
+from torch_world.envs import make
 from torch_world.models import LeWAM
 
 
@@ -92,7 +92,8 @@ class ArmConfig:
 
 
 def environment(config, *, batch_size=1, observation="rgb"):
-    return ObstacleArm(
+    return make(
+        "ObstacleArm-v0",
         batch_size=batch_size,
         observation=observation,
         size=config.size,

@@ -44,8 +44,9 @@ def first_success(success: Tensor) -> Tensor:
 
 def progress(distances: Tensor) -> Tensor:
     """Fraction of the initial distance to the goal closed by the end of each episode ``(N, T)``: 1 at the goal,
-    0 when no closer than at the start, negative when farther."""
-    return 1 - distances[:, -1] / distances[:, 0].clamp_min(1e-9)
+    0 when no closer than at the start, negative when farther, and NaN for episodes that start at the goal."""
+    start = distances[:, 0]
+    return (1 - distances[:, -1] / start).where(start > 0, torch.nan)
 
 
 def path_length(positions: Tensor) -> Tensor:

@@ -32,7 +32,7 @@ def test_owned_environment_uses_native_success_and_expert():
     pytest.importorskip("mujoco")
     c = ArmConfig()
     with environment(c, observation="state") as env:
-        assert env.env_id == "ObstacleArm-v0"
+        assert env.spec.id == "ObstacleArm-v0"
         start, goal = task(20017)
         env.goal = goal[None]
         env.reset(start[None])
@@ -61,32 +61,24 @@ def test_seed_zero_and_invalid_budgets():
         ArmConfig(reference=True, size=224, history_stride=6, frameskip=5)
 
 
-def test_archived_matched_tasks_are_disjoint_and_controllers_are_paired():
+def test_archived_protocol_keeps_test_tasks_disjoint_and_comparisons_paired():
     import json
+    from dataclasses import asdict
     from pathlib import Path
 
-    path = Path(__file__).resolve().parents[1] / "examples/action/reports/lewam-matched.json"
+    path = Path(__file__).resolve().parents[1] / "examples/action/reports/lewam-owned-arm.json"
     if not path.exists():
-        pytest.skip("the matched LeWAM report is a local archive, not tracked in git")
+        pytest.skip("the LeWAM report is a local archive, not tracked in git")
     report = json.loads(path.read_text())
-    assert report["complete"]
-    config = ArmConfig(**report["training"]["config"])
-    training_seeds = set(range(config.seed, config.seed + config.train_episodes))
-    validation_seeds = set(range(config.seed + 10000, config.seed + 10000 + config.validation_episodes))
-    for split, groups in report["groups"].items():
-        for models in groups.values():
-            paired = [(t["seed"], t["start_step"]) for t in models["local"]["policy"]]
-            assert len(paired) == report["cases_per_seed"]
-            seeds = {seed for seed, start in paired}
-            assert not seeds & validation_seeds
-            if split == "training_trajectories":
-                assert seeds <= training_seeds
-            else:
-                assert not seeds & training_seeds
-            for controllers in models.values():
-                for trials in controllers.values():
-                    assert [(t["seed"], t["start_step"]) for t in trials] == paired
-                assert all(t["success"] and t["final_success"] for t in controllers["expert"])
+    assert report["environment"] == "ObstacleArm-v0"
+    assert asdict(ArmConfig(**report["config"])) == asdict(ArmConfig())
+    splits = [set(seeds) for seeds in report["episode_seeds"].values()]
+    assert sum(map(len, splits)) == len(set.union(*splits))
+    test_seeds = report["episode_seeds"]["test"]
+    for trials in report["evaluation"].values():
+        assert [t["seed"] for t in trials] == test_seeds
+        assert not any(t["initial_success"] for t in trials)
+    assert all(t["success"] and t["final_success"] for t in report["evaluation"]["expert"])
 
 
 def test_reference_windows_use_strided_history_consecutive_actions_and_tail_mask():
@@ -366,3 +358,31 @@ def test_recovery_curriculum_keeps_fresh_evaluation_and_data_protocols(tmp_path,
     assert calls[1][2]["data_path"] == tmp_path / "study/initial/episodes.pt"
     assert all("data_path" not in calls[index][2] for index in (0, 2, 3))
     assert calls[-1][2]["initial_checkpoint"] == tmp_path / "study/smooth/model.pt"
+
+
+def test_archived_matched_tasks_are_disjoint_and_controllers_are_paired():
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "examples/action/reports/lewam-matched.json"
+    if not path.exists():
+        pytest.skip("the LeWAM report is a local archive, not tracked in git")
+    report = json.loads(path.read_text())
+    assert report["complete"]
+    config = ArmConfig(**report["training"]["config"])
+    training_seeds = set(range(config.seed, config.seed + config.train_episodes))
+    validation_seeds = set(range(config.seed + 10000, config.seed + 10000 + config.validation_episodes))
+    for split, groups in report["groups"].items():
+        for models in groups.values():
+            paired = [(t["seed"], t["start_step"]) for t in models["local"]["policy"]]
+            assert len(paired) == report["cases_per_seed"]
+            seeds = {seed for seed, start in paired}
+            assert not seeds & validation_seeds
+            if split == "training_trajectories":
+                assert seeds <= training_seeds
+            else:
+                assert not seeds & training_seeds
+            for controllers in models.values():
+                for trials in controllers.values():
+                    assert [(t["seed"], t["start_step"]) for t in trials] == paired
+                assert all(t["success"] and t["final_success"] for t in controllers["expert"])

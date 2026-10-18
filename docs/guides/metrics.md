@@ -69,7 +69,7 @@ plots.bars({"Push-T": results.intervals()}, xlabel="success rate", baseline="ran
 | reached | share of episodes that satisfied the goal at any step, even if they drifted away afterwards. OGBench ends an episode at the first success, so this is the column comparable to OGBench success rates |
 | steps | mean steps to first reach the goal, over the episodes that did |
 | final distance | median distance to the goal at the end (meters in the MuJoCo environments) |
-| progress | mean fraction of the start distance closed: partial credit for failures |
+| progress | median fraction of the start distance closed, over episodes that do not start at the goal: partial credit for failures |
 | SPL | success weighted by path length of what the task moves (`env.object_position`): the cube on the table plane for pick-and-place, the gripper in 3D for reach. A detour twice too long counts one half. Push-T has no SPL: its goal includes an angle, which a path length cannot measure; coverage scores it instead |
 | smoothness | mean change between consecutive actions; sampling planners like CEM tend to jitter |
 | ms / step | wall time of one policy call, the planning cost LeWM compares against DINO-WM |

@@ -25,6 +25,15 @@ def test_collect_and_windows():
     assert torch.equal(dataset[4]["states"], data["states"][1, 1:5])
 
 
+def test_windows_with_frameskip_stack_actions():
+    data = {"states": torch.arange(10.0).view(1, 10, 1), "actions": torch.arange(20.0).view(1, 10, 2)}
+    dataset = TrajectoryDataset(data, window=2, frameskip=3)
+    assert len(dataset) == 5
+    window = dataset[1]
+    assert window["states"].flatten().tolist() == [1, 4]
+    assert window["actions"].tolist() == [[2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13]]
+
+
 def test_ema_and_schedule():
     a, b = torch.nn.Linear(2, 2), torch.nn.Linear(2, 2)
     expected = 0.5 * a.weight + 0.5 * b.weight
