@@ -68,7 +68,7 @@ MuJoCo shares its compiled model across lanes and executes substeps in native co
 
 ## OGBench
 
-[OGBench](https://github.com/seohongpark/ogbench) tasks run behind the same protocol through `OGBench`, which steps one upstream Gymnasium environment per batch lane. Install the extra, `pip install "torch-world[ogbench]"`, and name a task by its OGBench dataset name; the dataset type (`play`, `noisy`, `navigate`, `stitch`, ...) only selects data, not the environment.
+[OGBench](https://github.com/seohongpark/ogbench) tasks run behind the same protocol through `OGBench`, which steps one upstream Gymnasium environment per batch lane. Install the extra, `pip install "torch-world[ogbench]"`, on Python 3.12 or earlier: OGBench needs dm_control, whose `labmaze` dependency has no wheels for later versions. Name a task by its OGBench dataset name; the dataset type (`play`, `noisy`, `navigate`, `stitch`, ...) only selects data, not the environment.
 
 ```python
 from torch_world.benchmarks import run_experiment
