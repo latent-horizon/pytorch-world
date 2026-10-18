@@ -46,7 +46,7 @@ class GoalReaching:
         - ``reached``: fraction of episodes that reach the goal at any step;
         - ``steps``: mean number of steps to first reach the goal, over the episodes that do;
         - ``final distance``: median distance to the goal at the end;
-        - ``progress``: mean fraction of the initial distance closed;
+        - ``progress``: median fraction of the initial distance closed, over episodes that do not start at the goal;
         - ``SPL``: success weighted by path length of the scored object;
         - ``smoothness``: mean change between consecutive actions (lower is smoother);
         - ``ms / step``: wall time of one policy call;
@@ -60,7 +60,7 @@ class GoalReaching:
                 row["reached"] = (first >= 0).float().mean().item()
                 row["steps"] = first[first >= 0].float().mean().item() if (first >= 0).any() else float("nan")
             row["final distance"] = self.distances[name][:, -1].median().item()
-            row["progress"] = metrics.progress(self.distances[name]).mean().item()
+            row["progress"] = metrics.progress(self.distances[name]).nanmedian().item()
             if name in self.positions and self.goals is not None:
                 row["SPL"] = metrics.spl(success, self.positions[name], self.goals)
             if name in self.actions and self.actions[name].size(1) > 1:
