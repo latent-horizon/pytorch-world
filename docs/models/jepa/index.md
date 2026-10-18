@@ -4,7 +4,49 @@ A **joint-embedding predictive architecture** encodes a context and a target, an
 
 All models in this family live in `torch_world.models.jepa` and are exported from `torch_world.models`.
 
-## Images
+## Action
+
+Action-conditioned JEPAs: latent world models that predict the embedding of the next observation from past embeddings and actions, and plan toward a goal. They subclass `WorldModel`, so `rollout`, `cost` and [CEM planning](../../guides/planning.md) work without extra code; LeWAM also generates actions with its own `LeWAMPlanner`. RoboJEPA conditions on several cameras, proprioceptive state and the robot's embodiment.
+
+<div class="grid cards" markdown>
+
+-   **[LeWM](lewm.md)**
+
+    ---
+
+    End-to-end from pixels: next-embedding MSE plus SIGReg, with an adaLN-conditioned causal predictor.
+
+    trained encoder · SIGReg
+
+-   **[LeWAM](lewam.md)**
+
+    ---
+
+    World and action model: latent dynamics and a flow-matching policy that generates action chunks, in one mixture of transformers. Plans with `LeWAMPlanner`.
+
+    trained encoder · SIGReg · flow matching
+
+-   **[DINO-WM](dinowm.md)**
+
+    ---
+
+    Dynamics over the patch features of a frozen DINOv2 encoder, with proprioception.
+
+    frozen encoder · MSE
+
+-   **[RoboJEPA](robojepa.md)**
+
+    ---
+
+    One predictor for many robots and cameras, in the latent space of a frozen V-JEPA 2.1 encoder.
+
+    frozen encoder · L1 + rollout
+
+</div>
+
+## Vision
+
+Self-supervised representation learning from images and video. They subclass `JEPA`; their encoders are evaluated with frozen-feature [probes](../../guides/metrics.md#probing-frozen-features).
 
 <div class="grid cards" markdown>
 
@@ -24,12 +66,6 @@ All models in this family live in `torch_world.models.jepa` and are exported fro
 
     SIGReg · multi-view
 
-</div>
-
-## Video
-
-<div class="grid cards" markdown>
-
 -   **[V-JEPA](vjepa.md)**
 
     ---
@@ -41,6 +77,8 @@ All models in this family live in `torch_world.models.jepa` and are exported fro
 </div>
 
 ## Vision-language
+
+Predict the embedding of text from images or video and a query.
 
 <div class="grid cards" markdown>
 
@@ -54,66 +92,28 @@ All models in this family live in `torch_world.models.jepa` and are exported fro
 
 </div>
 
-## World models
-
-Action-conditioned JEPAs. They subclass `WorldModel`, so `rollout`, `cost` and [CEM planning](../../guides/planning.md) work without extra code.
-
-<div class="grid cards" markdown>
-
--   **[LeWM](lewm.md)**
-
-    ---
-
-    End-to-end from pixels: next-embedding MSE plus SIGReg, with an adaLN-conditioned causal predictor.
-
-    trained encoder · SIGReg
-
--   **[DINO-WM](dinowm.md)**
-
-    ---
-
-    Dynamics over the patch features of a frozen DINOv2 encoder, with proprioception.
-
-    frozen encoder · MSE
-
-</div>
-
-## Robotics
-
-World models for robot control: several cameras, proprioceptive state, and action spaces that differ between embodiments. They are `WorldModel`s too, and plan with the same `CEM`, conditioned on the robot's state and embodiment.
-
-<div class="grid cards" markdown>
-
--   **[RoboJEPA](robojepa.md)**
-
-    ---
-
-    One predictor for many robots and cameras, in the latent space of a frozen V-JEPA 2.1 encoder.
-
-    frozen encoder · L1 + rollout
-
-</div>
-
 ## How they compare
 
 | model | predicts | from | anti-collapse | loss |
 |---|---|---|---|---|
+| [LeWM](lewm.md) | next frame embedding | past embeddings + actions | SIGReg | MSE + SIGReg |
+| [LeWAM](lewam.md) | future embeddings and an action chunk | past embeddings + actions (+ goal) | SIGReg | MSE + flow matching + SIGReg |
+| [DINO-WM](dinowm.md) | next frame patch features | past features + actions | frozen encoder | MSE |
+| [RoboJEPA](robojepa.md) | next frame features of every view | past features + actions + states | frozen encoder | L1, teacher forcing + rollout |
 | [I-JEPA](ijepa.md) | features of masked image blocks | a visible context block | EMA target | smooth L1 |
 | [LeJEPA](lejepa.md) | mean embedding of global views | every view | SIGReg | MSE + SIGReg |
 | [V-JEPA](vjepa.md) | features of masked video tubes | the unmasked tokens | EMA target | L1 (+ variance hinge) |
 | [VL-JEPA](vljepa.md) | embedding of the target text | visual tokens + query | contrastive | InfoNCE |
-| [LeWM](lewm.md) | next frame embedding | past embeddings + actions | SIGReg | MSE + SIGReg |
-| [DINO-WM](dinowm.md) | next frame patch features | past features + actions | frozen encoder | MSE |
-| [RoboJEPA](robojepa.md) | next frame features of every view | past features + actions + states | frozen encoder | L1, teacher forcing + rollout |
 
 ## Papers and code
 
 | model | paper | reference code |
 |---|---|---|
+| `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) |
+| `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) |
+| `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) |
+| `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) |
 | `IJEPA` | [Assran et al., 2023](https://arxiv.org/abs/2301.08243) | [facebookresearch/ijepa](https://github.com/facebookresearch/ijepa) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) |
 | `VJEPA` | [Bardes et al., 2024](https://arxiv.org/abs/2404.08471), [Assran et al., 2025](https://arxiv.org/abs/2506.09985) | [facebookresearch/jepa](https://github.com/facebookresearch/jepa), [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) |
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released |
-| `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) |
-| `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) |
-| `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) |
