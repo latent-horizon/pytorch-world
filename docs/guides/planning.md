@@ -45,6 +45,19 @@ planner(model, z, goal, states=env.state[:, None], embodiment=ids)
 
 Pass a `torch.Generator` as `generator` for reproducible plans.
 
+## MPPI: planning for reward
+
+[TD-MPC2](../models/tdmpc/tdmpc2.md) plans for the highest return instead of toward a goal. [`MPPI`](../api/planning.md) scores action sequences with `model.estimate_value`: predicted rewards over the horizon plus a learned value at its end. Each iteration it adds `num_pi_trajs` sequences from the model's policy prior to Gaussian samples, and refits the Gaussian to the `num_elites` best, weighted by `softmax(temperature * value)`. The plan it returns is one elite drawn with those weights.
+
+```python
+from torch_world.planning import MPPI
+
+planner = MPPI(horizon=3, action_dim=2)                          # the paper's settings
+plan = planner(model, model.encode(obs[:, None]), explore=True)  # (B, horizon, action_dim), in [-1, 1]
+```
+
+`MPPI` remembers its last mean and starts the next call from it, shifted by one step: call `planner.reset()` between episodes. `explore=True` adds noise with the final std, as when collecting data.
+
 ## Closed loop
 
 Model-predictive control: plan, execute the first action, observe, plan again. [`run_policy`](../api/envs.md) runs any `policy(observation) -> action` in an environment and returns the visited states.

@@ -31,7 +31,7 @@ uv add torch_world
 
 A **world model** learns how an environment evolves: from an observation and an action, it predicts what happens next. With one, an agent can plan by imagining the outcomes of its actions before taking them.
 
-`torch_world` gives world-model research shared parts. Models are organized into **families** that share a way of learning, and every model is built from the same layers, objectives, planners, environments and datasets. The first family is **JEPA**, which predicts the future in a learned representation space instead of in pixels. More families and models are on the way.
+`torch_world` gives world-model research shared parts. Models are organized into **families** that share a way of learning, and every model is built from the same layers, objectives, planners, environments and datasets. The first family is **JEPA**, which predicts the future in a learned representation space instead of in pixels; **TD-MPC** learns latent dynamics for control from rewards and values. More families and models are on the way.
 
 <div class="grid cards" markdown>
 
@@ -39,7 +39,7 @@ A **world model** learns how an environment evolves: from an observation and an 
 
     ---
 
-    Models grouped by how they learn. JEPA comes first, with seven models from image pretraining to multi-robot control. More families are coming.
+    Models grouped by how they learn: JEPA, from image pretraining to multi-robot control, and TD-MPC, for reward-driven control. More families are coming.
 
     [:octicons-arrow-right-24: Models](models/index.md)
 

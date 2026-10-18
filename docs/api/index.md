@@ -8,7 +8,7 @@ Generated from the docstrings of `torch_world`.
 | [`torch_world.masks`](masks.md) | `MultiBlockMask` (2D), `MultiBlock3DMask` (video), `frame_causal_mask`, `apply_masks` |
 | [`torch_world.losses`](losses.md) | `SIGReg`, `info_nce` |
 | [`torch_world.models`](models.md) | the `JEPA` and `WorldModel` base classes and the models |
-| [`torch_world.planning`](planning.md) | `CEM`, for any `WorldModel`, scoring the final or every imagined step |
+| [`torch_world.planning`](planning.md) | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward |
 | [`torch_world.envs`](envs.md) | `RobotCube` (reach or pick-and-place) and `PushT` (MuJoCo), the pixel worlds `Macaw` and `PointMass`; `run_policy` |
 | [`torch_world.datasets`](datasets.md) | `TrajectoryDataset`, `MedMNIST`, `MedicalVQA` |
 | [`torch_world.evaluation`](evaluation.md) | protocols that run a model and score it: `goal_reaching` for planners (success rates, videos), `vqa` and `compare` for question answering |
