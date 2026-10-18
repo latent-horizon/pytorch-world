@@ -44,7 +44,7 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `torch_world.masks` | `MultiBlockMask` (2D), `MultiBlock3DMask` (video), `frame_causal_mask`, `apply_masks` |
 | `torch_world.losses` | `SIGReg`, `info_nce` |
 | `torch_world.models` | the `JEPA` and `WorldModel` base classes and the models below |
-| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step |
+| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward |
 | `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw` and `PointMass`; `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
@@ -68,6 +68,14 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) | [action/robojepa](examples/action/robojepa.ipynb) |
 
 Joint-embedding predictive architectures (JEPAs) predict the *representation* of a target from the representation of a context, instead of reconstructing pixels. Action-conditioned JEPAs are world models: they predict the next latent state from the current one and an action, and planning searches for the actions that bring the imagined latent closest to a goal.
+
+### TD-MPC
+
+| model | paper | reference code | notebook |
+|---|---|---|---|
+| `TDMPC2` | [Hansen et al., 2024](https://arxiv.org/abs/2310.16828) | [nicklashansen/tdmpc2](https://github.com/nicklashansen/tdmpc2) | [action/tdmpc2](examples/action/tdmpc2.ipynb) |
+
+TD-MPC world models have no decoder: latent dynamics are trained to predict the next latent, the reward and, by temporal-difference learning, the value. MPPI plans for the highest imagined return, with proposals from a learned policy prior.
 
 ## Environment benchmarks
 

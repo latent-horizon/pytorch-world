@@ -22,3 +22,15 @@
 
 ::: torch_world.models.jepa.EmbodimentLinear
 
+::: torch_world.models.TDMPC2
+
+::: torch_world.models.tdmpc.state_encoder
+
+::: torch_world.models.tdmpc.pixel_encoder
+
+::: torch_world.models.tdmpc.SimNorm
+
+::: torch_world.models.tdmpc.ShiftAug
+
+::: torch_world.models.tdmpc.mlp
+

@@ -132,6 +132,7 @@ extra:
           - {name: LeWAM, url: models/jepa/lewam/}
           - {name: DINO-WM, url: models/jepa/dinowm/}
           - {name: RoboJEPA, url: models/jepa/robojepa/}
+          - {name: TD-MPC2, url: models/tdmpc/tdmpc2/}
       - title: Build
         links:
           - {name: Environments, url: environments/}
@@ -185,6 +186,9 @@ nav:
               - V-JEPA: models/jepa/vjepa.md
           - Vision-language:
               - VL-JEPA: models/jepa/vljepa.md
+      - TD-MPC:
+          - models/tdmpc/index.md
+          - TD-MPC2: models/tdmpc/tdmpc2.md
   - Environments:
       - environments/index.md
       - Planning puzzles:
@@ -241,6 +245,7 @@ nav:
           - LeWAM: examples/action/lewam.ipynb
           - DINO-WM: examples/action/dinowm.ipynb
           - RoboJEPA: examples/action/robojepa.ipynb
+          - TD-MPC2: examples/action/tdmpc2.ipynb
       - Vision:
           - I-JEPA: examples/vision/ijepa.ipynb
           - LeJEPA: examples/vision/lejepa.ipynb
