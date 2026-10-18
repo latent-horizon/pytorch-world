@@ -26,7 +26,7 @@ with KeyDoor(quality="high") as world:
     show_results(result)
 ```
 
-Listing never imports an optional simulator. Puzzles need only PyTorch. MuJoCo tasks need `pip install -e ".[benchmark]"`, Newton tasks `pip install -e ".[newton]"`, and the Franka tasks an Isaac Lab 3.x GPU runtime; see [Environment benchmarks](../guides/benchmark-environments.md#install-the-relevant-backend). Tasks marked *original* also keep their earlier interfaces; see [Pixel worlds](../guides/environments.md).
+Listing never imports an optional simulator. Puzzles need only PyTorch. MuJoCo tasks need `pip install -e ".[benchmark]"`, Newton tasks `pip install -e ".[newton]"`, and the Franka tasks an Isaac Lab 3.x GPU runtime; see [Install a backend](../guides/benchmark-environments.md#install-a-backend). Tasks marked *original* also keep their earlier interfaces; see [Pixel worlds](../guides/environments.md).
 
 ## Planning puzzles
 
@@ -91,4 +91,4 @@ Arms and grippers that act through contact: reaching, pushing, sliding, insertio
 
 ## Add your own
 
-Register an `EnvSpec` with a `category` from `CATEGORIES`, or a new name of your own, and it appears in `list_envs(category=...)`. See [Add an environment or task](../guides/benchmark-environments.md#add-an-environment-or-task).
+Register an `EnvSpec` with a `category` from `CATEGORIES`, or a new name of your own, and it appears in `list_envs(category=...)`. See [Bring your own environment](../guides/custom-environment.md).

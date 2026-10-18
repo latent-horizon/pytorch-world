@@ -1,6 +1,6 @@
-# Build your own model
+# Bring your own model
 
-A new model is a subclass of `JEPA` or `WorldModel` built from the shared modules. This page writes a world model in about 30 lines, then trains it and plans with it without further code. The [custom model notebook](../examples/custom_model.ipynb) runs it end to end.
+A new model is a subclass of `WorldModel` (action-conditioned dynamics) or `JEPA` (representation learning), built from the shared modules. This page writes a world model in about 30 lines, then trains it, plans with it and benchmarks it with no further code. The [custom model notebook](../examples/custom_model.ipynb) runs it end to end.
 
 ## The contract
 
@@ -12,7 +12,9 @@ For a `WorldModel`, implement three methods:
 | `predict(z, actions, ...)` | `z[:, t]` and `actions[:, t]` to a prediction of `z[:, t + 1]`, for every `t` |
 | `forward(...)` | a batch to `{"loss": ..., **components}` |
 
-and set `history`, the number of past latents `predict` should see during rollouts. `rollout`, `cost` and `CEM` planning then work as is.
+and set `history`, the number of past latents `predict` should see during rollouts. `rollout` and `cost` are inherited, so [planners](custom-planner.md) work as is. Override `cost` for another distance to the goal.
+
+A `JEPA` only needs `forward`. For an EMA target encoder, build it with `make_target_encoder` and call `update_target` after each step ([Training](training.md#ema-targets)).
 
 ## A convolutional JEPA
 
@@ -61,6 +63,21 @@ Train it like any other model ([Training](training.md)), and plan with [`CEM`](p
 planner = CEM(horizon=5, action_dim=2, num_samples=512, num_elites=48, iterations=10, bounds=(-1, 1))
 actions = planner(model, model.encode(obs[:, None]), goal)
 ```
+
+## Benchmark it
+
+`run_experiment` takes a factory that receives the observation shape and the action dimension. The one-step benchmark protocol requires `history = 1`. The encoder above expects 32 × 32 images:
+
+```python
+from torch_world.benchmarks import run_experiment, show_results
+from torch_world.envs import Maze
+
+with Maze(size=32) as world:
+    result = run_experiment(world, model_factory=lambda shape, action_dim: ConvJEPA(action_dim))
+show_results(result)
+```
+
+For other shapes, start from `benchmarks.observation_encoder(shape)`: a small CNN for images, an MLP for vectors. The [custom model notebook](../examples/envs/custom_model_three_envs.ipynb) compares such a model with LeWM on three tasks.
 
 ## Parts to reach for
 

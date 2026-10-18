@@ -122,7 +122,7 @@ extra:
           - {name: Installation, url: getting-started/installation/}
           - {name: Quick start, url: getting-started/quickstart/}
           - {name: Concepts, url: getting-started/concepts/}
-          - {name: Build your own model, url: guides/custom-model/}
+          - {name: Bring your own model, url: guides/custom-model/}
       - title: Models
         links:
           - {name: All models, url: models/}
@@ -153,14 +153,21 @@ nav:
       - Quick start: getting-started/quickstart.md
       - Concepts: getting-started/concepts.md
   - Guides:
-      - Masking: guides/masking.md
-      - Training: guides/training.md
-      - Planning: guides/planning.md
-      - Metrics: guides/metrics.md
-      - Pixel worlds: guides/environments.md
-      - Environment benchmarks: guides/benchmark-environments.md
-      - Figures: guides/plots.md
-      - Build your own model: guides/custom-model.md
+      - guides/index.md
+      - Bring your own:
+          - Model: guides/custom-model.md
+          - Environment: guides/custom-environment.md
+          - Dataset: guides/custom-dataset.md
+          - Planner: guides/custom-planner.md
+      - Train and evaluate:
+          - Training: guides/training.md
+          - Masking: guides/masking.md
+          - Planning: guides/planning.md
+          - Metrics: guides/metrics.md
+          - Figures: guides/plots.md
+      - Benchmarks:
+          - Benchmark experiments: guides/benchmark-environments.md
+          - Pixel worlds: guides/environments.md
   - Models:
       - models/index.md
       - JEPA:

@@ -85,3 +85,4 @@ success = ((paths[:, -1] - goals).norm(dim=-1) < 0.1).float().mean()
 - [Concepts](concepts.md): the two base classes and the shape conventions.
 - [Models](../models/index.md): every model, what it predicts and how to call it.
 - [LeWM notebook](../examples/action/lewm.ipynb): this page with figures, probes and results.
+- [Guides](../guides/index.md): bring your own model, environment, dataset or planner.
