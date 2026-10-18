@@ -172,19 +172,17 @@ nav:
       - models/index.md
       - JEPA:
           - models/jepa/index.md
-          - Images:
-              - I-JEPA: models/jepa/ijepa.md
-              - LeJEPA: models/jepa/lejepa.md
-          - Video:
-              - V-JEPA: models/jepa/vjepa.md
-          - Vision-language:
-              - VL-JEPA: models/jepa/vljepa.md
-          - World models:
+          - Action:
               - LeWM: models/jepa/lewm.md
               - LeWAM: models/jepa/lewam.md
               - DINO-WM: models/jepa/dinowm.md
-          - Robotics:
               - RoboJEPA: models/jepa/robojepa.md
+          - Vision:
+              - I-JEPA: models/jepa/ijepa.md
+              - LeJEPA: models/jepa/lejepa.md
+              - V-JEPA: models/jepa/vjepa.md
+          - Vision-language:
+              - VL-JEPA: models/jepa/vljepa.md
   - Environments:
       - environments/index.md
       - Planning puzzles:
@@ -232,19 +230,19 @@ nav:
   - Notebooks:
       - Tour: examples/intro.ipynb
       - Custom model: examples/custom_model.ipynb
-      - Vision:
-          - I-JEPA: examples/vision/ijepa.ipynb
-          - V-JEPA: examples/vision/vjepa.ipynb
-          - LeJEPA: examples/vision/lejepa.ipynb
-      - Environments:
-          - Custom model: examples/envs/custom_model_three_envs.ipynb
       - Action:
           - LeWM: examples/action/lewm.ipynb
           - LeWAM: examples/action/lewam.ipynb
           - DINO-WM: examples/action/dinowm.ipynb
           - RoboJEPA: examples/action/robojepa.ipynb
-      - VQA:
+      - Vision:
+          - I-JEPA: examples/vision/ijepa.ipynb
+          - LeJEPA: examples/vision/lejepa.ipynb
+          - V-JEPA: examples/vision/vjepa.ipynb
+      - Vision-language:
           - VL-JEPA: examples/vqa/vljepa.ipynb
+      - Environments:
+          - Custom model: examples/envs/custom_model_three_envs.ipynb
   - API:
       - api/index.md
       - torch_world.nn: api/nn.md
