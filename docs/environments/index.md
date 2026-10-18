@@ -1,15 +1,19 @@
 # Environments
 
-`torch_world.envs` registers 33 tasks for training and evaluating world models, in four categories. Every task is batched, exposes the same `reset` / `step` / `collect` interface, and has a notebook that trains LeWM and plans with CEM.
+`torch_world` works with **138 environments** for training and evaluating world models: 33 built-in tasks in four categories, 13 from [OGBench](#ogbench), 50 from [RoboCasa](#robocasa) and 42 from [RoboDojo](#robodojo). The 96 built-in, OGBench and RoboCasa tasks are registered in `torch_world.envs`, batched behind the same `reset` / `step` / `collect` interface; RoboDojo's tasks run in RoboDojo's own evaluation client, which a torch-world policy serves. Each built-in task has a notebook that trains LeWM and plans with CEM; OGBench, RoboCasa and RoboDojo each have one that trains a RoboJEPA baseline.
 
 The **Success** column shows a verified reference episode from `world.show_success()`: real simulator steps that end in the task's success condition. These references are privileged controllers or search, not model results.
 
-| Category | `category=` | Tasks | Backends |
+| Group | `category=` | Tasks | Backends |
 |---|---|---:|---|
 | [Planning puzzles](#planning-puzzles) | `"puzzles"` | 5 | PyTorch |
 | [Control](#control) | `"control"` | 6 | MuJoCo, Newton |
 | [Navigation and locomotion](#navigation-and-locomotion) | `"navigation"` | 6 | PyTorch, MuJoCo |
 | [Manipulation](#manipulation) | `"manipulation"` | 16 | MuJoCo, Isaac Lab |
+| [OGBench](#ogbench) | `"navigation"`, `"manipulation"` | 13 | MuJoCo (OGBench) |
+| [RoboCasa](#robocasa) | `"manipulation"` | 50 | MuJoCo (robosuite) |
+| [RoboDojo](#robodojo) | evaluated by RoboDojo | 42 | Isaac Sim (RoboDojo) |
+| **Total** | | **138** | |
 
 ## Use an environment
 
@@ -88,6 +92,160 @@ Arms and grippers that act through contact: reaching, pushing, sliding, insertio
 | ![FrankaCubeLift-v0 verified success](../assets/envs/success/frankacubelift_v0.gif){ width="120" loading=lazy } | `FrankaCubeLift-v0` | Isaac Lab | Franka grasping and lifting a free cube | [notebook](../examples/envs/manipulation/frankacubelift_v0.ipynb) |
 | ![FrankaObstacleReach-v0 verified success](../assets/envs/success/frankaobstaclereach_v0.gif){ width="120" loading=lazy } | `FrankaObstacleReach-v0` | Isaac Lab | Franka reaching around a tabletop barrier | [notebook](../examples/envs/manipulation/frankaobstaclereach_v0.ipynb) |
 | ![FrankaTablePush-v0 verified success](../assets/envs/success/frankatablepush_v0.gif){ width="120" loading=lazy } | `FrankaTablePush-v0` | Isaac Lab | Franka contact pushing on a tabletop | [notebook](../examples/envs/manipulation/frankatablepush_v0.ipynb) |
+
+## OGBench
+
+[OGBench](https://github.com/seohongpark/ogbench) is an offline goal-conditioned benchmark: models train on its fixed datasets, then reach goals in five evaluation tasks per environment. One task per family and observation type is registered under `OGBench/<dataset name>`, in the navigation and manipulation categories; `OGBench(name)` builds any other OGBench task, and `load_ogbench(name)` loads its dataset. They need `pip install "torch-world[ogbench]"`. See [OGBench](../guides/benchmark-environments.md#ogbench) for the protocol and the [notebook](../examples/envs/ogbench.ipynb) for a RoboJEPA baseline on `visual-cube-single-play-v0`.
+
+| Preview | Environment | Category | Observation | Actions | Steps | Task |
+|:---:|---|---|---|---:|---:|---|
+| ![pointmaze-medium-navigate-v0 dataset episode](../assets/envs/ogbench/pointmaze-medium-navigate.gif){ width="120" loading=lazy } | `OGBench/pointmaze-medium-navigate-v0` | navigation | state (2) | 2 | 1000 | Navigate a point mass through a medium maze |
+| ![antmaze-medium-navigate-v0 dataset episode](../assets/envs/ogbench/antmaze-medium-navigate.gif){ width="120" loading=lazy } | `OGBench/antmaze-medium-navigate-v0` | navigation | state (29) | 8 | 1000 | Navigate a quadruped ant through a medium maze |
+| ![visual-antmaze-medium-navigate-v0 dataset episode](../assets/envs/ogbench/visual-antmaze-medium-navigate.gif){ width="120" loading=lazy } | `OGBench/visual-antmaze-medium-navigate-v0` | navigation | RGB 64 × 64 | 8 | 1000 | Navigate the ant through a medium maze from pixels |
+| ![humanoidmaze-medium-navigate-v0 dataset episode](../assets/envs/ogbench/humanoidmaze-medium-navigate.gif){ width="120" loading=lazy } | `OGBench/humanoidmaze-medium-navigate-v0` | navigation | state (69) | 21 | 2000 | Navigate a humanoid through a medium maze |
+| ![antsoccer-arena-navigate-v0 dataset episode](../assets/envs/ogbench/antsoccer-arena-navigate.gif){ width="120" loading=lazy } | `OGBench/antsoccer-arena-navigate-v0` | navigation | state (42) | 8 | 1000 | Dribble a ball to a goal with the ant |
+| ![cube-single-play-v0 dataset episode](../assets/envs/ogbench/cube-single-play.gif){ width="120" loading=lazy } | `OGBench/cube-single-play-v0` | manipulation | state (28) | 5 | 200 | Move one cube to a goal pose with a UR5e arm |
+| ![visual-cube-single-play-v0 dataset episode](../assets/envs/ogbench/visual-cube-single-play.gif){ width="120" loading=lazy } | `OGBench/visual-cube-single-play-v0` | manipulation | RGB 64 × 64 | 5 | 200 | Move one cube to a goal pose from pixels |
+| ![cube-double-play-v0 dataset episode](../assets/envs/ogbench/cube-double-play.gif){ width="120" loading=lazy } | `OGBench/cube-double-play-v0` | manipulation | state (37) | 5 | 500 | Rearrange two cubes into goal poses |
+| ![visual-cube-double-play-v0 dataset episode](../assets/envs/ogbench/visual-cube-double-play.gif){ width="120" loading=lazy } | `OGBench/visual-cube-double-play-v0` | manipulation | RGB 64 × 64 | 5 | 500 | Rearrange two cubes into goal poses from pixels |
+| ![scene-play-v0 dataset episode](../assets/envs/ogbench/scene-play.gif){ width="120" loading=lazy } | `OGBench/scene-play-v0` | manipulation | state (40) | 5 | 750 | Reach a goal configuration of a cube, drawer, window and buttons |
+| ![visual-scene-play-v0 dataset episode](../assets/envs/ogbench/visual-scene-play.gif){ width="120" loading=lazy } | `OGBench/visual-scene-play-v0` | manipulation | RGB 64 × 64 | 5 | 750 | Reach a goal scene configuration from pixels |
+| ![puzzle-3x3-play-v0 dataset episode](../assets/envs/ogbench/puzzle-3x3-play.gif){ width="120" loading=lazy } | `OGBench/puzzle-3x3-play-v0` | manipulation | state (55) | 5 | 500 | Solve a 3x3 lights-out button puzzle with the arm |
+| ![visual-puzzle-3x3-play-v0 dataset episode](../assets/envs/ogbench/visual-puzzle-3x3-play.gif){ width="120" loading=lazy } | `OGBench/visual-puzzle-3x3-play-v0` | manipulation | RGB 64 × 64 | 5 | 500 | Solve the 3x3 button puzzle from pixels |
+
+Previews replay an episode of each task's OGBench validation dataset through the task's own camera: OGBench's expert and scripted data, not verified successes on its evaluation tasks. `python examples/envs/render_benchmark_thumbnails.py ogbench` renders them.
+
+```python
+from torch_world.envs import OGBench, list_envs, make
+
+[spec.id for spec in list_envs(backend="ogbench")]
+world = make("OGBench/visual-cube-single-play-v0", task_id=2, batch_size=8)
+world = OGBench("visual-cube-triple-play-v0", task_id=2)   # any OGBench dataset name
+```
+
+## RoboDojo
+
+[RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo) has 42 dual-arm manipulation tasks, from stacking bowls and folding clothes to playing a xylophone, by two ARX X5 arms in Isaac Sim 5.1. Its tasks run only inside RoboDojo's own evaluation client, which asks an [XPolicyLab](https://github.com/XPolicyLab/XPolicyLab) policy server for actions, so they are not built by `make`. A torch-world policy serves them through [`RoboDojoPolicy`](../guides/benchmark-environments.md#robodojo) and trains on their demonstrations with [`load_robodojo`](../datasets/trajectories.md#robodojo-episodes). The [notebook](../examples/envs/robodojo.ipynb) trains a RoboJEPA baseline on RoboDojo's demo bundle and serves it through XPolicyLab.
+
+| | |
+|---|---|
+| Robot | two ARX X5 arms with grippers: 14 joint targets per action, or end-effector poses |
+| Observations | three RGB cameras (`cam_head`, `cam_left_wrist`, `cam_right_wrist`, 640 × 480), joint states, language instruction |
+| Scoring | success rate and partial-credit score over RoboDojo's fixed evaluation layouts |
+
+| Preview | Task | Capability | Demonstrations |
+|:---:|---|---|:---:|
+| ![stack_bowls task video](../assets/envs/robodojo/stack_bowls.gif){ width="120" loading=lazy } | `stack_bowls` | Generalization | ✓ |
+| ![push_T task video](../assets/envs/robodojo/push_T.gif){ width="120" loading=lazy } | `push_T` | Generalization | ✓ |
+| ![pack_objects_into_box task video](../assets/envs/robodojo/pack_objects_into_box.gif){ width="120" loading=lazy } | `pack_objects_into_box` | Generalization | ✓ |
+| ![fold_clothes task video](../assets/envs/robodojo/fold_clothes.gif){ width="120" loading=lazy } | `fold_clothes` | Generalization | ✓ |
+| ![hang_mugs task video](../assets/envs/robodojo/hang_mugs.gif){ width="120" loading=lazy } | `hang_mugs` | Generalization | ✓ |
+| ![sweep_blocks task video](../assets/envs/robodojo/sweep_blocks.gif){ width="120" loading=lazy } | `sweep_blocks` | Generalization | ✓ |
+| ![pour_liquid_into_cup task video](../assets/envs/robodojo/pour_liquid_into_cup.gif){ width="120" loading=lazy } | `pour_liquid_into_cup` | Generalization | ✓ |
+| ![make_toast task video](../assets/envs/robodojo/make_toast.gif){ width="120" loading=lazy } | `make_toast` | Generalization | ✓ |
+| ![arrange_largest_number task video](../assets/envs/robodojo/arrange_largest_number.gif){ width="120" loading=lazy } | `arrange_largest_number` | Generalization | ✓ |
+| ![sort_nesting_dolls_by_size task video](../assets/envs/robodojo/sort_nesting_dolls_by_size.gif){ width="120" loading=lazy } | `sort_nesting_dolls_by_size` | Generalization | ✓ |
+| ![store_laptop_and_headphones task video](../assets/envs/robodojo/store_laptop_and_headphones.gif){ width="120" loading=lazy } | `store_laptop_and_headphones` | Generalization | ✓ |
+| ![stack_blocks task video](../assets/envs/robodojo/stack_blocks.gif){ width="120" loading=lazy } | `stack_blocks` | Generalization | ✓ |
+| ![fasten_screws task video](../assets/envs/robodojo/fasten_screws.gif){ width="120" loading=lazy } | `fasten_screws` | Precision | ✓ |
+| ![insert_tubes task video](../assets/envs/robodojo/insert_tubes.gif){ width="120" loading=lazy } | `insert_tubes` | Precision | ✓ |
+| ![plug_in_charger task video](../assets/envs/robodojo/plug_in_charger.gif){ width="120" loading=lazy } | `plug_in_charger` | Precision | ✓ |
+| ![pour_balls_into_vase task video](../assets/envs/robodojo/pour_balls_into_vase.gif){ width="120" loading=lazy } | `pour_balls_into_vase` | Precision | ✓ |
+| ![play_Xylophone task video](../assets/envs/robodojo/play_Xylophone.gif){ width="120" loading=lazy } | `play_Xylophone` | Precision | ✓ |
+| ![deposit_coin task video](../assets/envs/robodojo/deposit_coin.gif){ width="120" loading=lazy } | `deposit_coin` | Precision | ✓ |
+| ![insert_key task video](../assets/envs/robodojo/insert_key.gif){ width="120" loading=lazy } | `insert_key` | Precision | ✓ |
+| ![build_tower task video](../assets/envs/robodojo/build_tower.gif){ width="120" loading=lazy } | `build_tower` | Precision | ✓ |
+| ![put_bottles_into_dustbin task video](../assets/envs/robodojo/put_bottles_into_dustbin.gif){ width="120" loading=lazy } | `put_bottles_into_dustbin` | Long-Horizon | ✓ |
+| ![play_tic_tac_toe task video](../assets/envs/robodojo/play_tic_tac_toe.gif){ width="120" loading=lazy } | `play_tic_tac_toe` | Long-Horizon | ✓ |
+| ![classify_objects task video](../assets/envs/robodojo/classify_objects.gif){ width="120" loading=lazy } | `classify_objects` | Long-Horizon | ✓ |
+| ![fill_pen_holder task video](../assets/envs/robodojo/fill_pen_holder.gif){ width="120" loading=lazy } | `fill_pen_holder` | Long-Horizon | ✓ |
+| ![fill_egg_holder task video](../assets/envs/robodojo/fill_egg_holder.gif){ width="120" loading=lazy } | `fill_egg_holder` | Long-Horizon | ✓ |
+| ![organize_table task video](../assets/envs/robodojo/organize_table.gif){ width="120" loading=lazy } | `organize_table` | Long-Horizon | ✓ |
+| ![play_stacking_toy task video](../assets/envs/robodojo/play_stacking_toy.gif){ width="120" loading=lazy } | `play_stacking_toy` | Long-Horizon | ✓ |
+| ![make_kong task video](../assets/envs/robodojo/make_kong.gif){ width="120" loading=lazy } | `make_kong` | Long-Horizon | ✓ |
+| ![cover_blocks task video](../assets/envs/robodojo/cover_blocks.gif){ width="120" loading=lazy } | `cover_blocks` | Memory | ✓ |
+| ![match_and_pick_from_conveyor task video](../assets/envs/robodojo/match_and_pick_from_conveyor.gif){ width="120" loading=lazy } | `match_and_pick_from_conveyor` | Memory | ✓ |
+| ![swap_T task video](../assets/envs/robodojo/swap_T.gif){ width="120" loading=lazy } | `swap_T` | Memory | ✓ |
+| ![press_by_number task video](../assets/envs/robodojo/press_by_number.gif){ width="120" loading=lazy } | `press_by_number` | Memory | ✓ |
+| ![imitate_sorting_sequence task video](../assets/envs/robodojo/imitate_sorting_sequence.gif){ width="120" loading=lazy } | `imitate_sorting_sequence` | Memory | ✓ |
+| ![swap_blocks task video](../assets/envs/robodojo/swap_blocks.gif){ width="120" loading=lazy } | `swap_blocks` | Memory | ✓ |
+| ![align_blocks task video](../assets/envs/robodojo/align_blocks.gif){ width="120" loading=lazy } | `align_blocks` | Open | — |
+| ![solve_equation task video](../assets/envs/robodojo/solve_equation.gif){ width="120" loading=lazy } | `solve_equation` | Open | — |
+| ![stack_blocks_by_language task video](../assets/envs/robodojo/stack_blocks_by_language.gif){ width="120" loading=lazy } | `stack_blocks_by_language` | Open | ✓ |
+| ![general_pickup task video](../assets/envs/robodojo/general_pickup.gif){ width="120" loading=lazy } | `general_pickup` | Open | — |
+| ![classify_objects_by_language task video](../assets/envs/robodojo/classify_objects_by_language.gif){ width="120" loading=lazy } | `classify_objects_by_language` | Open | — |
+| ![pick_from_conveyor_by_image task video](../assets/envs/robodojo/pick_from_conveyor_by_image.gif){ width="120" loading=lazy } | `pick_from_conveyor_by_image` | Open | — |
+| ![store_tools_in_toolbox task video](../assets/envs/robodojo/store_tools_in_toolbox.gif){ width="120" loading=lazy } | `store_tools_in_toolbox` | Open | — |
+| ![pour_by_language task video](../assets/envs/robodojo/pour_by_language.gif){ width="120" loading=lazy } | `pour_by_language` | Open | — |
+
+Previews are RoboDojo's official task videos from [robodojo-benchmark.com](https://robodojo-benchmark.com), cropped to a square; `python examples/envs/render_benchmark_thumbnails.py robodojo` renders them. RoboDojo groups its tasks by the capability they test. **Demonstrations** marks the tasks with public training data; seven Open tasks have none and are evaluated only. Twelve Generalization tasks also have a `_random` variant with cluttered layouts. `torch_world.datasets.robodojo.ROBODOJO_TASKS` lists the task names.
+
+## RoboCasa
+
+[RoboCasa](https://robocasa.ai) is a large kitchen benchmark in MuJoCo: a mobile Franka arm (`PandaOmron`) performs 365 tasks across 2,500 pretraining and 10 target kitchens. Its 50 target tasks are registered under `RoboCasa/<task>` in the manipulation category: 18 atomic tasks and 16 composite tasks seen in pretraining, and 16 composite tasks that are not. `RoboCasa(task)` builds any other RoboCasa task, and `load_robocasa` loads its demonstrations. Tasks are given in language, so episodes end at RoboCasa's own success check. RoboCasa pins MuJoCo 3.3.1 and installs from source with 23 GB of kitchen assets, in its own environment; see [RoboCasa](../guides/benchmark-environments.md#robocasa).
+
+| Preview | Environment | Task set | Task |
+|:---:|---|---|---|
+| ![ArrangeBreadBasket demonstration](../assets/envs/robocasa/ArrangeBreadBasket.gif){ width="120" loading=lazy } | `RoboCasa/ArrangeBreadBasket` | composite, unseen | Arrange bread basket |
+| ![ArrangeTea demonstration](../assets/envs/robocasa/ArrangeTea.gif){ width="120" loading=lazy } | `RoboCasa/ArrangeTea` | composite, unseen | Arrange tea |
+| ![BreadSelection demonstration](../assets/envs/robocasa/BreadSelection.gif){ width="120" loading=lazy } | `RoboCasa/BreadSelection` | composite, unseen | Bread selection |
+| ![CategorizeCondiments demonstration](../assets/envs/robocasa/CategorizeCondiments.gif){ width="120" loading=lazy } | `RoboCasa/CategorizeCondiments` | composite, unseen | Categorize condiments |
+| ![CloseBlenderLid demonstration](../assets/envs/robocasa/CloseBlenderLid.gif){ width="120" loading=lazy } | `RoboCasa/CloseBlenderLid` | atomic, seen | Close blender lid |
+| ![CloseFridge demonstration](../assets/envs/robocasa/CloseFridge.gif){ width="120" loading=lazy } | `RoboCasa/CloseFridge` | atomic, seen | Close fridge |
+| ![CloseToasterOvenDoor demonstration](../assets/envs/robocasa/CloseToasterOvenDoor.gif){ width="120" loading=lazy } | `RoboCasa/CloseToasterOvenDoor` | atomic, seen | Close toaster oven door |
+| ![CoffeeSetupMug demonstration](../assets/envs/robocasa/CoffeeSetupMug.gif){ width="120" loading=lazy } | `RoboCasa/CoffeeSetupMug` | atomic, seen | Coffee setup mug |
+| ![CuttingToolSelection demonstration](../assets/envs/robocasa/CuttingToolSelection.gif){ width="120" loading=lazy } | `RoboCasa/CuttingToolSelection` | composite, unseen | Cutting tool selection |
+| ![DeliverStraw demonstration](../assets/envs/robocasa/DeliverStraw.gif){ width="120" loading=lazy } | `RoboCasa/DeliverStraw` | composite, seen | Deliver straw |
+| ![GarnishPancake demonstration](../assets/envs/robocasa/GarnishPancake.gif){ width="120" loading=lazy } | `RoboCasa/GarnishPancake` | composite, unseen | Garnish pancake |
+| ![GatherTableware demonstration](../assets/envs/robocasa/GatherTableware.gif){ width="120" loading=lazy } | `RoboCasa/GatherTableware` | composite, unseen | Gather tableware |
+| ![GetToastedBread demonstration](../assets/envs/robocasa/GetToastedBread.gif){ width="120" loading=lazy } | `RoboCasa/GetToastedBread` | composite, seen | Get toasted bread |
+| ![HeatKebabSandwich demonstration](../assets/envs/robocasa/HeatKebabSandwich.gif){ width="120" loading=lazy } | `RoboCasa/HeatKebabSandwich` | composite, unseen | Heat kebab sandwich |
+| ![KettleBoiling demonstration](../assets/envs/robocasa/KettleBoiling.gif){ width="120" loading=lazy } | `RoboCasa/KettleBoiling` | composite, seen | Kettle boiling |
+| ![LoadDishwasher demonstration](../assets/envs/robocasa/LoadDishwasher.gif){ width="120" loading=lazy } | `RoboCasa/LoadDishwasher` | composite, seen | Load dishwasher |
+| ![MakeIceLemonade demonstration](../assets/envs/robocasa/MakeIceLemonade.gif){ width="120" loading=lazy } | `RoboCasa/MakeIceLemonade` | composite, unseen | Make ice lemonade |
+| ![NavigateKitchen demonstration](../assets/envs/robocasa/NavigateKitchen.gif){ width="120" loading=lazy } | `RoboCasa/NavigateKitchen` | atomic, seen | Navigate kitchen |
+| ![OpenCabinet demonstration](../assets/envs/robocasa/OpenCabinet.gif){ width="120" loading=lazy } | `RoboCasa/OpenCabinet` | atomic, seen | Open cabinet |
+| ![OpenDrawer demonstration](../assets/envs/robocasa/OpenDrawer.gif){ width="120" loading=lazy } | `RoboCasa/OpenDrawer` | atomic, seen | Open drawer |
+| ![OpenStandMixerHead demonstration](../assets/envs/robocasa/OpenStandMixerHead.gif){ width="120" loading=lazy } | `RoboCasa/OpenStandMixerHead` | atomic, seen | Open stand mixer head |
+| ![PackIdenticalLunches demonstration](../assets/envs/robocasa/PackIdenticalLunches.gif){ width="120" loading=lazy } | `RoboCasa/PackIdenticalLunches` | composite, seen | Pack identical lunches |
+| ![PanTransfer demonstration](../assets/envs/robocasa/PanTransfer.gif){ width="120" loading=lazy } | `RoboCasa/PanTransfer` | composite, unseen | Pan transfer |
+| ![PickPlaceCounterToCabinet demonstration](../assets/envs/robocasa/PickPlaceCounterToCabinet.gif){ width="120" loading=lazy } | `RoboCasa/PickPlaceCounterToCabinet` | atomic, seen | Pick place counter to cabinet |
+| ![PickPlaceCounterToStove demonstration](../assets/envs/robocasa/PickPlaceCounterToStove.gif){ width="120" loading=lazy } | `RoboCasa/PickPlaceCounterToStove` | atomic, seen | Pick place counter to stove |
+| ![PickPlaceDrawerToCounter demonstration](../assets/envs/robocasa/PickPlaceDrawerToCounter.gif){ width="120" loading=lazy } | `RoboCasa/PickPlaceDrawerToCounter` | atomic, seen | Pick place drawer to counter |
+| ![PickPlaceSinkToCounter demonstration](../assets/envs/robocasa/PickPlaceSinkToCounter.gif){ width="120" loading=lazy } | `RoboCasa/PickPlaceSinkToCounter` | atomic, seen | Pick place sink to counter |
+| ![PickPlaceToasterToCounter demonstration](../assets/envs/robocasa/PickPlaceToasterToCounter.gif){ width="120" loading=lazy } | `RoboCasa/PickPlaceToasterToCounter` | atomic, seen | Pick place toaster to counter |
+| ![PortionHotDogs demonstration](../assets/envs/robocasa/PortionHotDogs.gif){ width="120" loading=lazy } | `RoboCasa/PortionHotDogs` | composite, unseen | Portion hot dogs |
+| ![PreSoakPan demonstration](../assets/envs/robocasa/PreSoakPan.gif){ width="120" loading=lazy } | `RoboCasa/PreSoakPan` | composite, seen | Pre soak pan |
+| ![PrepareCoffee demonstration](../assets/envs/robocasa/PrepareCoffee.gif){ width="120" loading=lazy } | `RoboCasa/PrepareCoffee` | composite, seen | Prepare coffee |
+| ![RecycleBottlesByType demonstration](../assets/envs/robocasa/RecycleBottlesByType.gif){ width="120" loading=lazy } | `RoboCasa/RecycleBottlesByType` | composite, unseen | Recycle bottles by type |
+| ![RinseSinkBasin demonstration](../assets/envs/robocasa/RinseSinkBasin.gif){ width="120" loading=lazy } | `RoboCasa/RinseSinkBasin` | composite, seen | Rinse sink basin |
+| ![ScrubCuttingBoard demonstration](../assets/envs/robocasa/ScrubCuttingBoard.gif){ width="120" loading=lazy } | `RoboCasa/ScrubCuttingBoard` | composite, seen | Scrub cutting board |
+| ![SearingMeat demonstration](../assets/envs/robocasa/SearingMeat.gif){ width="120" loading=lazy } | `RoboCasa/SearingMeat` | composite, seen | Searing meat |
+| ![SeparateFreezerRack demonstration](../assets/envs/robocasa/SeparateFreezerRack.gif){ width="120" loading=lazy } | `RoboCasa/SeparateFreezerRack` | composite, unseen | Separate freezer rack |
+| ![SetUpCuttingStation demonstration](../assets/envs/robocasa/SetUpCuttingStation.gif){ width="120" loading=lazy } | `RoboCasa/SetUpCuttingStation` | composite, seen | Set up cutting station |
+| ![SlideDishwasherRack demonstration](../assets/envs/robocasa/SlideDishwasherRack.gif){ width="120" loading=lazy } | `RoboCasa/SlideDishwasherRack` | atomic, seen | Slide dishwasher rack |
+| ![StackBowlsCabinet demonstration](../assets/envs/robocasa/StackBowlsCabinet.gif){ width="120" loading=lazy } | `RoboCasa/StackBowlsCabinet` | composite, seen | Stack bowls cabinet |
+| ![SteamInMicrowave demonstration](../assets/envs/robocasa/SteamInMicrowave.gif){ width="120" loading=lazy } | `RoboCasa/SteamInMicrowave` | composite, seen | Steam in microwave |
+| ![StirVegetables demonstration](../assets/envs/robocasa/StirVegetables.gif){ width="120" loading=lazy } | `RoboCasa/StirVegetables` | composite, seen | Stir vegetables |
+| ![StoreLeftoversInBowl demonstration](../assets/envs/robocasa/StoreLeftoversInBowl.gif){ width="120" loading=lazy } | `RoboCasa/StoreLeftoversInBowl` | composite, seen | Store leftovers in bowl |
+| ![TurnOffStove demonstration](../assets/envs/robocasa/TurnOffStove.gif){ width="120" loading=lazy } | `RoboCasa/TurnOffStove` | atomic, seen | Turn off stove |
+| ![TurnOnElectricKettle demonstration](../assets/envs/robocasa/TurnOnElectricKettle.gif){ width="120" loading=lazy } | `RoboCasa/TurnOnElectricKettle` | atomic, seen | Turn on electric kettle |
+| ![TurnOnMicrowave demonstration](../assets/envs/robocasa/TurnOnMicrowave.gif){ width="120" loading=lazy } | `RoboCasa/TurnOnMicrowave` | atomic, seen | Turn on microwave |
+| ![TurnOnSinkFaucet demonstration](../assets/envs/robocasa/TurnOnSinkFaucet.gif){ width="120" loading=lazy } | `RoboCasa/TurnOnSinkFaucet` | atomic, seen | Turn on sink faucet |
+| ![WaffleReheat demonstration](../assets/envs/robocasa/WaffleReheat.gif){ width="120" loading=lazy } | `RoboCasa/WaffleReheat` | composite, unseen | Waffle reheat |
+| ![WashFruitColander demonstration](../assets/envs/robocasa/WashFruitColander.gif){ width="120" loading=lazy } | `RoboCasa/WashFruitColander` | composite, unseen | Wash fruit colander |
+| ![WashLettuce demonstration](../assets/envs/robocasa/WashLettuce.gif){ width="120" loading=lazy } | `RoboCasa/WashLettuce` | composite, seen | Wash lettuce |
+| ![WeighIngredients demonstration](../assets/envs/robocasa/WeighIngredients.gif){ width="120" loading=lazy } | `RoboCasa/WeighIngredients` | composite, unseen | Weigh ingredients |
+
+Previews are the first human demonstration of each task from RoboCasa's datasets, seen by the left agent-view camera; `python examples/envs/render_benchmark_thumbnails.py robocasa` renders them. Every human demonstration completes its task.
+
+```python
+from torch_world.envs import RoboCasa, make
+
+world = make("RoboCasa/OpenDrawer", batch_size=4, split="target")
+world.reset(seed=0)
+world.instruction      # one language instruction per lane
+```
 
 ## Add your own
 

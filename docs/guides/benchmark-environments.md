@@ -1,6 +1,6 @@
 # Benchmark experiments
 
-`torch_world.envs` registers 33 tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
+`torch_world` works with 138 environments: 33 built-in tasks, 13 from OGBench, 50 from RoboCasa and 42 from RoboDojo. `torch_world.envs` registers the 33 built-in tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. It also registers 13 [OGBench](#ogbench) tasks and 50 [RoboCasa](#robocasa) tasks, and serves policies to [RoboDojo](#robodojo). Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
 
 Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used.
 
@@ -65,6 +65,97 @@ with make("FrankaObstacleReach-v0", batch_size=64, device="cuda:0") as env:
 The environment owns the runtime by default; use `launch=False` inside an existing runtime. `isaac_scenes.build_config` creates our table, barriers/objects, observations, actions and objectives from scratch. A custom `cfg` can extend these scenes. Default policy observations contain joint positions/velocities, task position and target error. Success is a task-position error below 4 cm. Terminal observations are captured before internal autoresets. The shipped Isaac notebooks use state vectors for training and real cameras for previews, filmstrips, and GIFs. Pass `observation="rgb"` to train from the built-in camera; no custom configuration or callbacks are needed. `camera="task"` frames the arm and tabletop, while `camera="overview"` shows a wider scene. Terminal state and camera snapshots are both captured before autoreset. Custom camera configurations still require compatible `success_fn` and `target_fn` callbacks.
 
 MuJoCo shares its compiled model across lanes and executes substeps in native code. Newton builds all worlds into one solver. Isaac Lab uses GPU batches. Puzzle stepping and rendering are vectorized over lanes; remaining loops represent sequential updates, scene construction, or individual MuJoCo renderer calls.
+
+## OGBench
+
+[OGBench](https://github.com/seohongpark/ogbench) tasks run behind the same protocol through `OGBench`, which steps one upstream Gymnasium environment per batch lane. Install the extra, `pip install "torch-world[ogbench]"`, on Python 3.12 or earlier: OGBench needs dm_control, whose `labmaze` dependency has no wheels for later versions. Name a task by its OGBench dataset name; the dataset type (`play`, `noisy`, `navigate`, `stitch`, ...) only selects data, not the environment.
+
+```python
+from torch_world.benchmarks import run_experiment
+from torch_world.envs import OGBench
+
+with OGBench("visual-cube-single-play-v0", task_id=2, batch_size=8) as world:
+    observation = world.reset(seed=7)    # (8, 3, 64, 64)
+    world.goal                           # the goal observation of evaluation task 2
+    result = run_experiment(world)
+```
+
+| | goal-conditioned names | `-singletask` names |
+|---|---|---|
+| task | `task_id`, one of OGBench's five evaluation tasks | fixed by the name, e.g. `scene-play-singletask-task2-v0` |
+| `goal` | the goal observation, so `render(goal)` returns it | none |
+| reward | 1 on success, else 0 | OGBench's, from `-num_subtasks` (or -1 in mazes) up to 0 |
+| `run_experiment` | plans toward the encoded goal, scored by OGBench's `success` | plans a reward head, scored by returns and `success` |
+
+Observations follow OGBench: state vectors `(B, D)`, or `visual-` images `(B, 3, 64, 64)` in `[0, 1]` (`size` renders them at another resolution). Actions are OGBench's continuous controls in `[-1, 1]`. Episodes end on success and at OGBench's time limit. `transition.success` is the simulator's own flag, so the five OGBench evaluation tasks score exactly as upstream. `render_frame()` renders the upstream camera at `render_size` for state tasks, and `render_goal_frame()` is OGBench's rendering of the goal.
+
+`state` is the observation: OGBench defines goals and success inside the simulator, so states are neither restorable nor scored from tensors, and `reset(state)` is not supported. OGBench draws some randomness from NumPy's global generator; each lane keeps its own stream, so `reset(seed=...)` is reproducible and leaves the caller's generator untouched. The one exception is upstream: manipulation goals settle under two random actions from an unseeded action space, so the arm pose in the goal varies between resets while the object targets that define success do not.
+
+One task per OGBench family and observation type is registered as `OGBench/<name>` (`list_envs(backend="ogbench")`, listed on the [Environments](../environments/index.md#ogbench) page), so `make("OGBench/cube-single-play-v0")` works like any registered task. OGBench names are not Python identifiers, so these tasks have no named classes; `OGBench(name)` builds them and any other OGBench task, which carries its own `OGBench/<name>` spec, so runs are saved and summarized the same way. Discrete-action powderworld tasks are not supported. Train offline from the OGBench datasets with [`load_ogbench`](../datasets/trajectories.md#ogbench-datasets); the [OGBench notebook](../examples/envs/ogbench.ipynb) trains a RoboJEPA baseline.
+
+## RoboDojo
+
+[RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo) is evaluated from its own side. Its client runs the tasks in Isaac Sim 5.1 on fixed evaluation layouts and asks an [XPolicyLab](https://github.com/XPolicyLab/XPolicyLab) policy server for actions over WebSocket. `RoboDojoPolicy` is that server's model, so a torch-world policy runs in its own environment and is scored exactly as the leaderboard scores it, with no Isaac Sim installed alongside torch-world.
+
+`policy` is any callable from a batch of observations to actions `(B, 14)`, or to chunks `(B, H, 14)` that RoboDojo executes in order: a trained policy, or a planner over a world model. RoboDojo tasks are given in language, not as goal images, so a goal-reaching planner needs its own goal, for example the last frame of a demonstration. Add a policy folder to XPolicyLab:
+
+```python
+# XPolicyLab/policy/TorchWorld/model.py
+import torch
+
+from torch_world.evaluation import RoboDojoPolicy
+from XPolicyLab.utils.process_data import get_robot_action_dim_info
+
+
+class Model(RoboDojoPolicy):
+    def __init__(self, cfg):
+        policy = torch.load(cfg["checkpoint"], weights_only=False).eval().cuda()
+        bounds = torch.load(cfg["action_bounds"])          # (low, high) of the training actions
+        super().__init__(
+            policy, camera="cam_head", size=64, action_type=cfg["action_type"],
+            robot=get_robot_action_dim_info(cfg["env_cfg_type"]), action_bounds=bounds, device="cuda",
+        )
+```
+
+Copy `deploy.py` and `deploy.yml` from XPolicyLab's `policy/DP/` (a generic chunked loop, with `eval_batch: true` for batched evaluation), then start the server and the evaluation client as RoboDojo's README describes.
+
+| | |
+|---|---|
+| observations | `observation="rgb"`: `camera` frames `(B, 3, size, size)` in `[0, 1]`; `"state"`: the packed robot vector `(B, 14)` |
+| actions | `[left arm (6), left gripper (1), right arm (6), right gripper (1)]`, joint targets in radians and grippers in `[0, 1]`; `action_type="ee"` uses 7-value poses for the arms |
+| `action_bounds` | maps actions in `[-1, 1]` to robot units; without it the policy returns robot units |
+| batching | `update_obs_batch` and `get_action_batch` serve every running RoboDojo environment in one policy call |
+| `reset()` | clears the observations and calls `policy.reset()` when it exists |
+
+Train on RoboDojo's demonstrations with [`load_robodojo`](../datasets/trajectories.md#robodojo-episodes), as the [RoboDojo notebook](../examples/envs/robodojo.ipynb) does; it resizes frames with the same function, so the policy sees the same pixels in training and evaluation. RoboDojo's target robots are dual-arm (two ARX X5 arms by default); pass another dual-arm robot's `arm_dim` and `ee_dim` as `robot`.
+
+## RoboCasa
+
+[RoboCasa](https://robocasa.ai) kitchen tasks run behind the same protocol through `RoboCasa`, which steps one upstream robosuite environment per batch lane. Its 50 target tasks are registered as `RoboCasa/<task>`; `RoboCasa(task)` builds any of its 365 tasks.
+
+RoboCasa is not on PyPI and asserts `mujoco==3.3.1` and `numpy==2.2.5` when imported, so it lives in its own environment, as Isaac Lab does, apart from the `benchmark` extra's MuJoCo 3.6.0. Install robosuite and RoboCasa from source as [RoboCasa's guide](https://robocasa.ai/docs/build/html/introduction/installation.html) describes, download its kitchen assets (`python -m robocasa.scripts.download_kitchen_assets`, 23 GB once extracted), then torch-world with the `robocasa` extra for the dataset loader. On recent macOS, the pinned `scipy==1.15.3` wheel fails to load; install `scipy>=1.16` over it.
+
+```python
+from torch_world.benchmarks import run_experiment
+from torch_world.envs import RoboCasa
+
+with RoboCasa("OpenDrawer", split="target", batch_size=4) as world:
+    observation = world.reset(seed=7)    # (4, 3, 128, 128) from the left agent-view camera
+    world.instruction                    # one language instruction per lane
+    result = run_experiment(world)       # a reward head on frozen latents, scored by RoboCasa's success check
+```
+
+| | |
+|---|---|
+| observations | `camera` frames `(B, 3, size, size)` in `[0, 1]`, flipped upright, or `observation="state"`: the robot's proprioception `(B, D)`; object poses vary in number across kitchens and are left out |
+| actions | RoboCasa's 12 controls in `[-1, 1]`: end-effector position and rotation deltas, gripper, base motion (3), torso, base/arm mode |
+| episodes | end when `_check_success()` passes, reward 1; truncated at the task's horizon from RoboCasa's dataset registry |
+| `split` | `"target"`: the 10 target kitchens and held-out objects; `"pretrain"`: the 2,500 pretraining scenes |
+| `state` | the robot's proprioception, whatever the observation; not a simulator checkpoint |
+
+`reset(scenes=[load_robocasa_scene(root, episode)])` starts each lane from a recorded demonstration instead: its kitchen, objects and initial simulator state, restored as RoboCasa's playback script does. The demonstration's frames are then reachable goals, so a planner can be scored on held-out demonstrations by RoboCasa's own success check, as the [RoboCasa notebook](../examples/envs/robocasa.ipynb) does. Replaying a demonstration's actions from its scene reaches success, which checks the restore and the action order end to end.
+
+Tasks are given in language, `instruction`, so there is no `goal`: `run_experiment` fits a reward head and `render_goal_frame()` shows the kitchen at reset, labeled with the instruction. Seeded resets are reproducible: the kitchen, objects and robot noise come from RoboCasa's seeded generator, and each lane keeps its own stream of NumPy's global generator, which RoboCasa draws counter colors from. Every reset rebuilds the kitchen, which takes seconds per lane. On macOS, robosuite renders through GLFW contexts, and with several RoboCasa environments in one process all but the last return corrupted images, so `RoboCasa` refuses `batch_size > 1` with pixel observations there; use Linux with `MUJOCO_GL=egl` for batches. Train on its demonstrations with [`load_robocasa`](../datasets/trajectories.md#robocasa-demonstrations).
 
 ## Visual quality
 

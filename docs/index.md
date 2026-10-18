@@ -1,11 +1,11 @@
 ---
-title: pytorch-world
+title: 
 hide:
   - navigation
   - toc
 ---
 
-# pytorch-world
+# PyTorch World
 
 <div class="tw-hero" markdown>
 
@@ -63,9 +63,9 @@ A **world model** learns how an environment evolves: from an observation and an 
 
     ---
 
-    Batched pixel worlds that render on the GPU, and MuJoCo pick-and-place with UR10e and SO-101 arms.
+    138 environments: 33 built-in tasks from planning puzzles to Franka manipulation, plus OGBench, RoboCasa and RoboDojo.
 
-    [:octicons-arrow-right-24: Environments](guides/environments.md)
+    [:octicons-arrow-right-24: Environments](environments/index.md)
 
 -   :material-database-outline:{ .lg } **Datasets**
 
@@ -84,6 +84,176 @@ A **world model** learns how an environment evolves: from an observation and an 
     [:octicons-arrow-right-24: API reference](api/index.md)
 
 </div>
+
+## Environments
+
+138 environments: 33 built-in, 13 from OGBench, 50 from RoboCasa and 42 from RoboDojo. Built-in tasks show a verified successful episode; OGBench tasks replay an episode of their dataset, RoboCasa tasks a human demonstration, and RoboDojo tasks its official task video. See [Environments](environments/index.md) for each one.
+
+### Built-in
+
+<div class="tw-carousel" markdown>
+
+[![Checkpoints-v0](assets/envs/success/checkpoints_v0.gif){ loading=lazy width="120" height="120" }<span>Checkpoints</span>](examples/envs/puzzles/checkpoints_v0.ipynb)
+[![IceMaze-v0](assets/envs/success/icemaze_v0.gif){ loading=lazy width="120" height="120" }<span>IceMaze</span>](examples/envs/puzzles/icemaze_v0.ipynb)
+[![KeyDoor-v0](assets/envs/success/keydoor_v0.gif){ loading=lazy width="120" height="120" }<span>KeyDoor</span>](examples/envs/puzzles/keydoor_v0.ipynb)
+[![Maze-v0](assets/envs/success/maze_v0.gif){ loading=lazy width="120" height="120" }<span>Maze</span>](examples/envs/puzzles/maze_v0.ipynb)
+[![Sokoban-v0](assets/envs/success/sokoban_v0.gif){ loading=lazy width="120" height="120" }<span>Sokoban</span>](examples/envs/puzzles/sokoban_v0.ipynb)
+[![BallPlate-v0](assets/envs/success/ballplate_v0.gif){ loading=lazy width="120" height="120" }<span>BallPlate</span>](examples/envs/control/ballplate_v0.ipynb)
+[![CartpoleSwingup-v0](assets/envs/success/cartpoleswingup_v0.gif){ loading=lazy width="120" height="120" }<span>CartpoleSwingup</span>](examples/envs/control/cartpoleswingup_v0.ipynb)
+[![ReactionWheel-v0](assets/envs/success/reactionwheel_v0.gif){ loading=lazy width="120" height="120" }<span>ReactionWheel</span>](examples/envs/control/reactionwheel_v0.ipynb)
+[![NewtonAcrobot-v0](assets/envs/success/newtonacrobot_v0.gif){ loading=lazy width="120" height="120" }<span>NewtonAcrobot</span>](examples/envs/control/newtonacrobot_v0.ipynb)
+[![NewtonPendulum-v0](assets/envs/success/newtonpendulum_v0.gif){ loading=lazy width="120" height="120" }<span>NewtonPendulum</span>](examples/envs/control/newtonpendulum_v0.ipynb)
+[![Macaw-v0](assets/envs/success/macaw_v0.gif){ loading=lazy width="120" height="120" }<span>Macaw</span>](examples/envs/navigation/macaw_v0.ipynb)
+[![PointMass-v0](assets/envs/success/pointmass_v0.gif){ loading=lazy width="120" height="120" }<span>PointMass</span>](examples/envs/navigation/pointmass_v0.ipynb)
+[![DifferentialParking-v0](assets/envs/success/differentialparking_v0.gif){ loading=lazy width="120" height="120" }<span>DifferentialParking</span>](examples/envs/navigation/differentialparking_v0.ipynb)
+[![HurdleHopper-v0](assets/envs/success/hurdlehopper_v0.gif){ loading=lazy width="120" height="120" }<span>HurdleHopper</span>](examples/envs/navigation/hurdlehopper_v0.ipynb)
+[![PayloadTransport-v0](assets/envs/success/payloadtransport_v0.gif){ loading=lazy width="120" height="120" }<span>PayloadTransport</span>](examples/envs/navigation/payloadtransport_v0.ipynb)
+[![PlanarQuadrotor-v0](assets/envs/success/planarquadrotor_v0.gif){ loading=lazy width="120" height="120" }<span>PlanarQuadrotor</span>](examples/envs/navigation/planarquadrotor_v0.ipynb)
+[![BlockStack-v0](assets/envs/success/blockstack_v0.gif){ loading=lazy width="120" height="120" }<span>BlockStack</span>](examples/envs/manipulation/blockstack_v0.ipynb)
+[![BoxGate-v0](assets/envs/success/boxgate_v0.gif){ loading=lazy width="120" height="120" }<span>BoxGate</span>](examples/envs/manipulation/boxgate_v0.ipynb)
+[![DoorOpen-v0](assets/envs/success/dooropen_v0.gif){ loading=lazy width="120" height="120" }<span>DoorOpen</span>](examples/envs/manipulation/dooropen_v0.ipynb)
+[![DrawerOpen-v0](assets/envs/success/draweropen_v0.gif){ loading=lazy width="120" height="120" }<span>DrawerOpen</span>](examples/envs/manipulation/draweropen_v0.ipynb)
+[![ObstacleArm-v0](assets/envs/success/obstaclearm_v0.gif){ loading=lazy width="120" height="120" }<span>ObstacleArm</span>](examples/envs/manipulation/obstaclearm_v0.ipynb)
+[![PegInsertion-v0](assets/envs/success/peginsertion_v0.gif){ loading=lazy width="120" height="120" }<span>PegInsertion</span>](examples/envs/manipulation/peginsertion_v0.ipynb)
+[![PickPlace-v0](assets/envs/success/pickplace_v0.gif){ loading=lazy width="120" height="120" }<span>PickPlace</span>](examples/envs/manipulation/pickplace_v0.ipynb)
+[![PuckPush-v0](assets/envs/success/puckpush_v0.gif){ loading=lazy width="120" height="120" }<span>PuckPush</span>](examples/envs/manipulation/puckpush_v0.ipynb)
+[![PuckSlide-v0](assets/envs/success/puckslide_v0.gif){ loading=lazy width="120" height="120" }<span>PuckSlide</span>](examples/envs/manipulation/puckslide_v0.ipynb)
+[![PushT-v0](assets/envs/success/pusht_v0.gif){ loading=lazy width="120" height="120" }<span>PushT</span>](examples/envs/manipulation/pusht_v0.ipynb)
+[![RobotCube-v0](assets/envs/success/robotcube_v0.gif){ loading=lazy width="120" height="120" }<span>RobotCube</span>](examples/envs/manipulation/robotcube_v0.ipynb)
+[![RobotCubeSO101-v0](assets/envs/success/robotcubeso101_v0.gif){ loading=lazy width="120" height="120" }<span>RobotCubeSO101</span>](examples/envs/manipulation/robotcubeso101_v0.ipynb)
+[![SpatialArm-v0](assets/envs/success/spatialarm_v0.gif){ loading=lazy width="120" height="120" }<span>SpatialArm</span>](examples/envs/manipulation/spatialarm_v0.ipynb)
+[![FrankaCubeLift-v0](assets/envs/success/frankacubelift_v0.gif){ loading=lazy width="120" height="120" }<span>FrankaCubeLift</span>](examples/envs/manipulation/frankacubelift_v0.ipynb)
+[![FrankaObstacleReach-v0](assets/envs/success/frankaobstaclereach_v0.gif){ loading=lazy width="120" height="120" }<span>FrankaObstacleReach</span>](examples/envs/manipulation/frankaobstaclereach_v0.ipynb)
+[![FrankaTablePush-v0](assets/envs/success/frankatablepush_v0.gif){ loading=lazy width="120" height="120" }<span>FrankaTablePush</span>](examples/envs/manipulation/frankatablepush_v0.ipynb)
+
+</div>
+
+### OGBench
+
+<div class="tw-carousel" markdown>
+
+[![pointmaze-medium-navigate-v0](assets/envs/ogbench/pointmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>pointmaze-medium-navigate</span>](environments/index.md#ogbench)
+[![antmaze-medium-navigate-v0](assets/envs/ogbench/antmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>antmaze-medium-navigate</span>](environments/index.md#ogbench)
+[![visual-antmaze-medium-navigate-v0](assets/envs/ogbench/visual-antmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>visual-antmaze-medium-navigate</span>](environments/index.md#ogbench)
+[![humanoidmaze-medium-navigate-v0](assets/envs/ogbench/humanoidmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>humanoidmaze-medium-navigate</span>](environments/index.md#ogbench)
+[![antsoccer-arena-navigate-v0](assets/envs/ogbench/antsoccer-arena-navigate.gif){ loading=lazy width="120" height="120" }<span>antsoccer-arena-navigate</span>](environments/index.md#ogbench)
+[![cube-single-play-v0](assets/envs/ogbench/cube-single-play.gif){ loading=lazy width="120" height="120" }<span>cube-single-play</span>](environments/index.md#ogbench)
+[![visual-cube-single-play-v0](assets/envs/ogbench/visual-cube-single-play.gif){ loading=lazy width="120" height="120" }<span>visual-cube-single-play</span>](environments/index.md#ogbench)
+[![cube-double-play-v0](assets/envs/ogbench/cube-double-play.gif){ loading=lazy width="120" height="120" }<span>cube-double-play</span>](environments/index.md#ogbench)
+[![visual-cube-double-play-v0](assets/envs/ogbench/visual-cube-double-play.gif){ loading=lazy width="120" height="120" }<span>visual-cube-double-play</span>](environments/index.md#ogbench)
+[![scene-play-v0](assets/envs/ogbench/scene-play.gif){ loading=lazy width="120" height="120" }<span>scene-play</span>](environments/index.md#ogbench)
+[![visual-scene-play-v0](assets/envs/ogbench/visual-scene-play.gif){ loading=lazy width="120" height="120" }<span>visual-scene-play</span>](environments/index.md#ogbench)
+[![puzzle-3x3-play-v0](assets/envs/ogbench/puzzle-3x3-play.gif){ loading=lazy width="120" height="120" }<span>puzzle-3x3-play</span>](environments/index.md#ogbench)
+[![visual-puzzle-3x3-play-v0](assets/envs/ogbench/visual-puzzle-3x3-play.gif){ loading=lazy width="120" height="120" }<span>visual-puzzle-3x3-play</span>](environments/index.md#ogbench)
+
+</div>
+
+### RoboCasa
+
+<div class="tw-carousel" markdown>
+
+[![ArrangeBreadBasket](assets/envs/robocasa/ArrangeBreadBasket.gif){ loading=lazy width="120" height="120" }<span>Arrange Bread Basket</span>](environments/index.md#robocasa)
+[![ArrangeTea](assets/envs/robocasa/ArrangeTea.gif){ loading=lazy width="120" height="120" }<span>Arrange Tea</span>](environments/index.md#robocasa)
+[![BreadSelection](assets/envs/robocasa/BreadSelection.gif){ loading=lazy width="120" height="120" }<span>Bread Selection</span>](environments/index.md#robocasa)
+[![CategorizeCondiments](assets/envs/robocasa/CategorizeCondiments.gif){ loading=lazy width="120" height="120" }<span>Categorize Condiments</span>](environments/index.md#robocasa)
+[![CloseBlenderLid](assets/envs/robocasa/CloseBlenderLid.gif){ loading=lazy width="120" height="120" }<span>Close Blender Lid</span>](environments/index.md#robocasa)
+[![CloseFridge](assets/envs/robocasa/CloseFridge.gif){ loading=lazy width="120" height="120" }<span>Close Fridge</span>](environments/index.md#robocasa)
+[![CloseToasterOvenDoor](assets/envs/robocasa/CloseToasterOvenDoor.gif){ loading=lazy width="120" height="120" }<span>Close Toaster Oven Door</span>](environments/index.md#robocasa)
+[![CoffeeSetupMug](assets/envs/robocasa/CoffeeSetupMug.gif){ loading=lazy width="120" height="120" }<span>Coffee Setup Mug</span>](environments/index.md#robocasa)
+[![CuttingToolSelection](assets/envs/robocasa/CuttingToolSelection.gif){ loading=lazy width="120" height="120" }<span>Cutting Tool Selection</span>](environments/index.md#robocasa)
+[![DeliverStraw](assets/envs/robocasa/DeliverStraw.gif){ loading=lazy width="120" height="120" }<span>Deliver Straw</span>](environments/index.md#robocasa)
+[![GarnishPancake](assets/envs/robocasa/GarnishPancake.gif){ loading=lazy width="120" height="120" }<span>Garnish Pancake</span>](environments/index.md#robocasa)
+[![GatherTableware](assets/envs/robocasa/GatherTableware.gif){ loading=lazy width="120" height="120" }<span>Gather Tableware</span>](environments/index.md#robocasa)
+[![GetToastedBread](assets/envs/robocasa/GetToastedBread.gif){ loading=lazy width="120" height="120" }<span>Get Toasted Bread</span>](environments/index.md#robocasa)
+[![HeatKebabSandwich](assets/envs/robocasa/HeatKebabSandwich.gif){ loading=lazy width="120" height="120" }<span>Heat Kebab Sandwich</span>](environments/index.md#robocasa)
+[![KettleBoiling](assets/envs/robocasa/KettleBoiling.gif){ loading=lazy width="120" height="120" }<span>Kettle Boiling</span>](environments/index.md#robocasa)
+[![LoadDishwasher](assets/envs/robocasa/LoadDishwasher.gif){ loading=lazy width="120" height="120" }<span>Load Dishwasher</span>](environments/index.md#robocasa)
+[![MakeIceLemonade](assets/envs/robocasa/MakeIceLemonade.gif){ loading=lazy width="120" height="120" }<span>Make Ice Lemonade</span>](environments/index.md#robocasa)
+[![NavigateKitchen](assets/envs/robocasa/NavigateKitchen.gif){ loading=lazy width="120" height="120" }<span>Navigate Kitchen</span>](environments/index.md#robocasa)
+[![OpenCabinet](assets/envs/robocasa/OpenCabinet.gif){ loading=lazy width="120" height="120" }<span>Open Cabinet</span>](environments/index.md#robocasa)
+[![OpenDrawer](assets/envs/robocasa/OpenDrawer.gif){ loading=lazy width="120" height="120" }<span>Open Drawer</span>](environments/index.md#robocasa)
+[![OpenStandMixerHead](assets/envs/robocasa/OpenStandMixerHead.gif){ loading=lazy width="120" height="120" }<span>Open Stand Mixer Head</span>](environments/index.md#robocasa)
+[![PackIdenticalLunches](assets/envs/robocasa/PackIdenticalLunches.gif){ loading=lazy width="120" height="120" }<span>Pack Identical Lunches</span>](environments/index.md#robocasa)
+[![PanTransfer](assets/envs/robocasa/PanTransfer.gif){ loading=lazy width="120" height="120" }<span>Pan Transfer</span>](environments/index.md#robocasa)
+[![PickPlaceCounterToCabinet](assets/envs/robocasa/PickPlaceCounterToCabinet.gif){ loading=lazy width="120" height="120" }<span>Pick Place Counter To Cabinet</span>](environments/index.md#robocasa)
+[![PickPlaceCounterToStove](assets/envs/robocasa/PickPlaceCounterToStove.gif){ loading=lazy width="120" height="120" }<span>Pick Place Counter To Stove</span>](environments/index.md#robocasa)
+[![PickPlaceDrawerToCounter](assets/envs/robocasa/PickPlaceDrawerToCounter.gif){ loading=lazy width="120" height="120" }<span>Pick Place Drawer To Counter</span>](environments/index.md#robocasa)
+[![PickPlaceSinkToCounter](assets/envs/robocasa/PickPlaceSinkToCounter.gif){ loading=lazy width="120" height="120" }<span>Pick Place Sink To Counter</span>](environments/index.md#robocasa)
+[![PickPlaceToasterToCounter](assets/envs/robocasa/PickPlaceToasterToCounter.gif){ loading=lazy width="120" height="120" }<span>Pick Place Toaster To Counter</span>](environments/index.md#robocasa)
+[![PortionHotDogs](assets/envs/robocasa/PortionHotDogs.gif){ loading=lazy width="120" height="120" }<span>Portion Hot Dogs</span>](environments/index.md#robocasa)
+[![PreSoakPan](assets/envs/robocasa/PreSoakPan.gif){ loading=lazy width="120" height="120" }<span>Pre Soak Pan</span>](environments/index.md#robocasa)
+[![PrepareCoffee](assets/envs/robocasa/PrepareCoffee.gif){ loading=lazy width="120" height="120" }<span>Prepare Coffee</span>](environments/index.md#robocasa)
+[![RecycleBottlesByType](assets/envs/robocasa/RecycleBottlesByType.gif){ loading=lazy width="120" height="120" }<span>Recycle Bottles By Type</span>](environments/index.md#robocasa)
+[![RinseSinkBasin](assets/envs/robocasa/RinseSinkBasin.gif){ loading=lazy width="120" height="120" }<span>Rinse Sink Basin</span>](environments/index.md#robocasa)
+[![ScrubCuttingBoard](assets/envs/robocasa/ScrubCuttingBoard.gif){ loading=lazy width="120" height="120" }<span>Scrub Cutting Board</span>](environments/index.md#robocasa)
+[![SearingMeat](assets/envs/robocasa/SearingMeat.gif){ loading=lazy width="120" height="120" }<span>Searing Meat</span>](environments/index.md#robocasa)
+[![SeparateFreezerRack](assets/envs/robocasa/SeparateFreezerRack.gif){ loading=lazy width="120" height="120" }<span>Separate Freezer Rack</span>](environments/index.md#robocasa)
+[![SetUpCuttingStation](assets/envs/robocasa/SetUpCuttingStation.gif){ loading=lazy width="120" height="120" }<span>Set Up Cutting Station</span>](environments/index.md#robocasa)
+[![SlideDishwasherRack](assets/envs/robocasa/SlideDishwasherRack.gif){ loading=lazy width="120" height="120" }<span>Slide Dishwasher Rack</span>](environments/index.md#robocasa)
+[![StackBowlsCabinet](assets/envs/robocasa/StackBowlsCabinet.gif){ loading=lazy width="120" height="120" }<span>Stack Bowls Cabinet</span>](environments/index.md#robocasa)
+[![SteamInMicrowave](assets/envs/robocasa/SteamInMicrowave.gif){ loading=lazy width="120" height="120" }<span>Steam In Microwave</span>](environments/index.md#robocasa)
+[![StirVegetables](assets/envs/robocasa/StirVegetables.gif){ loading=lazy width="120" height="120" }<span>Stir Vegetables</span>](environments/index.md#robocasa)
+[![StoreLeftoversInBowl](assets/envs/robocasa/StoreLeftoversInBowl.gif){ loading=lazy width="120" height="120" }<span>Store Leftovers In Bowl</span>](environments/index.md#robocasa)
+[![TurnOffStove](assets/envs/robocasa/TurnOffStove.gif){ loading=lazy width="120" height="120" }<span>Turn Off Stove</span>](environments/index.md#robocasa)
+[![TurnOnElectricKettle](assets/envs/robocasa/TurnOnElectricKettle.gif){ loading=lazy width="120" height="120" }<span>Turn On Electric Kettle</span>](environments/index.md#robocasa)
+[![TurnOnMicrowave](assets/envs/robocasa/TurnOnMicrowave.gif){ loading=lazy width="120" height="120" }<span>Turn On Microwave</span>](environments/index.md#robocasa)
+[![TurnOnSinkFaucet](assets/envs/robocasa/TurnOnSinkFaucet.gif){ loading=lazy width="120" height="120" }<span>Turn On Sink Faucet</span>](environments/index.md#robocasa)
+[![WaffleReheat](assets/envs/robocasa/WaffleReheat.gif){ loading=lazy width="120" height="120" }<span>Waffle Reheat</span>](environments/index.md#robocasa)
+[![WashFruitColander](assets/envs/robocasa/WashFruitColander.gif){ loading=lazy width="120" height="120" }<span>Wash Fruit Colander</span>](environments/index.md#robocasa)
+[![WashLettuce](assets/envs/robocasa/WashLettuce.gif){ loading=lazy width="120" height="120" }<span>Wash Lettuce</span>](environments/index.md#robocasa)
+[![WeighIngredients](assets/envs/robocasa/WeighIngredients.gif){ loading=lazy width="120" height="120" }<span>Weigh Ingredients</span>](environments/index.md#robocasa)
+
+</div>
+
+### RoboDojo
+
+<div class="tw-carousel" markdown>
+
+[![stack_bowls](assets/envs/robodojo/stack_bowls.gif){ loading=lazy width="120" height="120" }<span>stack bowls</span>](environments/index.md#robodojo)
+[![push_T](assets/envs/robodojo/push_T.gif){ loading=lazy width="120" height="120" }<span>push T</span>](environments/index.md#robodojo)
+[![pack_objects_into_box](assets/envs/robodojo/pack_objects_into_box.gif){ loading=lazy width="120" height="120" }<span>pack objects into box</span>](environments/index.md#robodojo)
+[![fold_clothes](assets/envs/robodojo/fold_clothes.gif){ loading=lazy width="120" height="120" }<span>fold clothes</span>](environments/index.md#robodojo)
+[![hang_mugs](assets/envs/robodojo/hang_mugs.gif){ loading=lazy width="120" height="120" }<span>hang mugs</span>](environments/index.md#robodojo)
+[![sweep_blocks](assets/envs/robodojo/sweep_blocks.gif){ loading=lazy width="120" height="120" }<span>sweep blocks</span>](environments/index.md#robodojo)
+[![pour_liquid_into_cup](assets/envs/robodojo/pour_liquid_into_cup.gif){ loading=lazy width="120" height="120" }<span>pour liquid into cup</span>](environments/index.md#robodojo)
+[![make_toast](assets/envs/robodojo/make_toast.gif){ loading=lazy width="120" height="120" }<span>make toast</span>](environments/index.md#robodojo)
+[![arrange_largest_number](assets/envs/robodojo/arrange_largest_number.gif){ loading=lazy width="120" height="120" }<span>arrange largest number</span>](environments/index.md#robodojo)
+[![sort_nesting_dolls_by_size](assets/envs/robodojo/sort_nesting_dolls_by_size.gif){ loading=lazy width="120" height="120" }<span>sort nesting dolls by size</span>](environments/index.md#robodojo)
+[![store_laptop_and_headphones](assets/envs/robodojo/store_laptop_and_headphones.gif){ loading=lazy width="120" height="120" }<span>store laptop and headphones</span>](environments/index.md#robodojo)
+[![stack_blocks](assets/envs/robodojo/stack_blocks.gif){ loading=lazy width="120" height="120" }<span>stack blocks</span>](environments/index.md#robodojo)
+[![fasten_screws](assets/envs/robodojo/fasten_screws.gif){ loading=lazy width="120" height="120" }<span>fasten screws</span>](environments/index.md#robodojo)
+[![insert_tubes](assets/envs/robodojo/insert_tubes.gif){ loading=lazy width="120" height="120" }<span>insert tubes</span>](environments/index.md#robodojo)
+[![plug_in_charger](assets/envs/robodojo/plug_in_charger.gif){ loading=lazy width="120" height="120" }<span>plug in charger</span>](environments/index.md#robodojo)
+[![pour_balls_into_vase](assets/envs/robodojo/pour_balls_into_vase.gif){ loading=lazy width="120" height="120" }<span>pour balls into vase</span>](environments/index.md#robodojo)
+[![play_Xylophone](assets/envs/robodojo/play_Xylophone.gif){ loading=lazy width="120" height="120" }<span>play Xylophone</span>](environments/index.md#robodojo)
+[![deposit_coin](assets/envs/robodojo/deposit_coin.gif){ loading=lazy width="120" height="120" }<span>deposit coin</span>](environments/index.md#robodojo)
+[![insert_key](assets/envs/robodojo/insert_key.gif){ loading=lazy width="120" height="120" }<span>insert key</span>](environments/index.md#robodojo)
+[![build_tower](assets/envs/robodojo/build_tower.gif){ loading=lazy width="120" height="120" }<span>build tower</span>](environments/index.md#robodojo)
+[![put_bottles_into_dustbin](assets/envs/robodojo/put_bottles_into_dustbin.gif){ loading=lazy width="120" height="120" }<span>put bottles into dustbin</span>](environments/index.md#robodojo)
+[![play_tic_tac_toe](assets/envs/robodojo/play_tic_tac_toe.gif){ loading=lazy width="120" height="120" }<span>play tic tac toe</span>](environments/index.md#robodojo)
+[![classify_objects](assets/envs/robodojo/classify_objects.gif){ loading=lazy width="120" height="120" }<span>classify objects</span>](environments/index.md#robodojo)
+[![fill_pen_holder](assets/envs/robodojo/fill_pen_holder.gif){ loading=lazy width="120" height="120" }<span>fill pen holder</span>](environments/index.md#robodojo)
+[![fill_egg_holder](assets/envs/robodojo/fill_egg_holder.gif){ loading=lazy width="120" height="120" }<span>fill egg holder</span>](environments/index.md#robodojo)
+[![organize_table](assets/envs/robodojo/organize_table.gif){ loading=lazy width="120" height="120" }<span>organize table</span>](environments/index.md#robodojo)
+[![play_stacking_toy](assets/envs/robodojo/play_stacking_toy.gif){ loading=lazy width="120" height="120" }<span>play stacking toy</span>](environments/index.md#robodojo)
+[![make_kong](assets/envs/robodojo/make_kong.gif){ loading=lazy width="120" height="120" }<span>make kong</span>](environments/index.md#robodojo)
+[![cover_blocks](assets/envs/robodojo/cover_blocks.gif){ loading=lazy width="120" height="120" }<span>cover blocks</span>](environments/index.md#robodojo)
+[![match_and_pick_from_conveyor](assets/envs/robodojo/match_and_pick_from_conveyor.gif){ loading=lazy width="120" height="120" }<span>match and pick from conveyor</span>](environments/index.md#robodojo)
+[![swap_T](assets/envs/robodojo/swap_T.gif){ loading=lazy width="120" height="120" }<span>swap T</span>](environments/index.md#robodojo)
+[![press_by_number](assets/envs/robodojo/press_by_number.gif){ loading=lazy width="120" height="120" }<span>press by number</span>](environments/index.md#robodojo)
+[![imitate_sorting_sequence](assets/envs/robodojo/imitate_sorting_sequence.gif){ loading=lazy width="120" height="120" }<span>imitate sorting sequence</span>](environments/index.md#robodojo)
+[![swap_blocks](assets/envs/robodojo/swap_blocks.gif){ loading=lazy width="120" height="120" }<span>swap blocks</span>](environments/index.md#robodojo)
+[![align_blocks](assets/envs/robodojo/align_blocks.gif){ loading=lazy width="120" height="120" }<span>align blocks</span>](environments/index.md#robodojo)
+[![solve_equation](assets/envs/robodojo/solve_equation.gif){ loading=lazy width="120" height="120" }<span>solve equation</span>](environments/index.md#robodojo)
+[![stack_blocks_by_language](assets/envs/robodojo/stack_blocks_by_language.gif){ loading=lazy width="120" height="120" }<span>stack blocks by language</span>](environments/index.md#robodojo)
+[![general_pickup](assets/envs/robodojo/general_pickup.gif){ loading=lazy width="120" height="120" }<span>general pickup</span>](environments/index.md#robodojo)
+[![classify_objects_by_language](assets/envs/robodojo/classify_objects_by_language.gif){ loading=lazy width="120" height="120" }<span>classify objects by language</span>](environments/index.md#robodojo)
+[![pick_from_conveyor_by_image](assets/envs/robodojo/pick_from_conveyor_by_image.gif){ loading=lazy width="120" height="120" }<span>pick from conveyor by image</span>](environments/index.md#robodojo)
+[![store_tools_in_toolbox](assets/envs/robodojo/store_tools_in_toolbox.gif){ loading=lazy width="120" height="120" }<span>store tools in toolbox</span>](environments/index.md#robodojo)
+[![pour_by_language](assets/envs/robodojo/pour_by_language.gif){ loading=lazy width="120" height="120" }<span>pour by language</span>](environments/index.md#robodojo)
+
+</div>
+
 
 ## Thirty seconds
 

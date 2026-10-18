@@ -37,6 +37,10 @@
 
 ::: torch_world.envs.Scene
 
+::: torch_world.envs.ogbench.OGBench
+
+::: torch_world.envs.robocasa.RoboCasa
+
 ::: torch_world.benchmarks.show_success
 
 ## Named environment classes
@@ -52,7 +56,7 @@ creates an environment owned and closed by the runner. Use `get_spec(world)` or
 
 ## Rendering quality
 
-All 33 registered recipes accept `quality="low" | "medium" | "high"` (default `high`).
+All 33 built-in recipes accept `quality="low" | "medium" | "high"` (default `high`).
 `size` overrides RGB model resolution; `render_size` overrides presentation resolution.
 `render_frame()` and `render_goal_frame()` return batched camera/presentation frames independently
 of the policy observation. `render_settings` exposes effective resolutions for saved experiments.

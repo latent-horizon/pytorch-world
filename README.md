@@ -71,7 +71,7 @@ Joint-embedding predictive architectures (JEPAs) predict the *representation* of
 
 ## Environment benchmarks
 
-Discover **28 new tasks plus five benchmark recipes for the original environments** with `torch_world.envs.list_envs()` and create them with `make(id)`: planning puzzles, MuJoCo manipulation and control, Newton articulated dynamics, and Isaac Lab robotics. [Setup and contributor API](docs/guides/benchmark-environments.md).
+Work with **138 environments**: 33 built-in tasks (28 new tasks and five benchmark recipes for the original environments), 13 from OGBench, 50 from RoboCasa and 42 from RoboDojo. Discover the built-in, OGBench and RoboCasa tasks with `torch_world.envs.list_envs()` and create them with `make(id)`: planning puzzles, MuJoCo manipulation and control, Newton articulated dynamics, Isaac Lab robotics and kitchen tasks. RoboDojo's dual-arm tasks are evaluated by RoboDojo's own client, which a torch-world policy serves through XPolicyLab. [Setup and contributor API](docs/guides/benchmark-environments.md).
 
 ```python
 from torch_world.envs import KeyDoor

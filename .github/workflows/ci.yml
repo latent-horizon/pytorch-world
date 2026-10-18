@@ -62,7 +62,7 @@ jobs:
         # CPU wheels of torch: a fraction of the size of the default CUDA build.
         run: |
           uv venv
-          uv pip install --torch-backend cpu -e ".[test,examples,action,benchmark,newton,notebooks]"
+          uv pip install --torch-backend cpu -e ".[test,examples,action,benchmark,newton,ogbench,robodojo,robocasa,notebooks]"
       - name: Test
         # One worker per core; software rendering dominates, so tests run in parallel processes.
         run: uv run --no-sync pytest -q -n auto --durations=5

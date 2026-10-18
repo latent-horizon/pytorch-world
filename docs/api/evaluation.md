@@ -10,6 +10,10 @@
 
 ::: torch_world.evaluation.random_policy
 
+## RoboDojo
+
+::: torch_world.evaluation.RoboDojoPolicy
+
 ## Question answering
 
 ::: torch_world.evaluation.vqa
