@@ -123,6 +123,7 @@ with make("Reach-v0", batch_size=4) as env:
 | the environment has | planning objective |
 |---|---|
 | `goal`, `distance(states, goal)`, `success(states, goal)` and `render(state)` | reach the encoded goal, scored by `success` at the end of the episode |
+| `goal` and `render(goal)` only | reach the encoded goal, scored by `transition.success` during the episode |
 | none of these | a reward head on frozen latents, scored by the summed reward |
 
 Only expose the goal members when states can really be scored and rendered.

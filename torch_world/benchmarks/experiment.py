@@ -202,7 +202,8 @@ def run_experiment(
     factories are independent of the environment, split, and scoring code.
 
     Puzzle data splits by starting state; other tasks split by collection seed.
-    Goal-renderable tasks use goal MPC. Others fit a frozen-latent reward head
+    Goal-renderable tasks use goal MPC, scored by ``success(state, goal)`` when the
+    task defines ``distance`` and by its success signal otherwise. Others fit a frozen-latent reward head
     and plan predicted rewards, reporting actual environment returns. Isaac's
     default policy vectors are a state-based experiment, not a pixel result.
     """
@@ -300,8 +301,10 @@ def run_experiment(
 
         result["target"] = capture_frame(env, target=True)
         result["gt_label"] = getattr(env, "gt_label", "GT")
-        goal_scoring = hasattr(env, "goal")
-        if goal_scoring:
+        # A goal observation is planned toward; without `distance`, the simulator's success signal scores it.
+        goal_planning = hasattr(env, "goal")
+        goal_scoring = goal_planning and hasattr(env, "distance")
+        if goal_planning:
             with torch.no_grad():
                 target = model.encode(env.render(env.goal).to(device)[:, None])[:, 0]
             objective = model

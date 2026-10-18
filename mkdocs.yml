@@ -1,4 +1,4 @@
-site_name: pytorch-world
+site_name: PyTorch World
 site_description: World models library for PyTorch
 site_url: https://latent-horizon.github.io/pytorch-world/
 repo_url: https://github.com/latent-horizon/pytorch-world
@@ -108,6 +108,7 @@ markdown_extensions:
 extra_javascript:
   - javascripts/katex.js
   - javascripts/water.js
+  - javascripts/carousel.js
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
 
@@ -222,6 +223,10 @@ nav:
           - FrankaCubeLift: examples/envs/manipulation/frankacubelift_v0.ipynb
           - FrankaObstacleReach: examples/envs/manipulation/frankaobstaclereach_v0.ipynb
           - FrankaTablePush: examples/envs/manipulation/frankatablepush_v0.ipynb
+      - Benchmark suites:
+          - OGBench: examples/envs/ogbench.ipynb
+          - RoboDojo: examples/envs/robodojo.ipynb
+          - RoboCasa: examples/envs/robocasa.ipynb
   - Datasets:
       - datasets/index.md
       - Trajectories: datasets/trajectories.md

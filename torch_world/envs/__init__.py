@@ -47,9 +47,11 @@ __all__ = [
     "BenchmarkEnv",
     "EnvSpec",
     "Macaw",
+    "OGBench",
     "PointMass",
     "PushT",
     "RenderQuality",
+    "RoboCasa",
     "RobotCube",
     "Scene",
     "Transition",
@@ -64,7 +66,11 @@ __all__ = [
 register_builtins()
 del register_builtins
 
-_TASK_NAMES = frozenset(spec.id.removesuffix("-v0") for spec in list_envs() if "legacy" not in spec.tags)
+# External suites keep their own names under a namespace, `OGBench/...` or `RoboCasa/...`, which are not
+# identifiers; `OGBench(name)` and `RoboCasa(task)` build them.
+_TASK_NAMES = frozenset(
+    spec.id.removesuffix("-v0") for spec in list_envs() if "legacy" not in spec.tags and "/" not in spec.id
+)
 __all__.extend(sorted(_TASK_NAMES))
 
 
@@ -79,6 +85,14 @@ def __getattr__(name):
         from torch_world.envs.robot_cube import RobotCube
 
         return RobotCube
+    if name == "OGBench":
+        from torch_world.envs.ogbench import OGBench
+
+        return OGBench
+    if name == "RoboCasa":
+        from torch_world.envs.robocasa import RoboCasa
+
+        return RoboCasa
     if name == "PushT":
         from torch_world.envs.push_t import PushT
 
