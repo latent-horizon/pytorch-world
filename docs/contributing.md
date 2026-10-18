@@ -30,7 +30,7 @@ Code is formatted and linted with [ruff](https://docs.astral.sh/ruff/) at a line
 
 ## Adding a model
 
-1. Subclass `JEPA` or `WorldModel` in a new file in its family's folder, for example `torch_world/models/jepa/_mymodel.py`. Build it from the shared modules in `nn`, `masks` and `losses`. See [Build your own model](guides/custom-model.md).
+1. Subclass `JEPA` or `WorldModel` in a new file in its family's folder, for example `torch_world/models/jepa/_mymodel.py`. Build it from the shared modules in `nn`, `masks` and `losses`. See [Bring your own model](guides/custom-model.md).
 2. Write the docstring: what the model predicts, its loss, and the paper and reference code. It becomes the model's [API reference](api/models.md).
 3. Export it from the family's `__init__.py` and from `torch_world.models`.
 4. Add tests under `tests/models/`: output shapes, a finite loss, gradients and, for world models, a planning call.

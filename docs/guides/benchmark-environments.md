@@ -1,32 +1,8 @@
-# Benchmark environments
+# Benchmark experiments
 
-The registry adds **28 original task implementations**: five planning puzzles, 18 MuJoCo scenes, two Newton control systems, and three Isaac Lab tabletop tasks. Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used. Existing `PointMass`, `Macaw`, `PushT` and `RobotCube` interfaces remain available.
+`torch_world.envs` registers 33 tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
 
-Every task belongs to one of four categories: **planning puzzles**, **control**, **navigation and locomotion**, and **manipulation**. The [Environments](../environments/index.md) page lists every task by category.
-
-The registry also includes **five benchmark recipes for the original environments**: `PointMass-v0`, `Macaw-v0`, `PushT-v0`, `RobotCube-v0` (UR10e) and `RobotCubeSO101-v0`. Their notebooks use the same imported LeWM/CEM baseline, replaceable factories, result tables, GT panels and episode GIFs. Use the classes directly:
-
-```python
-from torch_world.envs import Macaw, PointMass, RobotCube
-from torch_world.benchmarks import run_experiment, show_results
-
-world = Macaw(size=128, quality="high")  # or PointMass(...), RobotCube(...)
-world.show_env()
-result = run_experiment(world, output_dir="runs/benchmarks")
-world.show_success()
-show_results(result)
-world.close()
-```
-
-These recipes use fixed GT throughout an experiment and random-action training data. PointMass, Macaw and RobotCube keep seeded random starts. PushT uses a fixed symmetric translation task, not the full random-pose distribution. RobotCube benchmark success additionally requires released fingers and tool withdrawal; the original class's scoring is unchanged. Its notebook camera shows the whole arm, while model inputs retain the original task camera. Set `presentation_camera="task"` to use that view in GIFs too. Set constructor options directly, for example `RobotCube(robot="so101", camera="wrist", size=128)`.
-
-`PushT()` supports the same workflow. All four classes preserve their original positional arguments, simulation methods and frame-sequence `collect()` API. The runner borrows a cached episode view of the same world, adding fixed goals, aligned transitions and episode limits; it leaves the world open afterward. Use `world.as_benchmark()` to access that protocol directly. `observation="state"` configures the benchmark view; original simulation methods still return pixels. `quality` and `render_size` control presentation; `size` retains its original observation default, so the notebooks explicitly select 128 pixels. String recipes through `make()` remain supported.
-
-Macaw's presentation frames preserve the animated wing phase; its GT is the gliding pose. A single frame does not reveal phase, so the shared `history=1` experiment has a known limitation here. The original scripted play-data collectors remain available independently of this random-action benchmark protocol.
-
-Most MuJoCo tasks use primitive geometry for controlled experiments, including explicitly constrained planar systems. `PickPlace` and `BlockStack` use the articulated Robotiq 2F-85 hardware model on a Cartesian stage. Its meshes, inertias, four-bar linkages, tendon drive and contact pads are packaged locally, with the upstream BSD license and pinned provenance in `torch_world/envs/assets/robotiq_2f85/`. The surrounding tasks are our own implementation. Isaac Lab tasks use the articulated Franka asset. These are validation environments, not claims of sim-to-real fidelity.
-
-The Robotiq tasks expose four normalized actions: X, Y, Z and gripper closure (−1 open, +1 closed). Their 60 mm cubes fit the nominal 85 mm opening. Placement requires a settled cube at GT, open fingers and a withdrawn tool; holding the cube at GT does not count. The high-quality camera shows the gripper and contact area. `world.show_success()` replays a verified grasp, lift, transfer, release and withdrawal episode, with GT visible throughout.
+Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used.
 
 ## Discover and run
 
@@ -40,7 +16,6 @@ result = run_experiment(world, output_dir="runs/benchmarks")
 world.show_success()
 world.close()
 ```
-
 
 Every new benchmark task has a named class exported from `torch_world.envs`, including `Maze`, `Sokoban`, `PegInsertion`, `NewtonAcrobot`, and `FrankaCubeLift`. Configure the world once in its constructor. `world.show_env()` resets and previews its first batch lane alongside **GT**; `world.show_success()` resets it to display an animated, verified reference episode alongside GT. Both reuse the same instance and leave it open.
 
@@ -69,7 +44,7 @@ MuJoCo success requires both position tolerance and low scored-coordinate veloci
 
 Puzzles, MuJoCo and Newton tasks support `reset(state)` and `render(state)` for state-goal evaluation. Isaac Lab observations cannot restore physics state; compare those with seeded resets and `evaluation.benchmark`, not `evaluation.goal_reaching`.
 
-## Install the relevant backend
+## Install a backend
 
 ```bash
 pip install -e ".[benchmark,notebooks,test]"  # 18 original MuJoCo tasks, notebook tools
@@ -113,7 +88,7 @@ Puzzles use antialiased, cached sprites with distinct silhouettes and square cel
 
 Presentation frames are stored as `uint8`, independently of floating-point model observations.
 
-## LeWM experiments and interchangeable models
+## Swap the model and planner
 
 `examples/envs/` contains one concise notebook per task, in one folder per category (`puzzles/`, `control/`, `navigation/`, `manipulation/`); the [Environments](../environments/index.md) page links each one. Each executed notebook links its measured run artifacts and episode visuals. All use the same library runner and plots. The [custom model notebook](../examples/envs/custom_model_three_envs.ipynb) defines a small residual world model and compares it with the imported LeWM baseline on Maze, KeyDoor, and Sokoban, with GT references, episode GIFs, and a campaign summary CSV.
 
@@ -123,17 +98,14 @@ from torch_world.envs import Maze
 from torch_world.models import LeWM
 from torch_world.planning import CEM
 
-
 def model_factory(observation_shape, action_dim):
     return LeWM(
         observation_encoder(observation_shape), action_dim, embed_dim=32, history=1,
         depth=2, num_heads=4, head_dim=8, mlp_dim=64, proj_dim=64, dropout=0,
     )
 
-
 def planner_factory(action_dim):
     return CEM(8, action_dim, num_samples=96, num_elites=12, iterations=3, bounds=(-1, 1))
-
 
 world = Maze(quality="high")
 result = run_experiment(
@@ -152,7 +124,7 @@ Goal-renderable tasks plan against a goal embedding. Other tasks fit a reward he
 
 The default 400 updates, four evaluation seeds, and 60 steps are a pipeline-validation budget. Fixed puzzles repeat a single initial state; confidence intervals reflect policy randomness on that level, not generalization to new levels. `show_results` uses `plots.curves`, `plots.bars`, `plots.images`, and `plots.episodes`; all 28 built-in tasks have RGB presentation frames and GIFs, including state-trained Franka tasks. User environments without a visual renderer retain vector trajectories. GIF subsampling always retains the final observation and labels frames with their original episode steps. Tasks without a success signal omit success metrics instead of reporting failure.
 
-## Procedural result storage
+## Saved runs
 
 Set `output_dir` to save each run independently:
 
@@ -185,31 +157,7 @@ Use `load_run(run_directory)` to verify and reload a saved run, then `show_resul
 
 The CSV has one row per completed run/policy. Keep environments, observation modalities, training budgets and protocols separate when comparing; do not average raw returns across unrelated tasks.
 
-## Add an environment or task
-
-Register a callable or a lazy `module:Class` entry point. No central switch statement, simulator import, or source edit is required for user projects.
-
-```python
-from torch_world.envs import EnvSpec, register_env, register_task, make
-
-register_env(EnvSpec(
-    id="MyMaze-v0",
-    entry_point="torch_world.envs.puzzles:PlanningPuzzle",
-    backend="torch",
-    description="A custom maze with a winding corridor",
-    tags=("planning", "navigation"),
-    category="puzzles",
-    kwargs={"task": "maze", "level": ("#######", "#A#..G#", "#.#.#.#", "#...#.#", "#######")},
-))
-register_task("MyMazeLong-v0", "MyMaze-v0", description="Longer planning budget", max_episode_steps=300)
-env = make("MyMazeLong-v0", batch_size=4)
-```
-
-For new dynamics, subclass `BenchmarkEnv` and implement `reset`, `step`, `render`, `state`, `action_dim`, and `state_dim`. `step` must replace state snapshots rather than mutate old returned tensors, set `Transition`, and freeze finished lanes. The base supplies collection, action validation, and resource context management. Use `puzzles.py`, `physics_scenes.py` / `physics_tasks.py`, or `newton.py` as the closest complete example. The optional goal methods are `distance`, `success`, and `render(state)`; only expose them if states really can be scored and rendered.
-
-For upstream contributions, include deterministic reset tests, known dynamics/solution checks, action bounds, finite observations, terminal padding, cleanup, metadata/reference, and a small experiment notebook. `tests/test_benchmark_envs.py` includes a breadth-first solver checking every built-in puzzle is solvable and integration tests for every registered MuJoCo task.
-
-## GT and successful examples
+## GT and reference episodes
 
 Every result filmstrip and GIF includes a reference labeled **GT**. Franka reach uses a visible green marker labeled **GT · green target**. Push/lift GT places the object at its target and restores the simulator immediately afterward; the unchanged arm is not a solved manipulation demonstration. `env.render_goal_frame()` returns the visual reference without stepping physics, while `render_target()` retains the model-observation interface. It represents the success condition, not a model prediction.
 
@@ -242,8 +190,28 @@ python examples/envs/render_references.py Maze-v0
 
 This writes the GIF and provenance under `runs/references/<environment>/<timestamp>/` and updates only the notebook's reference output. Baseline results are preserved.
 
-For a new MuJoCo task, add a `Scene` builder with geometry, controls, initial/target coordinates and scored coordinates/tolerances, then register it using `kwargs={"scene": my_scene}` and the `torch_world.envs.physics_tasks:MujocoTask` entry point. This requires no edit to the built-in scene map. Keep timestep integration and rendering in the shared runner. Distinct difficulty settings can be registered with `register_task`; they should not be counted as distinct physical environments.
+## Original environments
 
-## Catalogue
+The registry also includes five benchmark recipes for the original environments: `PointMass-v0`, `Macaw-v0`, `PushT-v0`, `RobotCube-v0` (UR10e) and `RobotCubeSO101-v0`. Their notebooks use the same imported LeWM/CEM baseline, replaceable factories, result tables, GT panels and episode GIFs. Use the classes directly:
 
-The [Environments](../environments/index.md) page lists every task by category, with its backend and notebook.
+```python
+from torch_world.envs import Macaw, PointMass, RobotCube
+from torch_world.benchmarks import run_experiment, show_results
+
+world = Macaw(size=128, quality="high")  # or PointMass(...), RobotCube(...)
+world.show_env()
+result = run_experiment(world, output_dir="runs/benchmarks")
+world.show_success()
+show_results(result)
+world.close()
+```
+
+These recipes use fixed GT throughout an experiment and random-action training data. PointMass, Macaw and RobotCube keep seeded random starts. PushT uses a fixed symmetric translation task, not the full random-pose distribution. RobotCube benchmark success additionally requires released fingers and tool withdrawal; the original class's scoring is unchanged. Its notebook camera shows the whole arm, while model inputs retain the original task camera. Set `presentation_camera="task"` to use that view in GIFs too. Set constructor options directly, for example `RobotCube(robot="so101", camera="wrist", size=128)`.
+
+`PushT()` supports the same workflow. All four classes preserve their original positional arguments, simulation methods and frame-sequence `collect()` API. The runner borrows a cached episode view of the same world, adding fixed goals, aligned transitions and episode limits; it leaves the world open afterward. Use `world.as_benchmark()` to access that protocol directly. `observation="state"` configures the benchmark view; original simulation methods still return pixels. `quality` and `render_size` control presentation; `size` retains its original observation default, so the notebooks explicitly select 128 pixels. String recipes through `make()` remain supported.
+
+## Hardware models
+
+Macaw's presentation frames preserve the animated wing phase; its GT is the gliding pose. A single frame does not reveal phase, so the shared `history=1` experiment has a known limitation here. The original scripted play-data collectors remain available independently of this random-action benchmark protocol.
+
+Most MuJoCo tasks use primitive geometry for controlled experiments, including explicitly constrained planar systems. `PickPlace` and `BlockStack` use the articulated Robotiq 2F-85 hardware model on a Cartesian stage. Its meshes, inertias, four-bar linkages, tendon drive and contact pads are packaged locally, with the upstream BSD license and pinned provenance in `torch_world/envs/assets/robotiq_2f85/`. The surrounding tasks are our own implementation. Isaac Lab tasks use the articulated Franka asset. These are validation environments, not claims of sim-to-real fidelity.
