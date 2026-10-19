@@ -20,9 +20,9 @@ class ManiSkill(BenchmarkEnv):
     Rewards are ManiSkill's ``reward_mode``, normalized dense by default; ``transition.success`` is its ``success``
     flag, and episodes end on success or ``fail``, as ManiSkill terminates them, or at the task's time limit. With
     ``terminate_on_success=False`` only ``fail`` ends them early, and ``success`` is reported at every step. Frames
-    come from ManiSkill's human render camera. Rendering needs a Vulkan driver, MoltenVK on macOS; on Linux,
-    ``render_backend="none"`` runs state observations without one, and without frames. ``**env_kwargs`` go to
-    ``gymnasium.make``, such as ``robot_uids`` or ``reward_mode``.
+    come from ManiSkill's human render camera. ManiSkill needs a Vulkan driver, MoltenVK on macOS, even without
+    frames: its scenes build render materials. ``render_backend="none"`` skips the render cameras, and frames, for
+    faster state observations. ``**env_kwargs`` go to ``gymnasium.make``, such as ``robot_uids`` or ``reward_mode``.
     """
 
     def __init__(

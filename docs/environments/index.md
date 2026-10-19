@@ -173,7 +173,7 @@ The [DeepMind Control Suite](https://github.com/google-deepmind/dm_control) is t
 
 ## ManiSkill
 
-[ManiSkill 3](https://github.com/haosulab/ManiSkill) simulates manipulation with SAPIEN, GPU-parallel when CUDA is available. Twelve tabletop tasks that need no asset downloads are registered under `ManiSkill/<name>`; `ManiSkill(name)` builds any other task. Rewards are ManiSkill's normalized dense rewards; episodes end on its `success` or `fail` flags, or at the time limit. Actions follow ManiSkill's `control_mode`, by default the robot's. They need `pip install "torch-world[maniskill]"` (on Linux, x86_64 only), and a Vulkan driver to render (MoltenVK on macOS). The [notebook](../examples/envs/maniskill.ipynb) trains TD-MPC2 online on `PushCube-v1`; it is published without outputs, since SAPIEN has no build for the aarch64 machines that ran the others.
+[ManiSkill 3](https://github.com/haosulab/ManiSkill) simulates manipulation with SAPIEN, GPU-parallel when CUDA is available. Twelve tabletop tasks that need no asset downloads are registered under `ManiSkill/<name>`; `ManiSkill(name)` builds any other task. Rewards are ManiSkill's normalized dense rewards; episodes end on its `success` or `fail` flags, or at the time limit. Actions follow ManiSkill's `control_mode`, by default the robot's. They need `pip install "torch-world[maniskill]"` (on Linux, x86_64 only), and a Vulkan driver (MoltenVK on macOS). The [notebook](../examples/envs/maniskill.ipynb) trains TD-MPC2 online on `PushCube-v1`; it is published without outputs, since SAPIEN has no build for the aarch64 machines that ran the others.
 
 | Environment | Robot | Steps | Task |
 |---|---|---:|---|

@@ -120,11 +120,19 @@ def test_camera_observations_and_options(fake_maniskill, monkeypatch):
 
 
 def _maniskill_runs():
-    """ManiSkill's CPU simulation without rendering, which macOS cannot select: it always renders there."""
-    return HAS_MANISKILL and sys.platform.startswith("linux")
+    """ManiSkill on Linux with a Vulkan device, which its scenes need to build render materials even without frames."""
+    if not (HAS_MANISKILL and sys.platform.startswith("linux")):
+        return False
+    import sapien
+
+    try:
+        sapien.render.RenderMaterial()
+    except RuntimeError:
+        return False
+    return True
 
 
-@pytest.mark.skipif(not _maniskill_runs(), reason="requires the maniskill extra on Linux")
+@pytest.mark.skipif(not _maniskill_runs(), reason="requires the maniskill extra on Linux, with a Vulkan driver")
 def test_real_task():
     from torch_world.envs import make
 
