@@ -39,6 +39,14 @@
 
 ::: torch_world.envs.ogbench.OGBench
 
+::: torch_world.envs.dmcontrol.DMControl
+
+::: torch_world.envs.metaworld.MetaWorld
+
+::: torch_world.envs.maniskill.ManiSkill
+
+::: torch_world.envs.myosuite.MyoSuite
+
 ::: torch_world.envs.robocasa.RoboCasa
 
 ::: torch_world.benchmarks.show_success

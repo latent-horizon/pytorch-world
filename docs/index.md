@@ -63,7 +63,7 @@ A **world model** learns how an environment evolves: from an observation and an 
 
     ---
 
-    138 environments: 33 built-in tasks from planning puzzles to Franka manipulation, plus OGBench, RoboCasa and RoboDojo.
+    190 environments: 33 built-in tasks from planning puzzles to Franka manipulation, plus OGBench, DMControl, Meta-World, ManiSkill, MyoSuite, RoboCasa and RoboDojo.
 
     [:octicons-arrow-right-24: Environments](environments/index.md)
 
@@ -87,7 +87,7 @@ A **world model** learns how an environment evolves: from an observation and an 
 
 ## Environments
 
-138 environments: 33 built-in, 13 from OGBench, 50 from RoboCasa and 42 from RoboDojo. Built-in tasks show a verified successful episode; OGBench tasks replay an episode of their dataset, RoboCasa tasks a human demonstration, and RoboDojo tasks its official task video. See [Environments](environments/index.md) for each one.
+190 environments: 33 built-in, 13 from OGBench, 20 from DMControl, 10 from Meta-World, 12 from ManiSkill, 10 from MyoSuite, 50 from RoboCasa and 42 from RoboDojo. Built-in tasks show a verified successful episode; OGBench tasks replay an episode of their dataset, RoboCasa tasks a human demonstration, and RoboDojo tasks its official task video. See [Environments](environments/index.md) for each one, including the DMControl, Meta-World, ManiSkill and MyoSuite tasks.
 
 ### Built-in
 

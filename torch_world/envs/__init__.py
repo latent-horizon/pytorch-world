@@ -45,8 +45,12 @@ __all__ = [
     "CATEGORIES",
     "QUALITY_PRESETS",
     "BenchmarkEnv",
+    "DMControl",
     "EnvSpec",
     "Macaw",
+    "ManiSkill",
+    "MetaWorld",
+    "MyoSuite",
     "OGBench",
     "PointMass",
     "PushT",
@@ -66,8 +70,8 @@ __all__ = [
 register_builtins()
 del register_builtins
 
-# External suites keep their own names under a namespace, `OGBench/...` or `RoboCasa/...`, which are not
-# identifiers; `OGBench(name)` and `RoboCasa(task)` build them.
+# External suites keep their own names under a namespace, such as `OGBench/...` or `RoboCasa/...`, which are not
+# identifiers; the suite's class, such as `OGBench(name)` or `RoboCasa(task)`, builds them.
 _TASK_NAMES = frozenset(
     spec.id.removesuffix("-v0") for spec in list_envs() if "legacy" not in spec.tags and "/" not in spec.id
 )
@@ -85,6 +89,11 @@ def __getattr__(name):
         from torch_world.envs.robot_cube import RobotCube
 
         return RobotCube
+    external = {"DMControl": "dmcontrol", "MetaWorld": "metaworld", "ManiSkill": "maniskill", "MyoSuite": "myosuite"}
+    if name in external:
+        from importlib import import_module
+
+        return getattr(import_module(f"torch_world.envs.{external[name]}"), name)
     if name == "OGBench":
         from torch_world.envs.ogbench import OGBench
 

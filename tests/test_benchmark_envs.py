@@ -30,7 +30,7 @@ def test_lazy_catalog_and_distinct_recipes():
     assert len(list_envs()) >= 25
     assert len(list_envs(backend="mujoco")) == 21
     assert len({(s.entry_point, repr(dict(s.kwargs))) for s in list_envs()}) == len(list_envs())
-    code = "import sys; import torch_world.envs; assert not any(m in sys.modules for m in ['mujoco','gymnasium','newton','warp','isaaclab','ogbench','robocasa','robosuite'])"
+    code = "import sys; import torch_world.envs; assert not any(m in sys.modules for m in ['mujoco','gymnasium','newton','warp','isaaclab','ogbench','robocasa','robosuite','dm_control','metaworld','mani_skill','myosuite'])"
     subprocess.run([sys.executable, "-c", code], check=True)
     with pytest.raises(KeyError, match="Unknown environment"):
         make("missing")
