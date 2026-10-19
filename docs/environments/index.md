@@ -1,6 +1,6 @@
 # Environments
 
-`torch_world` works with **138 environments** for training and evaluating world models: 33 built-in tasks in four categories, 13 from [OGBench](#ogbench), 50 from [RoboCasa](#robocasa) and 42 from [RoboDojo](#robodojo). The 96 built-in, OGBench and RoboCasa tasks are registered in `torch_world.envs`, batched behind the same `reset` / `step` / `collect` interface; RoboDojo's tasks run in RoboDojo's own evaluation client, which a torch-world policy serves. Each built-in task has a notebook that trains LeWM and plans with CEM; OGBench, RoboCasa and RoboDojo each have one that trains a RoboJEPA baseline.
+`torch_world` works with **190 environments** for training and evaluating world models: 33 built-in tasks in four categories, 13 from [OGBench](#ogbench), 20 from the [DeepMind Control Suite](#deepmind-control-suite), 10 from [Meta-World](#meta-world), 12 from [ManiSkill](#maniskill), 10 from [MyoSuite](#myosuite), 50 from [RoboCasa](#robocasa) and 42 from [RoboDojo](#robodojo). The 148 registered tasks are batched in `torch_world.envs` behind the same `reset` / `step` / `collect` interface, and each external suite's class builds any of its other tasks; RoboDojo's tasks run in RoboDojo's own evaluation client, which a torch-world policy serves. Each built-in task has a notebook that trains LeWM and plans with CEM; OGBench, RoboCasa and RoboDojo each have one that trains a RoboJEPA baseline, and DMControl, Meta-World, ManiSkill and MyoSuite one that trains TD-MPC2 online.
 
 The **Success** column shows a verified reference episode from `world.show_success()`: real simulator steps that end in the task's success condition. These references are privileged controllers or search, not model results.
 
@@ -11,9 +11,13 @@ The **Success** column shows a verified reference episode from `world.show_succe
 | [Navigation and locomotion](#navigation-and-locomotion) | `"navigation"` | 6 | PyTorch, MuJoCo |
 | [Manipulation](#manipulation) | `"manipulation"` | 16 | MuJoCo, Isaac Lab |
 | [OGBench](#ogbench) | `"navigation"`, `"manipulation"` | 13 | MuJoCo (OGBench) |
+| [DeepMind Control Suite](#deepmind-control-suite) | `"control"`, `"navigation"` | 20 | MuJoCo (dm_control) |
+| [Meta-World](#meta-world) | `"manipulation"` | 10 | MuJoCo (Meta-World) |
+| [ManiSkill](#maniskill) | `"manipulation"` | 12 | SAPIEN (ManiSkill) |
+| [MyoSuite](#myosuite) | `"control"`, `"manipulation"`, `"navigation"` | 10 | MuJoCo (MyoSuite) |
 | [RoboCasa](#robocasa) | `"manipulation"` | 50 | MuJoCo (robosuite) |
 | [RoboDojo](#robodojo) | evaluated by RoboDojo | 42 | Isaac Sim (RoboDojo) |
-| **Total** | | **138** | |
+| **Total** | | **190** | |
 
 ## Use an environment
 
@@ -121,6 +125,95 @@ from torch_world.envs import OGBench, list_envs, make
 [spec.id for spec in list_envs(backend="ogbench")]
 world = make("OGBench/visual-cube-single-play-v0", task_id=2, batch_size=8)
 world = OGBench("visual-cube-triple-play-v0", task_id=2)   # any OGBench dataset name
+```
+
+## DeepMind Control Suite
+
+The [DeepMind Control Suite](https://github.com/google-deepmind/dm_control) is the standard benchmark for continuous control from states and pixels. DreamerV3's 20 tasks are registered under `DMControl/<domain-task>`, in the control and locomotion categories; `DMControl(name)` builds any other suite task. Rewards are dense, in [0, 1] per step, with no success condition, so `transition.success` is `None`. Episodes last 1,000 control steps, divided by `action_repeat`. Pixel observations default to 64 × 64. They need `pip install "torch-world[dmcontrol]"`, on Python 3.12 or earlier. See [External suites](../guides/benchmark-environments.md#external-suites). The [notebook](../examples/envs/dmcontrol.ipynb) trains TD-MPC2 online on `cartpole-swingup`.
+
+| Environment | Category | Observation | Actions | Steps | Task |
+|---|---|---|---:|---:|---|
+| `DMControl/acrobot-swingup` | control | state (6) or RGB | 1 | 1000 | Swing up an underactuated two-link acrobot |
+| `DMControl/ball_in_cup-catch` | control | state (8) or RGB | 2 | 1000 | Swing a ball on a string into a cup |
+| `DMControl/cartpole-balance` | control | state (5) or RGB | 1 | 1000 | Keep a pole upright on a moving cart |
+| `DMControl/cartpole-balance_sparse` | control | state (5) or RGB | 1 | 1000 | Keep a pole upright on a cart, with a sparse reward |
+| `DMControl/cartpole-swingup` | control | state (5) or RGB | 1 | 1000 | Swing up and balance a pole on a cart |
+| `DMControl/cartpole-swingup_sparse` | control | state (5) or RGB | 1 | 1000 | Swing up and balance a pole on a cart, with a sparse reward |
+| `DMControl/cheetah-run` | navigation | state (17) or RGB | 6 | 1000 | Run forward with a planar cheetah |
+| `DMControl/finger-spin` | control | state (9) or RGB | 2 | 1000 | Spin a hinged body with a two-link finger |
+| `DMControl/finger-turn_easy` | control | state (12) or RGB | 2 | 1000 | Turn a hinged body to a wide target angle |
+| `DMControl/finger-turn_hard` | control | state (12) or RGB | 2 | 1000 | Turn a hinged body to a narrow target angle |
+| `DMControl/hopper-hop` | navigation | state (15) or RGB | 4 | 1000 | Hop forward with a planar one-legged hopper |
+| `DMControl/hopper-stand` | navigation | state (15) or RGB | 4 | 1000 | Stand a planar one-legged hopper upright |
+| `DMControl/pendulum-swingup` | control | state (3) or RGB | 1 | 1000 | Swing up a torque-limited pendulum |
+| `DMControl/quadruped-run` | navigation | state (78) or RGB | 12 | 1000 | Run forward with a quadruped |
+| `DMControl/quadruped-walk` | navigation | state (78) or RGB | 12 | 1000 | Walk forward with a quadruped |
+| `DMControl/reacher-easy` | control | state (6) or RGB | 2 | 1000 | Reach a large target with a two-link arm |
+| `DMControl/reacher-hard` | control | state (6) or RGB | 2 | 1000 | Reach a small target with a two-link arm |
+| `DMControl/walker-run` | navigation | state (24) or RGB | 6 | 1000 | Run forward with a planar biped |
+| `DMControl/walker-stand` | navigation | state (24) or RGB | 6 | 1000 | Stand a planar biped upright |
+| `DMControl/walker-walk` | navigation | state (24) or RGB | 6 | 1000 | Walk forward with a planar biped |
+
+## Meta-World
+
+[Meta-World](https://github.com/Farama-Foundation/Metaworld) has 50 tabletop manipulation tasks for a Sawyer arm. Its MT10 tasks are registered under `MetaWorld/<name>`; `MetaWorld(name)` builds any of the 50 v3 tasks. Each reset samples a new object and goal placement, which the 39-dimensional state observes. Rewards are Meta-World's dense shaping, and episodes end on its `success` flag or after 500 steps. They need `pip install "torch-world[metaworld]"`. The [notebook](../examples/envs/metaworld.ipynb) trains TD-MPC2 online on `reach-v3`.
+
+| Environment | Observation | Actions | Steps | Task |
+|---|---|---:|---:|---|
+| `MetaWorld/reach-v3` | state (39) or RGB | 4 | 500 | Reach a goal position with the Sawyer arm |
+| `MetaWorld/push-v3` | state (39) or RGB | 4 | 500 | Push a puck to a goal position |
+| `MetaWorld/pick-place-v3` | state (39) or RGB | 4 | 500 | Pick up a puck and place it at a goal |
+| `MetaWorld/door-open-v3` | state (39) or RGB | 4 | 500 | Open a door with a revolving joint |
+| `MetaWorld/drawer-open-v3` | state (39) or RGB | 4 | 500 | Pull a drawer open |
+| `MetaWorld/drawer-close-v3` | state (39) or RGB | 4 | 500 | Push a drawer closed |
+| `MetaWorld/button-press-topdown-v3` | state (39) or RGB | 4 | 500 | Press a button from above |
+| `MetaWorld/peg-insert-side-v3` | state (39) or RGB | 4 | 500 | Insert a peg sideways into a hole |
+| `MetaWorld/window-open-v3` | state (39) or RGB | 4 | 500 | Slide a window open |
+| `MetaWorld/window-close-v3` | state (39) or RGB | 4 | 500 | Slide a window closed |
+
+## ManiSkill
+
+[ManiSkill 3](https://github.com/haosulab/ManiSkill) simulates manipulation with SAPIEN, GPU-parallel when CUDA is available. Twelve tabletop tasks that need no asset downloads are registered under `ManiSkill/<name>`; `ManiSkill(name)` builds any other task. Rewards are ManiSkill's normalized dense rewards; episodes end on its `success` or `fail` flags, or at the time limit. Actions follow ManiSkill's `control_mode`, by default the robot's. They need `pip install "torch-world[maniskill]"` (on Linux, x86_64 only), and a Vulkan driver to render (MoltenVK on macOS). The [notebook](../examples/envs/maniskill.ipynb) trains TD-MPC2 online on `PushCube-v1`; it is published without outputs, since SAPIEN has no build for the aarch64 machines that ran the others.
+
+| Environment | Robot | Steps | Task |
+|---|---|---:|---|
+| `ManiSkill/PickCube-v1` | Panda | 50 | Pick up a cube and move it to a goal position with a Panda |
+| `ManiSkill/PushCube-v1` | Panda | 50 | Push a cube to a goal region |
+| `ManiSkill/PullCube-v1` | Panda | 50 | Pull a cube back to a goal region |
+| `ManiSkill/PokeCube-v1` | Panda | 50 | Poke a cube to a goal with a peg held in the gripper |
+| `ManiSkill/StackCube-v1` | Panda | 50 | Stack one cube on another |
+| `ManiSkill/PlaceSphere-v1` | Panda | 50 | Place a sphere into a shallow bin |
+| `ManiSkill/RollBall-v1` | Panda | 80 | Roll a ball into a goal region |
+| `ManiSkill/LiftPegUpright-v1` | Panda | 50 | Lift a lying peg into an upright pose |
+| `ManiSkill/PullCubeTool-v1` | Panda | 100 | Use an L-shaped tool to pull a cube within reach |
+| `ManiSkill/PushT-v1` | Panda stick | 100 | Push a T-shaped block into a goal pose with a stick |
+| `ManiSkill/PegInsertionSide-v1` | Panda, wrist camera | 100 | Insert a peg sideways into a box's hole |
+| `ManiSkill/PlugCharger-v1` | Panda, wrist camera | 200 | Plug a charger into a wall receptacle |
+
+## MyoSuite
+
+[MyoSuite](https://github.com/MyoHub/myosuite) drives musculoskeletal models with muscle activations: a finger, an elbow, a 39-muscle hand and an 80-muscle pair of legs. Ten tasks are registered under `MyoSuite/<name>`; `MyoSuite(name)` builds any other MyoSuite environment. Rewards are MyoSuite's dense task rewards. Episodes end on its `solved` flag, except in locomotion, where `solved` tracks the commanded velocity at each step, or at the task's limit. They need `pip install "torch-world[myosuite]"`, which requires MuJoCo 3.7 or later and so is installed apart from the `benchmark` extra. The [notebook](../examples/envs/myosuite.ipynb) trains TD-MPC2 online on `myoFingerReachRandom-v0`.
+
+| Environment | Category | Observation | Muscles | Steps | Task |
+|---|---|---|---:|---:|---|
+| `MyoSuite/myoFingerReachRandom-v0` | control | state (19) or RGB | 5 | 100 | Reach random targets with a muscle-driven finger |
+| `MyoSuite/myoFingerPoseRandom-v0` | control | state (17) or RGB | 5 | 100 | Hold random joint poses with a muscle-driven finger |
+| `MyoSuite/myoElbowPose1D6MRandom-v0` | control | state (9) or RGB | 6 | 100 | Hold random elbow angles with six muscles |
+| `MyoSuite/myoHandReachRandom-v0` | control | state (115) or RGB | 39 | 100 | Reach random fingertip targets with a 39-muscle hand |
+| `MyoSuite/myoHandPoseRandom-v0` | control | state (108) or RGB | 39 | 100 | Hold random hand poses with 39 muscles |
+| `MyoSuite/myoHandKeyTurnRandom-v0` | manipulation | state (93) or RGB | 39 | 200 | Turn a key between thumb and index finger |
+| `MyoSuite/myoHandObjHoldRandom-v0` | manipulation | state (91) or RGB | 39 | 75 | Hold an object of random shape and size |
+| `MyoSuite/myoHandPenTwirlRandom-v0` | manipulation | state (83) or RGB | 39 | 50 | Twirl a pen to random orientations in the hand |
+| `MyoSuite/myoHandReorient8-v0` | manipulation | state (200) or RGB | 39 | 50 | Reorient objects of eight shapes in the hand |
+| `MyoSuite/myoLegWalk-v0` | navigation | state (403) or RGB | 80 | 1000 | Walk forward on a musculoskeletal leg model |
+
+```python
+from torch_world.envs import DMControl, ManiSkill, MetaWorld, MyoSuite, make
+
+world = make("DMControl/walker-walk", observation="rgb", action_repeat=2, batch_size=8)
+world = MetaWorld("assembly-v3", batch_size=8)               # any of the 50 v3 tasks
+world = ManiSkill("StackCube-v1", control_mode="pd_ee_delta_pose", batch_size=64, device="cuda")
+world = MyoSuite("myoChallengeDieReorientP1-v0")            # any MyoSuite environment
 ```
 
 ## RoboDojo

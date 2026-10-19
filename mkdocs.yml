@@ -230,6 +230,10 @@ nav:
           - FrankaTablePush: examples/envs/manipulation/frankatablepush_v0.ipynb
       - Benchmark suites:
           - OGBench: examples/envs/ogbench.ipynb
+          - DMControl: examples/envs/dmcontrol.ipynb
+          - Meta-World: examples/envs/metaworld.ipynb
+          - ManiSkill: examples/envs/maniskill.ipynb
+          - MyoSuite: examples/envs/myosuite.ipynb
           - RoboDojo: examples/envs/robodojo.ipynb
           - RoboCasa: examples/envs/robocasa.ipynb
   - Datasets:

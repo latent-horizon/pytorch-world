@@ -29,6 +29,10 @@
 | `examples` | `matplotlib` | [`torch_world.plots`](../guides/plots.md) and the notebooks |
 | `robotics` | `mujoco` | the [`RobotCube`](../guides/environments.md#robotcube) environment |
 | `ogbench` | `ogbench`, on Python 3.12 or earlier | [OGBench tasks](../guides/benchmark-environments.md#ogbench) and [datasets](../datasets/trajectories.md#ogbench-datasets) |
+| `dmcontrol` | `dm_control`, on Python 3.12 or earlier | [DeepMind Control Suite tasks](../guides/benchmark-environments.md#external-suites) |
+| `metaworld` | `metaworld` | [Meta-World tasks](../guides/benchmark-environments.md#external-suites) |
+| `maniskill` | `mani_skill`; on Linux, x86_64 with Python 3.12 or earlier | [ManiSkill tasks](../guides/benchmark-environments.md#external-suites); rendering needs Vulkan |
+| `myosuite` | `myosuite`, MuJoCo 3.7 or later | [MyoSuite tasks](../guides/benchmark-environments.md#external-suites); not with the `benchmark` extra |
 | `robocasa` | `pyarrow`, `av` | reading [RoboCasa demonstrations](../datasets/trajectories.md#robocasa-demonstrations); RoboCasa itself installs from source |
 | `robodojo` | `h5py` | reading [RoboDojo episodes](../datasets/trajectories.md#robodojo-episodes) |
 | `test` | `pytest` | running the test suite |

@@ -1,6 +1,6 @@
 # Benchmark experiments
 
-`torch_world` works with 138 environments: 33 built-in tasks, 13 from OGBench, 50 from RoboCasa and 42 from RoboDojo. `torch_world.envs` registers the 33 built-in tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. It also registers 13 [OGBench](#ogbench) tasks and 50 [RoboCasa](#robocasa) tasks, and serves policies to [RoboDojo](#robodojo). Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
+`torch_world` works with 190 environments: 33 built-in tasks, 13 from OGBench, 52 from the DeepMind Control Suite, Meta-World, ManiSkill and MyoSuite, 50 from RoboCasa and 42 from RoboDojo. `torch_world.envs` registers the 33 built-in tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. It also registers 13 [OGBench](#ogbench) tasks, 52 tasks from four [external suites](#external-suites) and 50 [RoboCasa](#robocasa) tasks, and serves policies to [RoboDojo](#robodojo). Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
 
 Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used.
 
@@ -49,9 +49,11 @@ Puzzles, MuJoCo and Newton tasks support `reset(state)` and `render(state)` for 
 ```bash
 pip install -e ".[benchmark,notebooks,test]"  # 18 original MuJoCo tasks, notebook tools
 pip install -e ".[newton]"                   # Newton articulated control
+pip install -e ".[dmcontrol,metaworld,maniskill]"  # external suites that share the benchmark pin
+pip install -e ".[myosuite]"                 # MyoSuite, in its own environment: MuJoCo 3.7 or later
 ```
 
-The benchmark extra pins MuJoCo 3.6.0, the version used to verify the stored reference actions. LeWAM pins MuJoCo 3.15.0 for its separate matched study; install these two extras in separate virtual environments. The resolver declares them mutually exclusive. Reference replay is version-sensitive (BoxGate fails under 3.15), so do not combine their results across simulator versions. The `action` extra remains available for existing environments. The core package still depends only on torch.
+The benchmark extra pins MuJoCo 3.6.0, the version used to verify the stored reference actions. LeWAM pins MuJoCo 3.15.0 for its separate matched study; install these two extras in separate virtual environments. The resolver declares them mutually exclusive, and likewise `myosuite` and `benchmark`: MyoSuite 3 builds its models with MuJoCo's spec API from 3.7. Reference replay is version-sensitive (BoxGate fails under 3.15), so do not combine their results across simulator versions. The `action` extra remains available for existing environments. The core package still depends only on torch.
 
 Newton uses its real Featherstone articulated-body solver, with CPU as the portable default. Pass `physics_device="cuda:0"` to use Warp/CUDA. `device` separately selects the output tensor device. Its images are schematic views of the simulated links, not photorealistic camera images.
 
@@ -92,6 +94,48 @@ Observations follow OGBench: state vectors `(B, D)`, or `visual-` images `(B, 3,
 `state` is the observation: OGBench defines goals and success inside the simulator, so states are neither restorable nor scored from tensors, and `reset(state)` is not supported. OGBench draws some randomness from NumPy's global generator; each lane keeps its own stream, so `reset(seed=...)` is reproducible and leaves the caller's generator untouched. The one exception is upstream: manipulation goals settle under two random actions from an unseeded action space, so the arm pose in the goal varies between resets while the object targets that define success do not.
 
 One task per OGBench family and observation type is registered as `OGBench/<name>` (`list_envs(backend="ogbench")`, listed on the [Environments](../environments/index.md#ogbench) page), so `make("OGBench/cube-single-play-v0")` works like any registered task. OGBench names are not Python identifiers, so these tasks have no named classes; `OGBench(name)` builds them and any other OGBench task, which carries its own `OGBench/<name>` spec, so runs are saved and summarized the same way. Discrete-action powderworld tasks are not supported. Train offline from the OGBench datasets with [`load_ogbench`](../datasets/trajectories.md#ogbench-datasets); the [OGBench notebook](../examples/envs/ogbench.ipynb) trains a RoboJEPA baseline.
+
+## External suites
+
+Four more suites run behind the same protocol, each through one class that takes any of the suite's task names: `DMControl`, `MetaWorld`, `ManiSkill` and `MyoSuite`. A curated set of each is registered under the suite's prefix, `list_envs(backend="dmcontrol")` and so on, and listed on the [Environments](../environments/index.md#deepmind-control-suite) page; a task outside it carries its own `<Suite>/<name>` spec, so runs are saved and summarized the same way.
+
+```python
+from torch_world.benchmarks import run_experiment
+from torch_world.envs import DMControl, MetaWorld
+
+with DMControl("cheetah-run", observation="rgb", action_repeat=2, batch_size=8) as world:
+    observation = world.reset(seed=7)    # (8, 3, 64, 64)
+    result = run_experiment(world)
+
+with MetaWorld("pick-place-v3", batch_size=8) as world:
+    world.show_env()                     # the reset scene, with its sampled goal marker
+```
+
+| | `DMControl` | `MetaWorld` | `ManiSkill` | `MyoSuite` |
+|---|---|---|---|---|
+| extra | `dmcontrol`, Python 3.12 or earlier | `metaworld` | `maniskill`; on Linux, x86_64 with Python 3.12 or earlier | `myosuite`, apart from `benchmark` |
+| names | `"domain-task"`, e.g. `"cheetah-run"` | v3 tasks, e.g. `"pick-place-v3"` | registered IDs, e.g. `"PickCube-v1"` | registered IDs, e.g. `"myoHandPoseRandom-v0"` |
+| lanes | one environment each | one environment each | one GPU-parallel environment, or one each on CPU | one environment each |
+| `state` | the observation dictionary, flattened | the goal-observable state (39) | the flattened agent and task state | MyoSuite's state, including the target |
+| `observation="rgb"` | `camera`, 64 × 64 by default | `camera`, `"corner2"` by default | `camera` sensor, `"base_camera"` by default | `camera`, the model's first by default |
+| reward | the suite's, in [0, 1] per step | Meta-World's dense v2 shaping | ManiSkill's `reward_mode` | MyoSuite's dense reward |
+| `transition.success` | `None`: the suite has no success condition | `info["success"]` | `info["success"]` | `info["solved"]` |
+| episode ends | at the time limit, 1,000 steps / `action_repeat` | on success (`terminate_on_success`), or after 500 steps | on success (`terminate_on_success`) or failure, or at the task's limit | on success (`terminate_on_success`) except in locomotion, MyoSuite's terminations, or at the task's limit |
+
+Actions are each suite's continuous controls, rescaled from `[-1, 1]` to its bounds, and finished lanes are absorbing: they are never stepped again, or on a ManiSkill GPU batch, keep their last outcome. These suites define goals and success inside the simulator, so `state` is a snapshot, not a checkpoint: `reset(state)` and `render(state)` are not supported, and they have no `goal` observation. `run_experiment` therefore trains a reward head and plans for return, as for OGBench's single-task names. `render_goal_frame()` shows each lane's scene at reset; for the three MuJoCo suites it poses each simulation at its reset state for the frame and then restores it exactly.
+
+`reset(seed=...)` seeds lane `b` with `seed + b`, through each suite's own generator, so seeded resets are reproducible and NumPy's global generator is untouched. Deterministic tasks, such as `myoLegWalk-v0`, start every lane in the same pose.
+
+Ending episodes at success suits goal-reaching evaluation, but it sits awkwardly with return maximization. Meta-World, ManiSkill and MyoSuite pay dense rewards that are highest near the goal, so ending the episode there cuts off the reward stream that a return-maximizing agent is after. To train such agents, pass `terminate_on_success=False`, as TD-MPC2's own evaluations do: episodes run to the time limit, and `transition.success` still reports success at every step.
+
+Each suite has a notebook that trains [TD-MPC2](../models/tdmpc/tdmpc2.md) online and plans with MPPI: [DMControl](../examples/envs/dmcontrol.ipynb), [Meta-World](../examples/envs/metaworld.ipynb), [ManiSkill](../examples/envs/maniskill.ipynb) and [MyoSuite](../examples/envs/myosuite.ipynb).
+
+Each suite has a detail to know about:
+
+- **DMControl.** `action_repeat` repeats each action and sums its rewards. The quadruped domain observes from camera 2, as in DreamerV3 and TD-MPC2; every other domain observes from camera 0. `**task_kwargs`, such as `time_limit`, go to the suite's task.
+- **MetaWorld.** Tasks follow the goal-observable MT1 setup: every reset samples a new object and goal placement, instead of cycling through MT1's 50 fixed ones. Meta-World's corner cameras render upside down, so their frames are flipped upright. With the `benchmark` extra, the resolver selects Meta-World 3.0, the release that accepts MuJoCo 3.6. Later releases pin MuJoCo 3.3.0.
+- **ManiSkill.** With CUDA, the batch is one GPU-parallel environment; otherwise, or with `sim_backend="physx_cpu"`, each lane runs its own CPU environment, the only kind ManiSkill's CPU simulation supports. `control_mode`, such as `"pd_ee_delta_pose"`, selects the action space. SAPIEN renders with Vulkan: install MoltenVK on macOS, where ManiSkill always renders. On headless Linux, `render_backend="none"` runs state observations without frames.
+- **MyoSuite.** Actions are muscle activations, which MyoSuite normalizes to `[-1, 1]`. In the locomotion tasks, `solved` means the body is upright and tracking the commanded velocity at that step, so it is reported as `success` but does not end the episode. Pass `terminate_on_success` to choose for any task.
 
 ## RoboDojo
 
