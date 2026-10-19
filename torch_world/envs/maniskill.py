@@ -107,7 +107,8 @@ class ManiSkill(BenchmarkEnv):
         space = env.unwrapped.single_action_space
         self._low, self._high = (torch.as_tensor(b, dtype=torch.float32) for b in (space.low, space.high))
         self.action_dim = space.shape[0]
-        self.max_episode_steps = max_episode_steps or env.spec.max_episode_steps
+        # ManiSkill keeps the time limit in its own registry; the spec of the made environment drops it.
+        self.max_episode_steps = max_episode_steps or REGISTERED_ENVS[name].max_episode_steps
         self.reset(seed=0)
 
     def _read(self, obs):

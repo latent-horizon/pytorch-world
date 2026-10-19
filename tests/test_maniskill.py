@@ -17,7 +17,6 @@ class FakeEnv:
         self.name, self.num_envs, self.kwargs = name, num_envs, kwargs
         space = SimpleNamespace(low=torch.full((1,), -2.0).numpy(), high=torch.full((1,), 2.0).numpy(), shape=(1,))
         self.unwrapped = SimpleNamespace(single_action_space=space, device=torch.device("cpu"))
-        self.spec = SimpleNamespace(max_episode_steps=kwargs.get("max_episode_steps", 3))
         self.actions, self.closed = [], False
 
     def _obs(self):
@@ -54,7 +53,7 @@ def fake_maniskill(monkeypatch):
 
     envs = ModuleType("mani_skill.envs")
     registration = ModuleType("mani_skill.utils.registration")
-    registration.REGISTERED_ENVS = {"PickCube-v1": None, "Fake-v1": None}
+    registration.REGISTERED_ENVS = {name: SimpleNamespace(max_episode_steps=3) for name in ("PickCube-v1", "Fake-v1")}
     for name, module in {
         "gymnasium": SimpleNamespace(make=make),
         "mani_skill": ModuleType("mani_skill"),
