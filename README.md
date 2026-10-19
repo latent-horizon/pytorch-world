@@ -92,11 +92,6 @@ world.show_success()
 world.close()
 ```
 
-
-[One notebook per task](examples/envs/), grouped by category folder (`puzzles/`, `control/`, `navigation/`, `manipulation/`), uses LeWM and CEM from the library, with replaceable model/planner factories. Executed notebooks include measured results, tables, GT references, and episode GIFs for all 28 tasks, including actual Franka camera views. The folders also include PointMass, Macaw, PushT, and both RobotCube arms. `torch_world.benchmarks.run_experiment(..., output_dir="runs/benchmarks")` saves versioned run artifacts; `write_summary` combines completed runs into a benchmark CSV.
-
-Visual quality defaults to `high` (128-pixel RGB inputs, 512-pixel previews/GIFs). Use `quality="low"` or `"medium"`, or set `size` and `render_size` separately. Franka supports `camera="task"` / `"overview"` and `observation="rgb"` / `"state"`.
-
 ## Adding a model
 
 Subclass `JEPA` (representation learning) or `WorldModel` (action-conditioned dynamics) and build it from the shared modules. A `WorldModel` that implements `encode`, `predict` and `forward` gets `rollout`, `cost` and `CEM` planning with no extra code. See [examples/custom_model.ipynb](examples/custom_model.ipynb) and [CONTRIBUTING.md](CONTRIBUTING.md).
