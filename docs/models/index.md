@@ -10,7 +10,7 @@ Models are grouped into **families**. Models in a family share a way of learning
 
     Joint-embedding predictive architectures: predict the *representation* of a target from the representation of a context, never its pixels. Conditioned on actions, they become latent world models you can plan with.
 
-    Action: LeWM · LeWAM · DINO-WM · RoboJEPA<br>Vision: I-JEPA · LeJEPA · V-JEPA<br>Vision-language: VL-JEPA
+    Action: LeWM · LeWAM · DINO-WM · RoboJEPA<br>Vision: I-JEPA · LeJEPA · V-JEPA · LeVJEPA<br>Vision-language: VL-JEPA
 
 -   :material-chart-timeline-variant:{ .lg } **[TD-MPC](tdmpc/index.md)**
 
@@ -33,6 +33,7 @@ Models are grouped into **families**. Models in a family share a way of learning
 | JEPA | Vision | [I-JEPA](jepa/ijepa.md) | images | `JEPA` | [vision/ijepa](../examples/vision/ijepa.ipynb) |
 | JEPA | Vision | [LeJEPA](jepa/lejepa.md) | images | `JEPA` | [vision/lejepa](../examples/vision/lejepa.ipynb) |
 | JEPA | Vision | [V-JEPA](jepa/vjepa.md) | video | `JEPA` | [vision/vjepa](../examples/vision/vjepa.ipynb) |
+| JEPA | Vision | [LeVJEPA](jepa/levjepa.md) | video | `JEPA` | [vision/levjepa](../examples/vision/levjepa.ipynb) |
 | JEPA | Vision-language | [VL-JEPA](jepa/vljepa.md) | images or video + text | `JEPA` | [vqa/vljepa](../examples/vqa/vljepa.ipynb) |
 | TD-MPC | Control | [TD-MPC2](tdmpc/tdmpc2.md) | states or frames + actions + rewards | `WorldModel` | [action/tdmpc2](../examples/action/tdmpc2.ipynb) |
 

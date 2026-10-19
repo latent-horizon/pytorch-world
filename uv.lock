@@ -6182,6 +6182,9 @@ dmcontrol = [
     { name = "dm-control", version = "1.0.48", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.13' and extra != 'extra-11-torch-world-benchmark') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
 ]
 examples = [
+    { name = "av", version = "17.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
+    { name = "av", version = "18.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
+    { name = "av", version = "19.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "matplotlib", version = "3.11.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
 ]
@@ -6205,6 +6208,9 @@ newton = [
     { name = "newton" },
 ]
 notebooks = [
+    { name = "av", version = "17.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
+    { name = "av", version = "18.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
+    { name = "av", version = "19.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "ipykernel", version = "7.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "ipykernel", version = "7.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
@@ -6242,6 +6248,8 @@ docs = [
 
 [package.metadata]
 requires-dist = [
+    { name = "av", marker = "extra == 'examples'" },
+    { name = "av", marker = "extra == 'notebooks'" },
     { name = "av", marker = "extra == 'robocasa'" },
     { name = "dm-control", marker = "python_full_version < '3.13' and extra == 'dmcontrol'", specifier = ">=1.0.20" },
     { name = "h5py", marker = "extra == 'robodojo'" },

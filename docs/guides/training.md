@@ -43,7 +43,7 @@ Your own `JEPA` subclass gets the same machinery: build the copy with `self.targ
 
 ## BatchNorm before evaluation
 
-LeWM and LeJEPA projectors use BatchNorm. Their running averages lag behind features that move during training, which makes eval-mode embeddings drift from train-mode ones. Before evaluating, re-estimate the statistics as exact averages:
+LeWM, LeJEPA and LeVJEPA projectors use BatchNorm. Their running averages lag behind features that move during training, which makes eval-mode embeddings drift from train-mode ones. Before evaluating, re-estimate the statistics as exact averages:
 
 ```python
 import itertools
