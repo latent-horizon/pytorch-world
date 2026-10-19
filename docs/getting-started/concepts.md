@@ -9,7 +9,7 @@ The hard part is collapse: a constant embedding predicts itself perfectly. Model
 | strategy | how | models |
 |---|---|---|
 | EMA teacher | targets come from a slowly updated copy of the encoder, with stop-gradient | I-JEPA, V-JEPA |
-| distribution regularizer | [SIGReg](../api/losses.md) pushes embeddings toward an isotropic Gaussian | LeJEPA, LeWM |
+| distribution regularizer | [SIGReg](../api/losses.md) pushes embeddings toward an isotropic Gaussian | LeJEPA, LeVJEPA, LeWM |
 | frozen encoder | a pre-trained encoder is not trained at all | DINO-WM, RoboJEPA |
 | contrastive | [InfoNCE](../api/losses.md) pushes non-matching pairs apart | VL-JEPA |
 

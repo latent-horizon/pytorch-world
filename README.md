@@ -61,6 +61,7 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `IJEPA` | [Assran et al., 2023](https://arxiv.org/abs/2301.08243) | [facebookresearch/ijepa](https://github.com/facebookresearch/ijepa) | [vision/ijepa](examples/vision/ijepa.ipynb) |
 | `VJEPA` (and V-JEPA 2) | [Bardes et al., 2024](https://arxiv.org/abs/2404.08471), [Assran et al., 2025](https://arxiv.org/abs/2506.09985) | [facebookresearch/jepa](https://github.com/facebookresearch/jepa), [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) | [vision/vjepa](examples/vision/vjepa.ipynb) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) | [vision/lejepa](examples/vision/lejepa.ipynb) |
+| `LeVJEPA` | [Kuhn et al., 2026](https://arxiv.org/abs/2608.27395) | [galilai-group/levjepa](https://github.com/galilai-group/levjepa) | [vision/levjepa](examples/vision/levjepa.ipynb) |
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released | [vqa/vljepa](examples/vqa/vljepa.ipynb) |
 | `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) | [action/lewam](examples/action/lewam.ipynb) |
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) | [action/lewm](examples/action/lewm.ipynb) |

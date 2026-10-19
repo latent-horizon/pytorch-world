@@ -74,6 +74,14 @@ Self-supervised representation learning from images and video. They subclass `JE
 
     EMA target · L1 · tube masks
 
+-   **[LeVJEPA](levjepa.md)**
+
+    ---
+
+    LeJEPA for video: local crops of a clip predict its global view at the [cls] token, with 95% of tokens dropped and block-causal attention.
+
+    SIGReg · multi-view · token drop
+
 </div>
 
 ## Vision-language
@@ -103,6 +111,7 @@ Predict the embedding of text from images or video and a query.
 | [I-JEPA](ijepa.md) | features of masked image blocks | a visible context block | EMA target | smooth L1 |
 | [LeJEPA](lejepa.md) | mean embedding of global views | every view | SIGReg | MSE + SIGReg |
 | [V-JEPA](vjepa.md) | features of masked video tubes | the unmasked tokens | EMA target | L1 (+ variance hinge) |
+| [LeVJEPA](levjepa.md) | [cls] embedding of the global view | local views of the clip | SIGReg | MSE + SIGReg |
 | [VL-JEPA](vljepa.md) | embedding of the target text | visual tokens + query | contrastive | InfoNCE |
 
 ## Papers and code
@@ -116,4 +125,5 @@ Predict the embedding of text from images or video and a query.
 | `IJEPA` | [Assran et al., 2023](https://arxiv.org/abs/2301.08243) | [facebookresearch/ijepa](https://github.com/facebookresearch/ijepa) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) |
 | `VJEPA` | [Bardes et al., 2024](https://arxiv.org/abs/2404.08471), [Assran et al., 2025](https://arxiv.org/abs/2506.09985) | [facebookresearch/jepa](https://github.com/facebookresearch/jepa), [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) |
+| `LeVJEPA` | [Kuhn et al., 2026](https://arxiv.org/abs/2608.27395) | [galilai-group/levjepa](https://github.com/galilai-group/levjepa) |
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released |

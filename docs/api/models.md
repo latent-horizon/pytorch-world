@@ -10,6 +10,10 @@
 
 ::: torch_world.models.LeJEPA
 
+::: torch_world.models.LeVJEPA
+
+::: torch_world.models.LeVJEPAEncoder
+
 ::: torch_world.models.VLJEPA
 
 ::: torch_world.models.LeWAM

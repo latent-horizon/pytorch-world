@@ -184,6 +184,7 @@ nav:
               - I-JEPA: models/jepa/ijepa.md
               - LeJEPA: models/jepa/lejepa.md
               - V-JEPA: models/jepa/vjepa.md
+              - LeVJEPA: models/jepa/levjepa.md
           - Vision-language:
               - VL-JEPA: models/jepa/vljepa.md
       - TD-MPC:
@@ -254,6 +255,7 @@ nav:
           - I-JEPA: examples/vision/ijepa.ipynb
           - LeJEPA: examples/vision/lejepa.ipynb
           - V-JEPA: examples/vision/vjepa.ipynb
+          - LeVJEPA: examples/vision/levjepa.ipynb
       - Vision-language:
           - VL-JEPA: examples/vqa/vljepa.ipynb
       - Environments:
