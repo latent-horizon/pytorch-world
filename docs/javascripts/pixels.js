@@ -1,5 +1,6 @@
-// Liquid water over the hero sky: a height-field wave simulation on the GPU, rendered as a refracting surface.
-// The sky is redrawn in the shader to match the CSS background, so the swap is invisible; the CSS grain stays on top.
+// A pixel field over the hero sky: the sky is redrawn as a grid of tiny cells, and a height-field wave simulation,
+// one texel per cell, shifts, flickers and posterizes the cells the pointer disturbs. At rest the grid matches the
+// CSS background, so the swap is invisible; the CSS grain stays on top.
 // Without WebGL2 float render targets, or with reduced motion, the static CSS hero is left untouched.
 
 (() => {
@@ -54,12 +55,14 @@ void main() {
   o = s;
 }`;
 
-  // the sky of .tw-hero, refracted by the surface normal, with a soft specular sheen
+  // the sky of .tw-hero, sampled once per cell and disturbed by the wave height
   const RENDER = `#version 300 es
 precision highp float;
 uniform sampler2D u_state;
 uniform vec2 u_texel;
 uniform vec2 u_size;
+uniform float u_cell;
+uniform float u_time;
 in vec2 v_uv;
 out vec4 o;
 
@@ -96,19 +99,33 @@ vec3 sky(vec2 p) {
 
 float height(vec2 uv) { return texture(u_state, uv).r; }
 
-void main() {
-  float hx = height(v_uv + vec2(u_texel.x, 0.0)) - height(v_uv - vec2(u_texel.x, 0.0));
-  float hy = height(v_uv + vec2(0.0, u_texel.y)) - height(v_uv - vec2(0.0, u_texel.y));
-  vec3 n = normalize(vec3(-hx * 18.0, hy * 18.0, 1.0));   // y flipped: texture up, screen down
-  vec2 p = vec2(v_uv.x, 1.0 - v_uv.y) * u_size;
-  vec3 col = sky(p + n.xy * 90.0);
+float hash(vec2 q) { return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453); }
 
-  vec3 light = normalize(vec3(-0.35, -0.75, 1.0));
-  float spec = pow(max(dot(reflect(-light, n), vec3(0.0, 0.0, 1.0)), 0.0), 60.0);
-  float flat_ = pow(max(dot(reflect(-light, vec3(0.0, 0.0, 1.0)), vec3(0.0, 0.0, 1.0)), 0.0), 60.0);
-  float shade = dot(n, light) - light.z;              // slopes facing the light brighten, the others darken
-  col *= 1.0 + shade * 0.9;
-  col += vec3(1.0, 0.96, 0.9) * max(spec - flat_, 0.0) * 0.38;
+void main() {
+  vec2 p = vec2(v_uv.x, 1.0 - v_uv.y) * u_size;          // CSS pixels, y down
+  vec2 cell = floor(p / u_cell);
+  vec2 c = (cell + 0.5) * u_cell;
+  vec2 uv = vec2(c.x / u_size.x, 1.0 - c.y / u_size.y);
+  float h = height(uv);
+  float hx = height(uv + vec2(u_texel.x, 0.0)) - height(uv - vec2(u_texel.x, 0.0));
+  float hy = height(uv + vec2(0.0, u_texel.y)) - height(uv - vec2(0.0, u_texel.y));
+  float e = clamp(abs(h) * 14.0 + length(vec2(hx, hy)) * 10.0, 0.0, 1.0);
+
+  // the slope moves each cell by whole cells, so the grid tears instead of bending
+  vec2 shift = floor(vec2(-hx, hy) * 70.0 + 0.5) * u_cell;
+  vec3 col = sky(c + shift);
+  col *= 1.0 + h * 5.0;                                   // crests lighter, troughs darker
+
+  // disturbed cells drop to a few color levels and flicker
+  vec3 poster = floor(col * 6.0 + 0.5) / 6.0;
+  col = mix(col, poster, smoothstep(0.15, 0.6, e));
+  col += (hash(cell + floor(u_time * 14.0)) - 0.5) * 0.22 * e;
+
+  // a faint seam between disturbed cells, and a still dither everywhere
+  vec2 f = fract(p / u_cell);
+  float seam = step(f.x, 1.0 / u_cell) + step(f.y, 1.0 / u_cell);
+  col *= 1.0 - min(seam, 1.0) * 0.12 * e;
+  col += (hash(cell) - 0.5) * 0.018;
   o = vec4(col, 1.0);
 }`;
 
@@ -135,12 +152,12 @@ void main() {
     return { p, u: uniforms };
   }
 
-  function water(hero) {
-    if (hero.querySelector(".tw-water")) return;
+  function pixels(hero) {
+    if (hero.querySelector(".tw-pixels")) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const canvas = document.createElement("canvas");
-    canvas.className = "tw-water";
+    canvas.className = "tw-pixels";
     canvas.setAttribute("aria-hidden", "true");
     const gl = canvas.getContext("webgl2", { alpha: false, antialias: false, premultipliedAlpha: false });
     if (!gl || !gl.getExtension("EXT_color_buffer_float")) return;
@@ -160,15 +177,15 @@ void main() {
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-    let W = 0, H = 0, simW = 0, simH = 0;
+    let W = 0, H = 0, simW = 0, simH = 0, cell = 3;
     let targets = [];
 
     function target(w, h) {
       const tex = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.HALF_FLOAT, null);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       const fb = gl.createFramebuffer();
@@ -186,8 +203,8 @@ void main() {
       H = rect.height;
       canvas.width = Math.round(W * dpr);
       canvas.height = Math.round(H * dpr);
-      const scale = Math.min(1, 384 / W);
-      const w = Math.max(32, Math.round(W * scale)), h = Math.max(32, Math.round(H * scale));
+      cell = Math.max(3, Math.ceil(W / 520));                // one simulation texel per cell
+      const w = Math.max(32, Math.ceil(W / cell)), h = Math.max(32, Math.ceil(H / cell));
       if (w !== simW || h !== simH) {
         targets.forEach(({ tex, fb }) => (gl.deleteTexture(tex), gl.deleteFramebuffer(fb)));
         simW = w;
@@ -219,6 +236,8 @@ void main() {
       gl.uniform1i(render.u.u_state, 0);
       gl.uniform2f(render.u.u_texel, 1 / simW, 1 / simH);
       gl.uniform2f(render.u.u_size, W, H);
+      gl.uniform1f(render.u.u_cell, cell);
+      gl.uniform1f(render.u.u_time, performance.now() / 1000);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
@@ -276,10 +295,10 @@ void main() {
     hero.prepend(canvas);
     new ResizeObserver(resize).observe(hero);
     resize();
-    hero.classList.add("tw-hero--water");
+    hero.classList.add("tw-hero--pixels");
   }
 
-  const init = () => document.querySelectorAll(".tw-hero").forEach(water);
+  const init = () => document.querySelectorAll(".tw-hero").forEach(pixels);
   if (typeof document$ !== "undefined") document$.subscribe(init);
   else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();

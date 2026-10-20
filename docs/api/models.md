@@ -20,8 +20,6 @@
 
 ::: torch_world.models.LeWM
 
-::: torch_world.models.DINOWM
-
 ::: torch_world.models.RoboJEPA
 
 ::: torch_world.models.jepa.EmbodimentLinear
@@ -33,6 +31,8 @@
 ::: torch_world.models.DINOHead
 
 ::: torch_world.models.dino.sinkhorn_knopp
+
+::: torch_world.models.DINOWM
 
 ::: torch_world.models.TDMPC2
 

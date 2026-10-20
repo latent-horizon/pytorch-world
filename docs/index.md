@@ -84,7 +84,7 @@ uv add torch_world
 
 ## Environments
 
-190 environments: 33 built-in, 13 from OGBench, 20 from DMControl, 10 from Meta-World, 12 from ManiSkill, 10 from MyoSuite, 50 from RoboCasa and 42 from RoboDojo. Built-in tasks show a verified successful episode; OGBench tasks replay an episode of their dataset, RoboCasa tasks a human demonstration, and RoboDojo tasks its official task video. See [Environments](environments/index.md) for each one, including the DMControl, Meta-World, ManiSkill and MyoSuite tasks.
+190 environments: 33 built-in, 13 from OGBench, 20 from DMControl, 10 from Meta-World, 12 from ManiSkill, 10 from MyoSuite, 50 from RoboCasa and 42 from RoboDojo. Built-in tasks show a verified successful episode; OGBench tasks replay an episode of their dataset, Meta-World tasks its scripted expert, DMControl, ManiSkill and MyoSuite tasks a random policy, RoboCasa tasks a human demonstration, and RoboDojo tasks its official task video. See [Environments](environments/index.md) for each one.
 
 ### Built-in
 
@@ -142,6 +142,86 @@ uv add torch_world
 [![visual-scene-play-v0](assets/envs/ogbench/visual-scene-play.gif){ loading=lazy width="120" height="120" }<span>visual-scene-play</span>](environments/index.md#ogbench)
 [![puzzle-3x3-play-v0](assets/envs/ogbench/puzzle-3x3-play.gif){ loading=lazy width="120" height="120" }<span>puzzle-3x3-play</span>](environments/index.md#ogbench)
 [![visual-puzzle-3x3-play-v0](assets/envs/ogbench/visual-puzzle-3x3-play.gif){ loading=lazy width="120" height="120" }<span>visual-puzzle-3x3-play</span>](environments/index.md#ogbench)
+
+</div>
+
+### DeepMind Control Suite
+
+<div class="tw-carousel" markdown>
+
+[![acrobot-swingup](assets/envs/dmcontrol/acrobot-swingup.gif){ loading=lazy width="120" height="120" }<span>acrobot-swingup</span>](environments/index.md#deepmind-control-suite)
+[![ball_in_cup-catch](assets/envs/dmcontrol/ball_in_cup-catch.gif){ loading=lazy width="120" height="120" }<span>ball_in_cup-catch</span>](environments/index.md#deepmind-control-suite)
+[![cartpole-balance](assets/envs/dmcontrol/cartpole-balance.gif){ loading=lazy width="120" height="120" }<span>cartpole-balance</span>](environments/index.md#deepmind-control-suite)
+[![cartpole-balance_sparse](assets/envs/dmcontrol/cartpole-balance_sparse.gif){ loading=lazy width="120" height="120" }<span>cartpole-balance_sparse</span>](environments/index.md#deepmind-control-suite)
+[![cartpole-swingup](assets/envs/dmcontrol/cartpole-swingup.gif){ loading=lazy width="120" height="120" }<span>cartpole-swingup</span>](environments/index.md#deepmind-control-suite)
+[![cartpole-swingup_sparse](assets/envs/dmcontrol/cartpole-swingup_sparse.gif){ loading=lazy width="120" height="120" }<span>cartpole-swingup_sparse</span>](environments/index.md#deepmind-control-suite)
+[![cheetah-run](assets/envs/dmcontrol/cheetah-run.gif){ loading=lazy width="120" height="120" }<span>cheetah-run</span>](environments/index.md#deepmind-control-suite)
+[![finger-spin](assets/envs/dmcontrol/finger-spin.gif){ loading=lazy width="120" height="120" }<span>finger-spin</span>](environments/index.md#deepmind-control-suite)
+[![finger-turn_easy](assets/envs/dmcontrol/finger-turn_easy.gif){ loading=lazy width="120" height="120" }<span>finger-turn_easy</span>](environments/index.md#deepmind-control-suite)
+[![finger-turn_hard](assets/envs/dmcontrol/finger-turn_hard.gif){ loading=lazy width="120" height="120" }<span>finger-turn_hard</span>](environments/index.md#deepmind-control-suite)
+[![hopper-hop](assets/envs/dmcontrol/hopper-hop.gif){ loading=lazy width="120" height="120" }<span>hopper-hop</span>](environments/index.md#deepmind-control-suite)
+[![hopper-stand](assets/envs/dmcontrol/hopper-stand.gif){ loading=lazy width="120" height="120" }<span>hopper-stand</span>](environments/index.md#deepmind-control-suite)
+[![pendulum-swingup](assets/envs/dmcontrol/pendulum-swingup.gif){ loading=lazy width="120" height="120" }<span>pendulum-swingup</span>](environments/index.md#deepmind-control-suite)
+[![quadruped-run](assets/envs/dmcontrol/quadruped-run.gif){ loading=lazy width="120" height="120" }<span>quadruped-run</span>](environments/index.md#deepmind-control-suite)
+[![quadruped-walk](assets/envs/dmcontrol/quadruped-walk.gif){ loading=lazy width="120" height="120" }<span>quadruped-walk</span>](environments/index.md#deepmind-control-suite)
+[![reacher-easy](assets/envs/dmcontrol/reacher-easy.gif){ loading=lazy width="120" height="120" }<span>reacher-easy</span>](environments/index.md#deepmind-control-suite)
+[![reacher-hard](assets/envs/dmcontrol/reacher-hard.gif){ loading=lazy width="120" height="120" }<span>reacher-hard</span>](environments/index.md#deepmind-control-suite)
+[![walker-run](assets/envs/dmcontrol/walker-run.gif){ loading=lazy width="120" height="120" }<span>walker-run</span>](environments/index.md#deepmind-control-suite)
+[![walker-stand](assets/envs/dmcontrol/walker-stand.gif){ loading=lazy width="120" height="120" }<span>walker-stand</span>](environments/index.md#deepmind-control-suite)
+[![walker-walk](assets/envs/dmcontrol/walker-walk.gif){ loading=lazy width="120" height="120" }<span>walker-walk</span>](environments/index.md#deepmind-control-suite)
+
+</div>
+
+### Meta-World
+
+<div class="tw-carousel" markdown>
+
+[![reach-v3](assets/envs/metaworld/reach-v3.gif){ loading=lazy width="120" height="120" }<span>reach-v3</span>](environments/index.md#meta-world)
+[![push-v3](assets/envs/metaworld/push-v3.gif){ loading=lazy width="120" height="120" }<span>push-v3</span>](environments/index.md#meta-world)
+[![pick-place-v3](assets/envs/metaworld/pick-place-v3.gif){ loading=lazy width="120" height="120" }<span>pick-place-v3</span>](environments/index.md#meta-world)
+[![door-open-v3](assets/envs/metaworld/door-open-v3.gif){ loading=lazy width="120" height="120" }<span>door-open-v3</span>](environments/index.md#meta-world)
+[![drawer-open-v3](assets/envs/metaworld/drawer-open-v3.gif){ loading=lazy width="120" height="120" }<span>drawer-open-v3</span>](environments/index.md#meta-world)
+[![drawer-close-v3](assets/envs/metaworld/drawer-close-v3.gif){ loading=lazy width="120" height="120" }<span>drawer-close-v3</span>](environments/index.md#meta-world)
+[![button-press-topdown-v3](assets/envs/metaworld/button-press-topdown-v3.gif){ loading=lazy width="120" height="120" }<span>button-press-topdown-v3</span>](environments/index.md#meta-world)
+[![peg-insert-side-v3](assets/envs/metaworld/peg-insert-side-v3.gif){ loading=lazy width="120" height="120" }<span>peg-insert-side-v3</span>](environments/index.md#meta-world)
+[![window-open-v3](assets/envs/metaworld/window-open-v3.gif){ loading=lazy width="120" height="120" }<span>window-open-v3</span>](environments/index.md#meta-world)
+[![window-close-v3](assets/envs/metaworld/window-close-v3.gif){ loading=lazy width="120" height="120" }<span>window-close-v3</span>](environments/index.md#meta-world)
+
+</div>
+
+### ManiSkill
+
+<div class="tw-carousel" markdown>
+
+[![PickCube-v1](assets/envs/maniskill/PickCube-v1.gif){ loading=lazy width="120" height="120" }<span>PickCube-v1</span>](environments/index.md#maniskill)
+[![PushCube-v1](assets/envs/maniskill/PushCube-v1.gif){ loading=lazy width="120" height="120" }<span>PushCube-v1</span>](environments/index.md#maniskill)
+[![PullCube-v1](assets/envs/maniskill/PullCube-v1.gif){ loading=lazy width="120" height="120" }<span>PullCube-v1</span>](environments/index.md#maniskill)
+[![PokeCube-v1](assets/envs/maniskill/PokeCube-v1.gif){ loading=lazy width="120" height="120" }<span>PokeCube-v1</span>](environments/index.md#maniskill)
+[![StackCube-v1](assets/envs/maniskill/StackCube-v1.gif){ loading=lazy width="120" height="120" }<span>StackCube-v1</span>](environments/index.md#maniskill)
+[![PlaceSphere-v1](assets/envs/maniskill/PlaceSphere-v1.gif){ loading=lazy width="120" height="120" }<span>PlaceSphere-v1</span>](environments/index.md#maniskill)
+[![RollBall-v1](assets/envs/maniskill/RollBall-v1.gif){ loading=lazy width="120" height="120" }<span>RollBall-v1</span>](environments/index.md#maniskill)
+[![LiftPegUpright-v1](assets/envs/maniskill/LiftPegUpright-v1.gif){ loading=lazy width="120" height="120" }<span>LiftPegUpright-v1</span>](environments/index.md#maniskill)
+[![PullCubeTool-v1](assets/envs/maniskill/PullCubeTool-v1.gif){ loading=lazy width="120" height="120" }<span>PullCubeTool-v1</span>](environments/index.md#maniskill)
+[![PushT-v1](assets/envs/maniskill/PushT-v1.gif){ loading=lazy width="120" height="120" }<span>PushT-v1</span>](environments/index.md#maniskill)
+[![PegInsertionSide-v1](assets/envs/maniskill/PegInsertionSide-v1.gif){ loading=lazy width="120" height="120" }<span>PegInsertionSide-v1</span>](environments/index.md#maniskill)
+[![PlugCharger-v1](assets/envs/maniskill/PlugCharger-v1.gif){ loading=lazy width="120" height="120" }<span>PlugCharger-v1</span>](environments/index.md#maniskill)
+
+</div>
+
+### MyoSuite
+
+<div class="tw-carousel" markdown>
+
+[![myoFingerReachRandom-v0](assets/envs/myosuite/myoFingerReachRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerReachRandom-v0</span>](environments/index.md#myosuite)
+[![myoFingerPoseRandom-v0](assets/envs/myosuite/myoFingerPoseRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerPoseRandom-v0</span>](environments/index.md#myosuite)
+[![myoElbowPose1D6MRandom-v0](assets/envs/myosuite/myoElbowPose1D6MRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoElbowPose1D6MRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandReachRandom-v0](assets/envs/myosuite/myoHandReachRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandReachRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandPoseRandom-v0](assets/envs/myosuite/myoHandPoseRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandPoseRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandKeyTurnRandom-v0](assets/envs/myosuite/myoHandKeyTurnRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandKeyTurnRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandObjHoldRandom-v0](assets/envs/myosuite/myoHandObjHoldRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandObjHoldRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandPenTwirlRandom-v0](assets/envs/myosuite/myoHandPenTwirlRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandPenTwirlRandom-v0</span>](environments/index.md#myosuite)
+[![myoHandReorient8-v0](assets/envs/myosuite/myoHandReorient8-v0.gif){ loading=lazy width="120" height="120" }<span>myoHandReorient8-v0</span>](environments/index.md#myosuite)
+[![myoLegWalk-v0](assets/envs/myosuite/myoLegWalk-v0.gif){ loading=lazy width="120" height="120" }<span>myoLegWalk-v0</span>](environments/index.md#myosuite)
 
 </div>
 

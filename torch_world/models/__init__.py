@@ -1,7 +1,6 @@
 from torch_world.models.base import JEPA, WorldModel
-from torch_world.models.dino import DINOHead, DINOv2, DINOv2Encoder
+from torch_world.models.dino import DINOWM, DINOHead, DINOv2, DINOv2Encoder
 from torch_world.models.jepa import (
-    DINOWM,
     IJEPA,
     VJEPA,
     VLJEPA,

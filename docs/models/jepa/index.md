@@ -8,39 +8,28 @@ All models in this family live in `torch_world.models.jepa` and are exported fro
 
 Action-conditioned JEPAs: latent world models that predict the embedding of the next observation from past embeddings and actions, and plan toward a goal. They subclass `WorldModel`, so `rollout`, `cost` and [CEM planning](../../guides/planning.md) work without extra code; LeWAM also generates actions with its own `LeWAMPlanner`. RoboJEPA conditions on several cameras, proprioceptive state and the robot's embodiment.
 
-<div class="grid cards" markdown>
+<div class="grid cards tw-models" markdown>
 
 -   **[LeWM](lewm.md)**
 
-    ---
-
     End-to-end from pixels: next-embedding MSE plus SIGReg, with an adaLN-conditioned causal predictor.
 
-    trained encoder · SIGReg
+    `trained encoder` `SIGReg`
+    { .tw-chips }
 
 -   **[LeWAM](lewam.md)**
 
-    ---
-
     World and action model: latent dynamics and a flow-matching policy that generates action chunks, in one mixture of transformers. Plans with `LeWAMPlanner`.
 
-    trained encoder · SIGReg · flow matching
-
--   **[DINO-WM](dinowm.md)**
-
-    ---
-
-    Dynamics over the patch features of a frozen DINOv2 encoder, with proprioception.
-
-    frozen encoder · MSE
+    `trained encoder` `SIGReg` `flow matching`
+    { .tw-chips }
 
 -   **[RoboJEPA](robojepa.md)**
 
-    ---
-
     One predictor for many robots and cameras, in the latent space of a frozen V-JEPA 2.1 encoder.
 
-    frozen encoder · L1 + rollout
+    `frozen encoder` `L1 + rollout`
+    { .tw-chips }
 
 </div>
 
@@ -48,39 +37,35 @@ Action-conditioned JEPAs: latent world models that predict the embedding of the 
 
 Self-supervised representation learning from images and video. They subclass `JEPA`; their encoders are evaluated with frozen-feature [probes](../../guides/metrics.md#probing-frozen-features).
 
-<div class="grid cards" markdown>
+<div class="grid cards tw-models" markdown>
 
 -   **[I-JEPA](ijepa.md)**
 
-    ---
-
     Predict the features of masked image blocks from one visible context block.
 
-    EMA target · smooth L1 · multi-block masks
+    `EMA target` `smooth L1` `multi-block masks`
+    { .tw-chips }
 
 -   **[LeJEPA](lejepa.md)**
 
-    ---
-
     Every view predicts the mean of the global views; SIGReg keeps embeddings Gaussian. No teacher, no stop-gradient, no schedules.
 
-    SIGReg · multi-view
+    `SIGReg` `multi-view`
+    { .tw-chips }
 
 -   **[V-JEPA](vjepa.md)**
 
-    ---
-
     Predict the features of masked spatio-temporal tubes. Covers V-JEPA 2 with 3D RoPE.
 
-    EMA target · L1 · tube masks
+    `EMA target` `L1` `tube masks`
+    { .tw-chips }
 
 -   **[LeVJEPA](levjepa.md)**
 
-    ---
-
     LeJEPA for video: local crops of a clip predict its global view at the [cls] token, with 95% of tokens dropped and block-causal attention.
 
-    SIGReg · multi-view · token drop
+    `SIGReg` `multi-view` `token drop`
+    { .tw-chips }
 
 </div>
 
@@ -88,15 +73,14 @@ Self-supervised representation learning from images and video. They subclass `JE
 
 Predict the embedding of text from images or video and a query.
 
-<div class="grid cards" markdown>
+<div class="grid cards tw-models" markdown>
 
 -   **[VL-JEPA](vljepa.md)**
 
-    ---
-
     Predict the embedding of a text answer from visual tokens and a question; decode text only on demand.
 
-    frozen X-encoder · InfoNCE
+    `frozen X-encoder` `InfoNCE`
+    { .tw-chips }
 
 </div>
 
@@ -106,7 +90,6 @@ Predict the embedding of text from images or video and a query.
 |---|---|---|---|---|
 | [LeWM](lewm.md) | next frame embedding | past embeddings + actions | SIGReg | MSE + SIGReg |
 | [LeWAM](lewam.md) | future embeddings and an action chunk | past embeddings + actions (+ goal) | SIGReg | MSE + flow matching + SIGReg |
-| [DINO-WM](dinowm.md) | next frame patch features | past features + actions | frozen encoder | MSE |
 | [RoboJEPA](robojepa.md) | next frame features of every view | past features + actions + states | frozen encoder | L1, teacher forcing + rollout |
 | [I-JEPA](ijepa.md) | features of masked image blocks | a visible context block | EMA target | smooth L1 |
 | [LeJEPA](lejepa.md) | mean embedding of global views | every view | SIGReg | MSE + SIGReg |
@@ -120,7 +103,6 @@ Predict the embedding of text from images or video and a query.
 |---|---|---|
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) |
 | `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) |
-| `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) |
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) |
 | `IJEPA` | [Assran et al., 2023](https://arxiv.org/abs/2301.08243) | [facebookresearch/ijepa](https://github.com/facebookresearch/ijepa) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) |

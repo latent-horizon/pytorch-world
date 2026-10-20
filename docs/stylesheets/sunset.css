@@ -566,8 +566,9 @@ body,
   transform: none;
 }
 
-/* liquid water: a WebGL canvas between the sky and the content (see javascripts/water.js) */
-.tw-hero .tw-water {
+/* pixel field: a WebGL canvas between the sky and the content (see javascripts/pixels.js) */
+.tw-hero .tw-pixels {
+  image-rendering: pixelated;
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -1249,4 +1250,157 @@ body,
 .md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:has(a:focus-visible) {
   outline: 2px solid var(--md-accent-fg-color);
   outline-offset: 2px;
+}
+
+/* ---------- model cards: name, a muted summary, chips pinned to the bottom ---------- */
+
+.md-typeset .grid.cards.tw-models > ul > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.95rem 1.1rem;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li:hover {
+  transform: none;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li > p {
+  margin: 0;
+}
+
+/* title row: glyph beside the name */
+.md-typeset .grid.cards.tw-models > ul > li > p:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li > p:first-child strong {
+  font-weight: 650;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li > p:first-child a {
+  color: var(--md-default-fg-color);
+  transition: color 0.2s ease;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li:hover > p:first-child a {
+  color: var(--md-typeset-a-color);
+}
+
+.md-typeset .grid.cards.tw-models .lg {
+  height: 1.1rem;
+  width: 1.1rem;
+}
+
+/* summary: secondary text */
+.md-typeset .grid.cards.tw-models > ul > li > p:nth-of-type(2) {
+  margin-top: 0.3rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.7rem;
+  line-height: 1.55;
+}
+
+/* chips: tags (code spans) or model links, the first row pushed to the bottom */
+.md-typeset .tw-models .tw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.64rem;
+  line-height: 1.4;
+}
+
+.md-typeset .tw-models > ul > li > p:nth-of-type(2) + .tw-chips {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.md-typeset .grid.cards.tw-models > ul > li > .tw-chips + .tw-chips {
+  margin-top: 0.45rem;
+}
+
+.md-typeset .tw-models .tw-chips code,
+.md-typeset .tw-models .tw-chips a {
+  padding: 0.18em 0.65em;
+  border: 1px solid var(--tw-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--md-default-fg-color) 4%, transparent);
+  color: var(--md-default-fg-color--light);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  word-break: normal;
+}
+
+.md-typeset .tw-models .tw-chips a {
+  position: relative;
+  z-index: 1;
+  color: var(--md-default-fg-color);
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.md-typeset .tw-models .tw-chips a:hover {
+  border-color: color-mix(in srgb, var(--tw-coral) 55%, transparent);
+  background: color-mix(in srgb, var(--tw-coral) 10%, transparent);
+  color: var(--md-typeset-a-color);
+}
+
+/* family index: a fixed-width group label before its models */
+.md-typeset .tw-models .tw-chips strong {
+  flex: 0 0 4.5rem;
+  color: var(--md-default-fg-color--lighter);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* when the chips are not links, the whole card is the title link */
+.md-typeset .grid.cards.tw-models > ul > li:not(:has(.tw-chips a)) > p:first-child a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* family index: three compact cards, the whole card is the link */
+.md-typeset .grid.cards.tw-models--families {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.md-typeset .grid.cards.tw-models--families > ul > li {
+  padding: 0.75rem 0.9rem;
+}
+
+.md-typeset .grid.cards.tw-models--families > ul > li > p:first-child {
+  gap: 0.45rem;
+  font-size: 0.76rem;
+}
+
+.md-typeset .grid.cards.tw-models--families .lg {
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
+.md-typeset .grid.cards.tw-models--families > ul > li > p:nth-of-type(2) {
+  margin-top: 0.2rem;
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 59.9375em) {
+  .md-typeset .grid.cards.tw-models--families {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 44.9375em) {
+  .md-typeset .tw-models .tw-chips strong {
+    flex-basis: 100%;
+  }
 }
