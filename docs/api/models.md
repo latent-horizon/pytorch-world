@@ -26,6 +26,14 @@
 
 ::: torch_world.models.jepa.EmbodimentLinear
 
+::: torch_world.models.DINOv2
+
+::: torch_world.models.DINOv2Encoder
+
+::: torch_world.models.DINOHead
+
+::: torch_world.models.dino.sinkhorn_knopp
+
 ::: torch_world.models.TDMPC2
 
 ::: torch_world.models.tdmpc.state_encoder

@@ -1,6 +1,6 @@
 # Models
 
-Models are grouped into **families**. Models in a family share a way of learning and a base class, so they can be swapped and compared on the same data, environments and planners. The families are **JEPA** and **TD-MPC**; more families and models will be added.
+Models are grouped into **families**. Models in a family share a way of learning and a base class, so they can be swapped and compared on the same data, environments and planners. The families are **JEPA**, **DINO** and **TD-MPC**; more families and models will be added.
 
 <div class="grid cards" markdown>
 
@@ -11,6 +11,14 @@ Models are grouped into **families**. Models in a family share a way of learning
     Joint-embedding predictive architectures: predict the *representation* of a target from the representation of a context, never its pixels. Conditioned on actions, they become latent world models you can plan with.
 
     Action: LeWM · LeWAM · DINO-WM · RoboJEPA<br>Vision: I-JEPA · LeJEPA · V-JEPA · LeVJEPA<br>Vision-language: VL-JEPA
+
+-   :material-school-outline:{ .lg } **[DINO](dino/index.md)**
+
+    ---
+
+    Self-distillation: a student matches an EMA teacher's assignments of crops to learned prototypes, with no predictor and no labels.
+
+    Vision: DINOv2
 
 -   :material-chart-timeline-variant:{ .lg } **[TD-MPC](tdmpc/index.md)**
 
@@ -35,6 +43,7 @@ Models are grouped into **families**. Models in a family share a way of learning
 | JEPA | Vision | [V-JEPA](jepa/vjepa.md) | video | `JEPA` | [vision/vjepa](../examples/vision/vjepa.ipynb) |
 | JEPA | Vision | [LeVJEPA](jepa/levjepa.md) | video | `JEPA` | [vision/levjepa](../examples/vision/levjepa.ipynb) |
 | JEPA | Vision-language | [VL-JEPA](jepa/vljepa.md) | images or video + text | `JEPA` | [vqa/vljepa](../examples/vqa/vljepa.ipynb) |
+| DINO | Vision | [DINOv2](dino/dinov2.md) | images | `nn.Module` | [vision/dinov2](../examples/vision/dinov2.ipynb) |
 | TD-MPC | Control | [TD-MPC2](tdmpc/tdmpc2.md) | states or frames + actions + rewards | `WorldModel` | [action/tdmpc2](../examples/action/tdmpc2.ipynb) |
 
 Every model's `forward` returns a dict with a scalar `"loss"`. Every `WorldModel` also has `encode`, `predict` and `rollout`, and plans with [`CEM`](../guides/planning.md) out of the box; TD-MPC2 plans for reward with `MPPI`. To add a model, see [Bring your own model](../guides/custom-model.md).

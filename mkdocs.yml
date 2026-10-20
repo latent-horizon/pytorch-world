@@ -187,6 +187,9 @@ nav:
               - LeVJEPA: models/jepa/levjepa.md
           - Vision-language:
               - VL-JEPA: models/jepa/vljepa.md
+      - DINO:
+          - models/dino/index.md
+          - DINOv2: models/dino/dinov2.md
       - TD-MPC:
           - models/tdmpc/index.md
           - TD-MPC2: models/tdmpc/tdmpc2.md
@@ -256,6 +259,7 @@ nav:
           - LeJEPA: examples/vision/lejepa.ipynb
           - V-JEPA: examples/vision/vjepa.ipynb
           - LeVJEPA: examples/vision/levjepa.ipynb
+          - DINOv2 vs LeVJEPA: examples/vision/dinov2.ipynb
       - Vision-language:
           - VL-JEPA: examples/vqa/vljepa.ipynb
       - Environments:
