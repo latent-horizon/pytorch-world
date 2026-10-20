@@ -70,6 +70,14 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 
 Joint-embedding predictive architectures (JEPAs) predict the *representation* of a target from the representation of a context, instead of reconstructing pixels. Action-conditioned JEPAs are world models: they predict the next latent state from the current one and an action, and planning searches for the actions that bring the imagined latent closest to a goal.
 
+### DINO
+
+| model | paper | reference code | notebook |
+|---|---|---|---|
+| `DINOv2` | [Oquab et al., 2024](https://arxiv.org/abs/2304.07193) | [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2) | [vision/dinov2](examples/vision/dinov2.ipynb) |
+
+Self-distillation: a student matches an EMA teacher's assignments of image crops to learned prototypes, on [cls] tokens (DINO) and masked patches (iBOT). The notebook trains it next to LeVJEPA on the same photos and footage.
+
 ### TD-MPC
 
 | model | paper | reference code | notebook |

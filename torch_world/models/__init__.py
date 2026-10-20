@@ -1,4 +1,5 @@
 from torch_world.models.base import JEPA, WorldModel
+from torch_world.models.dino import DINOHead, DINOv2, DINOv2Encoder
 from torch_world.models.jepa import (
     DINOWM,
     IJEPA,
@@ -21,6 +22,9 @@ __all__ = [
     "TDMPC2",
     "VJEPA",
     "VLJEPA",
+    "DINOHead",
+    "DINOv2",
+    "DINOv2Encoder",
     "LeJEPA",
     "LeVJEPA",
     "LeVJEPAEncoder",

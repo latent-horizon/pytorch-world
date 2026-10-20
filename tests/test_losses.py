@@ -1,6 +1,6 @@
 import torch
 
-from torch_world.losses import SIGReg, info_nce
+from torch_world.losses import SIGReg, info_nce, koleo
 
 
 def reference_sigreg(proj, A, knots=17):
@@ -34,3 +34,15 @@ def test_info_nce():
     assert info_nce(a, a, 0.01) < 1e-3
     b = torch.randn(8, 4)
     assert torch.allclose(info_nce(a[:, :4], b), info_nce(b, a[:, :4]))
+
+
+def test_koleo_prefers_spread_embeddings():
+    spread = koleo(torch.eye(8))
+    clustered = koleo(torch.eye(8) + 10 * torch.ones(8, 8))
+    assert spread < clustered
+
+
+def test_koleo_uses_each_nearest_neighbor():
+    x = torch.tensor([[1.0, 0.0], [0.0, 1.0], [0.6, 0.8]])
+    distance = torch.tensor([(0.4**2 + 0.8**2) ** 0.5, (0.6**2 + 0.2**2) ** 0.5, (0.6**2 + 0.2**2) ** 0.5])
+    assert torch.allclose(koleo(x), -torch.log(distance).mean(), atol=1e-5)

@@ -4,3 +4,5 @@
 
 ::: torch_world.losses.info_nce
 
+::: torch_world.losses.koleo
+

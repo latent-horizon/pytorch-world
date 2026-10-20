@@ -1,7 +1,14 @@
 import pytest
 import torch
 
-from torch_world.masks import MultiBlock3DMask, MultiBlockMask, apply_masks, frame_causal_mask, repeat_interleave_batch
+from torch_world.masks import (
+    BlockwiseMask,
+    MultiBlock3DMask,
+    MultiBlockMask,
+    apply_masks,
+    frame_causal_mask,
+    repeat_interleave_batch,
+)
 
 
 def test_apply_masks_and_repeat():
@@ -51,3 +58,17 @@ def test_frame_causal_mask():
 def test_multiblock_rejects_blocks_smaller_than_min_keep():
     with pytest.raises(ValueError, match="min_keep"):
         MultiBlockMask((4, 4), pred_scale=(0.15, 0.15), aspect_ratio=(1.0, 1.0), min_keep=2)(1)
+
+
+def test_blockwise_mask_masks_a_fraction_of_images_within_the_ratio_range():
+    masks = BlockwiseMask((14, 14), ratio=(0.1, 0.5), probability=0.5)(16, generator=torch.Generator().manual_seed(0))
+    counts = masks.sum(1)
+    assert masks.shape == (16, 196) and masks.dtype == torch.bool
+    assert (counts > 0).sum() == 8
+    assert counts.max() <= 0.5 * 196
+
+
+def test_blockwise_mask_is_reproducible():
+    mask = BlockwiseMask((8, 8))
+    a, b = (mask(6, generator=torch.Generator().manual_seed(3)) for _ in range(2))
+    assert torch.equal(a, b)
