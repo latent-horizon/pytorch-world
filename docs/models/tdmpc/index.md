@@ -4,7 +4,7 @@
 
 All models in this family live in `torch_world.models.tdmpc` and are exported from `torch_world.models`. They subclass `WorldModel`, so `encode`, `predict` and `rollout` work as for every world model; they plan for reward with [`MPPI`](../../guides/planning.md#mppi-planning-for-reward), not toward a goal latent.
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[TD-MPC2](tdmpc2.md)**
 

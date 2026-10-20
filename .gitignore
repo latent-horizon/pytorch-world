@@ -19,3 +19,10 @@ examples/action/checkpoints/
 /examples/envs/media/
 /examples/envs/records/
 examples/action/reports/
+
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+docs/.vitepress/api.json
+docs/examples/
+docs/_fallback/

@@ -32,11 +32,9 @@ notebooks = ["matplotlib", "av", "nbclient", "nbformat", "ipykernel"]
 test = ["pytest", "pytest-xdist"]
 
 [dependency-groups]
+# The VitePress site (package.json) renders the API reference and notebooks with these.
 docs = [
-    "mkdocs>=1.6,<2",
-    "mkdocs-material>=9.6,<10",
-    "mkdocstrings[python]>=0.29",
-    "mkdocs-jupyter>=0.25",
+    "griffe>=1.5",
     "ruff",
 ]
 

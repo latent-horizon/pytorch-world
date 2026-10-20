@@ -2,7 +2,7 @@
 
 `torch_world.datasets` holds the data the models train on: windows over collected episodes for world models, and medical images and questions for vision-language models. Every dataset is a standard `torch.utils.data.Dataset` that returns dicts of tensors, so it plugs into a `DataLoader` as is.
 
-<div class="grid cards" markdown>
+<div class="grid cards">
 
 -   :material-chart-timeline-variant:{ .lg } **[Trajectories](trajectories.md)**
 

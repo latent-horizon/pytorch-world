@@ -8,7 +8,7 @@ All models in this family live in `torch_world.models.dino` and are exported fro
 
 Self-distillation pretraining of an image encoder. Call `update_teacher(momentum)` after each optimizer step.
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[DINOv2](dinov2.md)**
 
@@ -23,7 +23,7 @@ Self-distillation pretraining of an image encoder. Call `update_teacher(momentum
 
 World models built on the features of a frozen DINO encoder. They subclass `WorldModel`, so `rollout`, `cost` and [CEM planning](../../guides/planning.md) work without extra code.
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[DINO-WM](dinowm.md)**
 

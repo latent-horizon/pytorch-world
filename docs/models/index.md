@@ -2,7 +2,7 @@
 
 Models are grouped into **families**. Models in a family share a way of learning and a base class, so they can be swapped and compared on the same data, environments and planners. The families are **JEPA**, **DINO** and **TD-MPC**; more families and models will be added.
 
-<div class="grid cards tw-models tw-models--families" markdown>
+<div class="grid cards tw-models tw-models--families">
 
 -   :material-vector-link:{ .lg } **[JEPA](jepa/index.md)**
 
