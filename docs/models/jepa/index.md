@@ -8,7 +8,7 @@ All models in this family live in `torch_world.models.jepa` and are exported fro
 
 Action-conditioned JEPAs: latent world models that predict the embedding of the next observation from past embeddings and actions, and plan toward a goal. They subclass `WorldModel`, so `rollout`, `cost` and [CEM planning](../../guides/planning.md) work without extra code; LeWAM also generates actions with its own `LeWAMPlanner`. RoboJEPA conditions on several cameras, proprioceptive state and the robot's embodiment.
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[LeWM](lewm.md)**
 
@@ -37,7 +37,7 @@ Action-conditioned JEPAs: latent world models that predict the embedding of the 
 
 Self-supervised representation learning from images and video. They subclass `JEPA`; their encoders are evaluated with frozen-feature [probes](../../guides/metrics.md#probing-frozen-features).
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[I-JEPA](ijepa.md)**
 
@@ -73,7 +73,7 @@ Self-supervised representation learning from images and video. They subclass `JE
 
 Predict the embedding of text from images or video and a query.
 
-<div class="grid cards tw-models" markdown>
+<div class="grid cards tw-models">
 
 -   **[VL-JEPA](vljepa.md)**
 

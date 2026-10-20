@@ -2,25 +2,22 @@
 
 `torch_world` needs Python 3.10 or newer and PyTorch 2.1 or newer. PyTorch is its only required dependency.
 
-=== "uv"
+::: code-group
 
-    ```bash
-    uv add torch_world
-    ```
+```bash [uv]
+uv add torch_world
+```
 
-=== "pip"
+```bash [pip]
+pip install torch-world
+```
 
-    ```bash
-    pip install torch-world
-    ```
-
-=== "from source"
-
-    ```bash
-    git clone <repository-url> pytorch-world
-    cd pytorch-world
-    uv sync
-    ```
+```bash [from source]
+git clone <repository-url> pytorch-world
+cd pytorch-world
+uv sync
+```
+:::
 
 ## Optional extras
 
@@ -49,5 +46,7 @@ import torch_world
 print(torch_world.__version__)
 ```
 
-!!! tip "GPU"
-    Every module and environment is plain PyTorch and runs on whatever device you move it to. Environments take a `device` argument and render batches directly on it.
+::: tip GPU
+Every module and environment is plain PyTorch and runs on whatever device you move it to. Environments take a `device` argument and render batches directly on it.
+:::
+

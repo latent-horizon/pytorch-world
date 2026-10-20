@@ -20,8 +20,9 @@ masks_enc, masks_pred = masker(batch_size=128)
 
 Block sizes are shared across the batch and every mask is cropped to the shortest one, so the masks stack. Pass `allow_overlap=True` to let context and targets overlap, and a `generator` for reproducible masks.
 
-!!! warning "`min_keep` on small grids"
-    A block must hold more than `min_keep` patches. The default of 10 is meant for 14×14 grids and up; lower it on small grids, or sampling raises `ValueError`.
+::: warning `min_keep` on small grids
+A block must hold more than `min_keep` patches. The default of 10 is meant for 14×14 grids and up; lower it on small grids, or sampling raises `ValueError`.
+:::
 
 ## Video tubes: `MultiBlock3DMask`
 

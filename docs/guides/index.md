@@ -6,7 +6,7 @@ Every part of `torch_world` is replaceable: models, environments, data and plann
 
 Plug your own component into the library. Each guide states the interface, gives a complete example, and shows how to run it with the rest of the library.
 
-<div class="grid cards" markdown>
+<div class="grid cards">
 
 -   :material-cube-outline:{ .lg } **[Model](custom-model.md)**
 

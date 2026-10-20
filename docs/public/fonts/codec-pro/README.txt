@@ -10,5 +10,5 @@ web-licensed files here:
 | `CodecPro-Bold.woff2` | 600 |
 | `CodecPro-ExtraBold.woff2` | 700 |
 
-The `@font-face` rules are at the top of `docs/stylesheets/sunset.css`. Until
+The `@font-face` rules are at the top of `docs/.vitepress/theme/sunset.css`. Until
 the files are here, pages fall back to Inter.

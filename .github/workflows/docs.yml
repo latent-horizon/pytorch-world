@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths: ["docs/**", "examples/**", "torch_world/**", "mkdocs.yml", "pyproject.toml", ".github/workflows/docs.yml", ".github/scripts/changelog.sh"]
+    paths: ["docs/**", "examples/**", "torch_world/**", "package.json", "package-lock.json", "pyproject.toml", ".github/workflows/docs.yml", ".github/scripts/changelog.sh"]
   workflow_dispatch:
 
 permissions:
@@ -27,18 +27,25 @@ jobs:
           python-version: "3.12"
           enable-cache: true
 
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
       - name: Render the changelog from GitHub releases
         env:
           GH_TOKEN: ${{ github.token }}
         run: .github/scripts/changelog.sh
 
       - name: Build the site
-        run: uv run --only-group docs mkdocs build --strict
+        run: npm run docs:build
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: github.event_name != 'pull_request'
         with:
-          path: site
+          path: docs/.vitepress/dist
 
   deploy:
     if: github.event_name != 'pull_request'

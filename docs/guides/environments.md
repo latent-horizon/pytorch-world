@@ -85,8 +85,9 @@ env.success(env.state, goal_states)            # the cube rests within one cube 
 
 For the cube task, `distance` is in meters between the cube and its goal, `success` requires the cube to rest on the table within `radius` (one cube width) of its goal, and `position` is the cube's position in the unit square of the `"top"` camera.
 
-!!! note "Speed"
-    The batch is simulated sequentially on the CPU, so `RobotCube` is much slower than the pixel worlds. Collect data once and train from a [`TrajectoryDataset`](../datasets/trajectories.md).
+::: info Speed
+The batch is simulated sequentially on the CPU, so `RobotCube` is much slower than the pixel worlds. Collect data once and train from a [`TrajectoryDataset`](../datasets/trajectories.md).
+:::
 
 ## Running a policy
 

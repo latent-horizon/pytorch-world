@@ -35,7 +35,7 @@ Code is formatted and linted with [ruff](https://docs.astral.sh/ruff/) at a line
 3. Export it from the family's `__init__.py` and from `torch_world.models`.
 4. Add tests under `tests/models/`: output shapes, a finite loss, gradients and, for world models, a planning call.
 5. Add a notebook under `examples/` that trains it on one of the [environments](guides/environments.md) and shows what it learned.
-6. Add a page in its family's folder under `docs/models/` (for example `docs/models/jepa/`), link it from the family page and list it in `mkdocs.yml`.
+6. Add a page in its family's folder under `docs/models/` (for example `docs/models/jepa/`), link it from the family page and add it to the sidebar in `docs/.vitepress/config.mts`.
 
 A new family gets its own folder, `torch_world/models/<family>/` and `docs/models/<family>/`, with an index page that says what the family has in common.
 
@@ -47,11 +47,14 @@ See the [benchmark environment guide](guides/benchmark-environments.md) for the 
 
 ## Documentation
 
-The site is built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/`. API pages are generated from docstrings and the notebooks are rendered with their saved outputs, so run a notebook before committing it.
+The site is built with [VitePress](https://vitepress.dev/) from `docs/`. API pages are generated from docstrings and the notebooks are rendered with their saved outputs, so run a notebook before committing it. `docs/.vitepress/prepare.py` does both before every build; it needs Node.js 20 or newer and `uv`.
 
 ```bash
-uv run --only-group docs mkdocs serve
+npm install
+npm run docs:dev
 ```
+
+The site is also in Português, Español, 简体中文 and 日本語. Translations live in `docs/<locale>/` (`pt`, `es`, `zh`, `ja`) and mirror the English paths; a page without one shows the English text with a note. Interface strings are in `docs/.vitepress/i18n.ts`.
 
 Pushes to `main` deploy the site to GitHub Pages. This page and `CONTRIBUTING.md` at the repository root say the same thing; update both.
 

@@ -1,19 +1,21 @@
 ---
-title: 
-hide:
-  - navigation
-  - toc
+title: PyTorch World
+titleTemplate: false
+pageClass: tw-home
+sidebar: false
+aside: false
+outline: false
+prev: false
+next: false
 ---
 
-# PyTorch World
-
-<div class="tw-hero" markdown>
+<div class="tw-hero">
 
 ![pytorch-world](assets/banner-dark.png)
 
 World models for PyTorch. Learn how a world evolves, then plan by imagining what comes next. Shared parts keep every model short and easy to compare.
 
-<div class="tw-install" markdown>
+<div class="tw-install">
 
 ```bash
 uv add torch_world
@@ -21,16 +23,18 @@ uv add torch_world
 
 </div>
 
-<div class="tw-actions" markdown>
-[Get started](getting-started/quickstart.md){ .md-button .md-button--primary }
-[Models](models/index.md){ .md-button }
-[API](api/index.md){ .md-button }
-</div>
+<div class="tw-actions">
+
+[Get started](getting-started/quickstart.md){ .tw-button .tw-button--primary }
+[Models](models/index.md){ .tw-button }
+[API](api/index.md){ .tw-button }
 
 </div>
 
+</div>
 
-<div class="grid cards" markdown>
+
+<div class="grid cards">
 
 -   :material-family-tree:{ .lg } **Model families**
 
@@ -88,7 +92,7 @@ uv add torch_world
 
 ### Built-in
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![Checkpoints-v0](assets/envs/success/checkpoints_v0.gif){ loading=lazy width="120" height="120" }<span>Checkpoints</span>](examples/envs/puzzles/checkpoints_v0.ipynb)
 [![IceMaze-v0](assets/envs/success/icemaze_v0.gif){ loading=lazy width="120" height="120" }<span>IceMaze</span>](examples/envs/puzzles/icemaze_v0.ipynb)
@@ -127,7 +131,7 @@ uv add torch_world
 
 ### OGBench
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![pointmaze-medium-navigate-v0](assets/envs/ogbench/pointmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>pointmaze-medium-navigate</span>](environments/index.md#ogbench)
 [![antmaze-medium-navigate-v0](assets/envs/ogbench/antmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>antmaze-medium-navigate</span>](environments/index.md#ogbench)
@@ -147,7 +151,7 @@ uv add torch_world
 
 ### DeepMind Control Suite
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![acrobot-swingup](assets/envs/dmcontrol/acrobot-swingup.gif){ loading=lazy width="120" height="120" }<span>acrobot-swingup</span>](environments/index.md#deepmind-control-suite)
 [![ball_in_cup-catch](assets/envs/dmcontrol/ball_in_cup-catch.gif){ loading=lazy width="120" height="120" }<span>ball_in_cup-catch</span>](environments/index.md#deepmind-control-suite)
@@ -174,7 +178,7 @@ uv add torch_world
 
 ### Meta-World
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![reach-v3](assets/envs/metaworld/reach-v3.gif){ loading=lazy width="120" height="120" }<span>reach-v3</span>](environments/index.md#meta-world)
 [![push-v3](assets/envs/metaworld/push-v3.gif){ loading=lazy width="120" height="120" }<span>push-v3</span>](environments/index.md#meta-world)
@@ -191,7 +195,7 @@ uv add torch_world
 
 ### ManiSkill
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![PickCube-v1](assets/envs/maniskill/PickCube-v1.gif){ loading=lazy width="120" height="120" }<span>PickCube-v1</span>](environments/index.md#maniskill)
 [![PushCube-v1](assets/envs/maniskill/PushCube-v1.gif){ loading=lazy width="120" height="120" }<span>PushCube-v1</span>](environments/index.md#maniskill)
@@ -210,7 +214,7 @@ uv add torch_world
 
 ### MyoSuite
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![myoFingerReachRandom-v0](assets/envs/myosuite/myoFingerReachRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerReachRandom-v0</span>](environments/index.md#myosuite)
 [![myoFingerPoseRandom-v0](assets/envs/myosuite/myoFingerPoseRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerPoseRandom-v0</span>](environments/index.md#myosuite)
@@ -227,7 +231,7 @@ uv add torch_world
 
 ### RoboCasa
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![ArrangeBreadBasket](assets/envs/robocasa/ArrangeBreadBasket.gif){ loading=lazy width="120" height="120" }<span>Arrange Bread Basket</span>](environments/index.md#robocasa)
 [![ArrangeTea](assets/envs/robocasa/ArrangeTea.gif){ loading=lazy width="120" height="120" }<span>Arrange Tea</span>](environments/index.md#robocasa)
@@ -284,7 +288,7 @@ uv add torch_world
 
 ### RoboDojo
 
-<div class="tw-carousel" markdown>
+<div class="tw-carousel">
 
 [![stack_bowls](assets/envs/robodojo/stack_bowls.gif){ loading=lazy width="120" height="120" }<span>stack bowls</span>](environments/index.md#robodojo)
 [![push_T](assets/envs/robodojo/push_T.gif){ loading=lazy width="120" height="120" }<span>push T</span>](environments/index.md#robodojo)
