@@ -111,7 +111,7 @@ Item `i` is window `i % (T - window + 1)` of episode `i // (T - window + 1)`, wi
 
 | model | window |
 |---|---|
-| [LeWM](../models/jepa/lewm.md), [DINO-WM](../models/jepa/dinowm.md) | `model.history + 1` |
+| [LeWM](../models/jepa/lewm.md), [DINO-WM](../models/dino/dinowm.md) | `model.history + 1` |
 | a model with `history = 1`, like the [custom model](../guides/custom-model.md) | `2` |
 | [RoboJEPA](../models/jepa/robojepa.md) | `rollout_steps + 1` or more; it trains on whole clips |
 

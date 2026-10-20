@@ -65,7 +65,6 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released | [vqa/vljepa](examples/vqa/vljepa.ipynb) |
 | `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) | [action/lewam](examples/action/lewam.ipynb) |
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) | [action/lewm](examples/action/lewm.ipynb) |
-| `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) | [action/dinowm](examples/action/dinowm.ipynb) |
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) | [action/robojepa](examples/action/robojepa.ipynb) |
 
 Joint-embedding predictive architectures (JEPAs) predict the *representation* of a target from the representation of a context, instead of reconstructing pixels. Action-conditioned JEPAs are world models: they predict the next latent state from the current one and an action, and planning searches for the actions that bring the imagined latent closest to a goal.
@@ -75,8 +74,9 @@ Joint-embedding predictive architectures (JEPAs) predict the *representation* of
 | model | paper | reference code | notebook |
 |---|---|---|---|
 | `DINOv2` | [Oquab et al., 2024](https://arxiv.org/abs/2304.07193) | [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2) | [vision/dinov2](examples/vision/dinov2.ipynb) |
+| `DINOWM` | [Zhou et al., 2025](https://arxiv.org/abs/2411.04983) | [gaoyuezhou/dino_wm](https://github.com/gaoyuezhou/dino_wm) | [action/dinowm](examples/action/dinowm.ipynb) |
 
-Self-distillation: a student matches an EMA teacher's assignments of image crops to learned prototypes, on [cls] tokens (DINO) and masked patches (iBOT). The notebook trains it next to LeVJEPA on the same photos and footage.
+Self-distillation: a student matches an EMA teacher's assignments of image crops to learned prototypes, on [cls] tokens (DINO) and masked patches (iBOT). The notebook trains it next to LeVJEPA on the same photos and footage. DINO-WM learns latent dynamics over the patch features of a frozen DINOv2 encoder and plans with CEM.
 
 ### TD-MPC
 

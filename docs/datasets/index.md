@@ -34,7 +34,7 @@
 
 | dataset | each item | source | download | used by |
 |---|---|---|---|---|
-| [`TrajectoryDataset`](trajectories.md) | a window of pixels, actions and states | any [environment](../guides/environments.md), or your own episodes | none | [LeWM](../models/jepa/lewm.md), [DINO-WM](../models/jepa/dinowm.md) |
+| [`TrajectoryDataset`](trajectories.md) | a window of pixels, actions and states | any [environment](../guides/environments.md), or your own episodes | none | [LeWM](../models/jepa/lewm.md), [DINO-WM](../models/dino/dinowm.md) |
 | [`MedMNIST`](medmnist.md) | an image and its label | [MedMNIST v2](https://arxiv.org/abs/2110.14795), CC BY 4.0 | Zenodo, MD5-checked | image classification, linear probes |
 | [`MedicalVQA`](medical-vqa.md) | an image, its caption, a question and its answer | MedMNIST v2 + question templates | Zenodo, MD5-checked | [VL-JEPA](../models/jepa/vljepa.md) |
 

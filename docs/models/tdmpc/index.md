@@ -4,15 +4,14 @@
 
 All models in this family live in `torch_world.models.tdmpc` and are exported from `torch_world.models`. They subclass `WorldModel`, so `encode`, `predict` and `rollout` work as for every world model; they plan for reward with [`MPPI`](../../guides/planning.md#mppi-planning-for-reward), not toward a goal latent.
 
-<div class="grid cards" markdown>
+<div class="grid cards tw-models" markdown>
 
 -   **[TD-MPC2](tdmpc2.md)**
 
-    ---
-
     SimNorm latents, an ensemble of Q-functions with discrete regression, and a tanh-Gaussian policy prior; plans with MPPI.
 
-    reward-driven · TD learning · MPPI
+    `reward-driven` `TD learning` `MPPI`
+    { .tw-chips }
 
 </div>
 

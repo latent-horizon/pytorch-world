@@ -107,7 +107,7 @@ markdown_extensions:
 
 extra_javascript:
   - javascripts/katex.js
-  - javascripts/water.js
+  - javascripts/pixels.js
   - javascripts/carousel.js
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
@@ -130,7 +130,7 @@ extra:
           - {name: JEPA family, url: models/jepa/}
           - {name: LeWM, url: models/jepa/lewm/}
           - {name: LeWAM, url: models/jepa/lewam/}
-          - {name: DINO-WM, url: models/jepa/dinowm/}
+          - {name: DINO-WM, url: models/dino/dinowm/}
           - {name: RoboJEPA, url: models/jepa/robojepa/}
           - {name: TD-MPC2, url: models/tdmpc/tdmpc2/}
       - title: Build
@@ -178,7 +178,6 @@ nav:
           - Action:
               - LeWM: models/jepa/lewm.md
               - LeWAM: models/jepa/lewam.md
-              - DINO-WM: models/jepa/dinowm.md
               - RoboJEPA: models/jepa/robojepa.md
           - Vision:
               - I-JEPA: models/jepa/ijepa.md
@@ -190,6 +189,7 @@ nav:
       - DINO:
           - models/dino/index.md
           - DINOv2: models/dino/dinov2.md
+          - DINO-WM: models/dino/dinowm.md
       - TD-MPC:
           - models/tdmpc/index.md
           - TD-MPC2: models/tdmpc/tdmpc2.md
