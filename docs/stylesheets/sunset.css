@@ -81,22 +81,47 @@
   --tw-heading: linear-gradient(100deg, var(--tw-dusk) 0%, var(--tw-blue) 45%, var(--tw-rose) 100%);
 }
 
+/* dark: the sky after sunset. Near-neutral night, surfaces lifted by light, not by more blue. */
 [data-md-color-scheme="slate"] {
-  --md-hue: 218;
-  --md-default-bg-color: #0a1220;
-  --md-default-fg-color: #e8eef6;
-  --md-default-fg-color--light: #b3bfcf;
-  --md-default-fg-color--lighter: #7787a0;
-  --md-default-fg-color--lightest: #1e2c42;
-  --md-typeset-color: #d6dfea;
-  --md-typeset-a-color: #f69a7a;
-  --md-accent-fg-color: #f8b56c;
-  --md-code-bg-color: #142440;
-  --md-code-fg-color: #e1e9f3;
-  --md-footer-bg-color: #070e1a;
-  --md-footer-bg-color--dark: #050a13;
-  --tw-surface: #101b2d;
-  --tw-border: #1e2c42;
+  --md-hue: 222;
+  --md-default-bg-color: #080b12;
+  --md-default-bg-color--light: #080b12b3;
+  --md-default-fg-color: #eef1f6;
+  --md-default-fg-color--light: #a9b2c1;
+  --md-default-fg-color--lighter: #6b7587;
+  --md-default-fg-color--lightest: #1c2230;
+  --md-typeset-color: #d3d9e3;
+  --md-typeset-a-color: #f6a283;
+  --md-accent-fg-color: #fbc58a;
+  --md-code-bg-color: #0e131d;
+  --md-code-fg-color: #dfe5ee;
+  --md-footer-bg-color: #06080d;
+  --md-footer-bg-color--dark: #040609;
+  --md-shadow-z1: 0 0.2rem 0.5rem #0000004d;
+  --md-shadow-z2: 0 0.2rem 0.6rem #00000066;
+  --md-shadow-z3: 0 0.3rem 1.4rem #00000080;
+
+  /* syntax: the sunset palette, softened for a dark ground */
+  --md-code-hl-color: #fbc58a;
+  --md-code-hl-color--light: #fbc58a1a;
+  --md-code-hl-keyword-color: #f08aa6;
+  --md-code-hl-string-color: #f7c48a;
+  --md-code-hl-number-color: #f59a7c;
+  --md-code-hl-constant-color: #f59a7c;
+  --md-code-hl-special-color: #f08aa6;
+  --md-code-hl-function-color: #8ab8f0;
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-operator-color: #9aa5b8;
+  --md-code-hl-punctuation-color: #8792a5;
+  --md-code-hl-comment-color: #67718a;
+  --md-code-hl-generic-color: #a9b2c1;
+  --md-code-hl-variable-color: #c6b3f2;
+
+  --md-admonition-bg-color: #0e131d;
+
+  --tw-surface: #0f141e;
+  --tw-surface-2: #141a26;
+  --tw-border: #1d2431;
   --tw-heading: linear-gradient(100deg, var(--tw-glow) 0%, var(--tw-amber) 40%, var(--tw-coral) 75%, var(--tw-rose) 100%);
 }
 
@@ -125,10 +150,11 @@
 
 [data-md-color-scheme="slate"] {
   --tw-page:
-    radial-gradient(ellipse 90% 55% at 85% 105%, #f27c5f24, transparent 70%),
-    radial-gradient(ellipse 70% 45% at 10% 100%, #d4577c1a, transparent 70%),
-    linear-gradient(180deg, #16305a 0%, #0f2242 16%, #0b1628 42%, #0a1220 70%, #0d1420 100%);
-  --tw-ink: #e8eef6;
+    radial-gradient(ellipse 80% 40% at 50% -8%, #2b4a8a33, transparent 70%),
+    radial-gradient(ellipse 90% 50% at 85% 108%, #f27c5f1c, transparent 70%),
+    radial-gradient(ellipse 70% 40% at 10% 105%, #d4577c14, transparent 70%),
+    linear-gradient(180deg, #0d1322 0%, #0a0f1a 22%, #080b12 55%, #090b11 100%);
+  --tw-ink: #eef1f6;
 }
 
 body,
@@ -950,4 +976,277 @@ body,
   .md-typeset .tw-carousel__arrow--next {
     right: -0.4rem;
   }
+}
+
+/* ---------- dark: components on the night sky ---------- */
+
+[data-md-color-scheme="slate"] .md-header--shadow {
+  box-shadow: 0 1px 0 var(--tw-border);
+}
+
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3 {
+  color: #f4f6fa;
+}
+
+[data-md-color-scheme="slate"] .md-typeset strong {
+  color: var(--md-default-fg-color);
+}
+
+/* code: a quiet well with a hairline edge */
+[data-md-color-scheme="slate"] .md-typeset pre > code,
+[data-md-color-scheme="slate"] .md-typeset .doc-signature pre > code {
+  box-shadow: inset 0 0 0 1px var(--tw-border);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .highlight .hll {
+  box-shadow: inset 2px 0 var(--md-code-hl-color);
+}
+
+[data-md-color-scheme="slate"] .md-typeset :not(pre) > code {
+  background: var(--tw-surface-2);
+  box-shadow: inset 0 0 0 1px var(--tw-border);
+  color: #e6e1f0;
+}
+
+[data-md-color-scheme="slate"] .md-typeset a > code,
+[data-md-color-scheme="slate"] .md-typeset a code {
+  color: var(--md-typeset-a-color);
+  background: color-mix(in srgb, var(--tw-coral) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tw-coral) 20%, transparent);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-code__nav {
+  background: transparent;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-clipboard {
+  color: var(--md-default-fg-color--lighter);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-clipboard:hover {
+  color: var(--md-accent-fg-color);
+}
+
+/* tables */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  background: var(--tw-surface);
+  border-color: var(--tw-border);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background: var(--tw-surface-2);
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:hover {
+  background: color-mix(in srgb, var(--tw-amber) 4%, transparent);
+  box-shadow: none;
+}
+
+/* cards: a lifted surface, the horizon only on hover */
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li,
+[data-md-color-scheme="slate"] .md-typeset .grid > .card {
+  background: linear-gradient(180deg, var(--tw-surface-2), var(--tw-surface));
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover,
+[data-md-color-scheme="slate"] .md-typeset .grid > .card:hover {
+  background:
+    linear-gradient(180deg, var(--tw-surface-2), var(--tw-surface)) padding-box,
+    var(--tw-horizon) border-box;
+  box-shadow: 0 18px 40px -22px #f27c5f66;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li > hr,
+[data-md-color-scheme="slate"] .md-typeset .grid.cards hr {
+  border-color: var(--tw-border);
+}
+
+/* admonitions: tinted glass, colored by kind */
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+  background: color-mix(in srgb, var(--tw-surface) 85%, transparent);
+  border-color: var(--tw-border);
+  border-left-width: 3px;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset summary {
+  background: color-mix(in srgb, var(--tw-surface-2) 90%, transparent);
+}
+
+/* API reference */
+[data-md-color-scheme="slate"] .doc-symbol-class {
+  color: #8ab8f0 !important;
+  background-color: #3f7cc426 !important;
+}
+
+[data-md-color-scheme="slate"] .doc-symbol-function,
+[data-md-color-scheme="slate"] .doc-symbol-method {
+  color: #f08aa6 !important;
+  background-color: #d4577c26 !important;
+}
+
+[data-md-color-scheme="slate"] .doc-symbol-module {
+  color: #f7c48a !important;
+  background-color: #f8b56c1f !important;
+}
+
+[data-md-color-scheme="slate"] .doc-symbol-attribute {
+  color: #c6b3f2 !important;
+  background-color: #c6b3f21f !important;
+}
+
+/* navigation */
+[data-md-color-scheme="slate"] .md-nav__link--active,
+[data-md-color-scheme="slate"] .md-nav__link:is(:focus, :hover) {
+  color: var(--md-typeset-a-color);
+}
+
+[data-md-color-scheme="slate"] .md-nav__title,
+[data-md-color-scheme="slate"] .md-nav__item--section > .md-nav__link {
+  color: var(--md-default-fg-color);
+}
+
+/* search dropdown and other overlays */
+[data-md-color-scheme="slate"] .md-search__output,
+[data-md-color-scheme="slate"] .md-search__scrollwrap {
+  background: var(--tw-surface);
+}
+
+[data-md-color-scheme="slate"] .md-search-result__meta {
+  background: var(--tw-surface-2);
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="slate"] .md-search-result mark {
+  color: var(--md-accent-fg-color);
+}
+
+/* notebooks: outputs sit in the same wells as code */
+[data-md-color-scheme="slate"] .jupyter-wrapper .jp-OutputArea-output pre {
+  background: var(--md-code-bg-color);
+  color: var(--md-code-fg-color);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .tw-diagram {
+  background: linear-gradient(180deg, var(--tw-surface-2), var(--tw-surface));
+}
+
+[data-md-color-scheme="slate"] ::selection {
+  background: #f27c5f47;
+  color: #fff;
+}
+
+[data-md-color-scheme="slate"] .md-footer-meta__inner.tw-footer__bar {
+  border-top-color: var(--tw-border);
+}
+
+/* ---------- home cards: flat, quiet, the whole card is the link ---------- */
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul {
+  gap: 0.8rem;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.3rem 1.1rem;
+  border: 1px solid var(--tw-border);
+  border-radius: var(--tw-radius);
+  background: color-mix(in srgb, var(--tw-surface) 60%, transparent);
+  box-shadow: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:hover {
+  transform: none;
+  border-color: color-mix(in srgb, var(--md-default-fg-color) 18%, transparent);
+  background: var(--tw-surface);
+  box-shadow: none;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > hr {
+  display: none;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p {
+  margin: 0;
+}
+
+/* title row: a small muted glyph above the name */
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  font-size: 0.82rem;
+  letter-spacing: -0.01em;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:first-child strong {
+  font-weight: 600;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards .lg {
+  height: 1.15rem;
+  width: 1.15rem;
+  color: var(--md-default-fg-color--lighter);
+  transition: color 0.2s ease;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:hover .lg {
+  color: var(--tw-coral);
+}
+
+/* body: secondary text, a touch smaller */
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:nth-of-type(2) {
+  margin-top: 0.45rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+/* link: pinned to the bottom, arrow after the label, stretched over the card */
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:last-child {
+  margin-top: auto;
+  padding-top: 1.1rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:last-child a {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--md-default-fg-color--light);
+  transition: color 0.2s ease;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:last-child a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li > p:last-child .twemoji {
+  color: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:hover > p:last-child a {
+  color: var(--md-typeset-a-color);
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:hover > p:last-child .twemoji {
+  transform: translateX(3px);
+}
+
+.md-content:has(.tw-hero) .md-typeset .grid.cards > ul > li:has(a:focus-visible) {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
 }
