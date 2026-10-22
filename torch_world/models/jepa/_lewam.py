@@ -6,20 +6,14 @@ This implementation supports one view and configurable dynamics frameskip.
 It is not compatible with upstream checkpoint keys. See docs/models/jepa/lewam.md.
 """
 
-import math
-
 import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
 
 from torch_world.losses.sigreg import SIGReg
-from torch_world.models.base import WorldModel
-
-
-def _time_embedding(time: Tensor, dim: int) -> Tensor:
-    frequency = torch.exp(-math.log(10000) * torch.arange(dim // 2, device=time.device) / (dim // 2))
-    phase = time[:, None] * frequency
-    return torch.cat((phase.sin(), phase.cos()), dim=-1)
+from torch_world.models.base import WorldActionModel
+from torch_world.nn.flow import euler_sample, interpolate, velocity_target
+from torch_world.nn.flow import time_embedding as _time_embedding
 
 
 class _MixtureBlock(nn.Module):
@@ -65,7 +59,7 @@ class _MixtureBlock(nn.Module):
         return x + gm * self._streams(self.mlp, self.norm2(x) * (1 + cm) + sm, state_count)
 
 
-class LeWAM(WorldModel):
+class LeWAM(WorldActionModel):
     """Joint latent dynamics and flow-matching action chunks (Fu et al., 2026).
 
     A mixture of transformers predicts future latent states from clean actions,
@@ -293,8 +287,13 @@ class LeWAM(WorldModel):
         raw = actions * self.action_scale if self.action_mean is None else actions * self.action_std + self.action_mean
         return raw.maximum(-self.action_scale).minimum(self.action_scale) if clamp else raw
 
-    def predict_future(self, z: Tensor, actions: Tensor, *, history_pad: Tensor | None = None) -> Tensor:
-        """Predict a chunk of future latents from physical-unit actions, differentiably."""
+    def predict_future(
+        self, z: Tensor, actions: Tensor, goal: Tensor | None = None, *, history_pad: Tensor | None = None
+    ) -> Tensor:
+        """Predict a chunk of future latents from physical-unit actions, differentiably.
+
+        ``goal`` is accepted for the ``WorldActionModel`` interface and ignored: LeWAM's dynamics never see the goal.
+        """
         if actions.shape != (z.size(0), self.chunk_size, self.action_dim):
             raise ValueError("predict_future requires a complete action chunk")
         return self.joint_prediction(
@@ -340,10 +339,9 @@ class LeWAM(WorldModel):
         if actions.shape != shape:
             raise ValueError("Noise must have shape (B, chunk_size, action_dim)")
         clean = torch.zeros_like(actions)
-        for i in range(steps):
-            time = z.new_full((z.size(0),), i / steps)
-            velocity = self.joint_prediction(z, clean, actions, time, goal, remaining, history_pad)[1]
-            actions = actions + velocity / steps
+        actions = euler_sample(
+            lambda x, time: self.joint_prediction(z, clean, x, time, goal, remaining, history_pad)[1], actions, steps
+        )
         return self.denormalize_actions(actions, clamp=clamp)
 
     def _distance(self, predicted, target):
@@ -389,10 +387,10 @@ class LeWAM(WorldModel):
         target = self.normalize_actions(actions[:, h - 1 : h + k - 1])
         noise = torch.randn(target.shape, device=target.device, dtype=target.dtype, generator=generator)
         time = torch.rand(z.size(0), device=z.device, dtype=z.dtype, generator=generator)
-        noisy = torch.lerp(noise, target, time[:, None, None])
+        noisy = interpolate(noise, target, time)
         predicted, velocity = self.joint_prediction(z[:, :h], target, noisy, time, goal, remaining)
         dynamics = self._distance(predicted, z[:, h:]).mean()
-        error = (velocity - (target - noise)).square().mean(-1)
+        error = (velocity - velocity_target(noise, target)).square().mean(-1)
         if action_valid is None:
             action_valid = torch.ones_like(error)
         if action_valid.shape != error.shape or not torch.isfinite(action_valid).all() or (action_valid < 0).any():
@@ -455,7 +453,7 @@ class LeWAM(WorldModel):
         predicted, velocity = self.joint_prediction(
             z[:, : self.history],
             target,
-            torch.lerp(noise, target, time[:, None, None]),
+            interpolate(noise, target, time),
             time,
             goal,
             remaining,
@@ -472,7 +470,7 @@ class LeWAM(WorldModel):
         dynamics = masked_mean(
             self._distance(predicted, z[:, self.history : self.history + self.num_states]), state_valid
         )
-        action_loss = masked_mean((velocity - (target - noise)).square().mean(-1), action_valid)
+        action_loss = masked_mean((velocity - velocity_target(noise, target)).square().mean(-1), action_valid)
         # Independent projection draws for each time/goal group, matching upstream.
         regularizer = torch.stack([self.sigreg(group[None], generator=generator) for group in z.unbind(1)]).mean()
         return {

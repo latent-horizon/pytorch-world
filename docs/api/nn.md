@@ -12,6 +12,12 @@
 
 ::: torch_world.nn.WordTokenizer
 
+## Video autoencoders
+
+::: torch_world.nn.VideoVAE
+
+::: torch_world.nn.ConvVideoAE
+
 ## Transformers
 
 ::: torch_world.nn.VisionTransformer
@@ -45,6 +51,18 @@
 ::: torch_world.nn.grid_coords
 
 ::: torch_world.nn.rope
+
+## Flow matching
+
+::: torch_world.nn.time_embedding
+
+::: torch_world.nn.interpolate
+
+::: torch_world.nn.velocity_target
+
+::: torch_world.nn.sample_time
+
+::: torch_world.nn.euler_sample
 
 ## Initialization
 

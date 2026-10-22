@@ -7,3 +7,5 @@
 ::: torch_world.planning.LeWAMPlanner
 
 ::: torch_world.planning.LeWAMHorizonPlanner
+
+::: torch_world.planning.DreamZeroPolicy

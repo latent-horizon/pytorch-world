@@ -32,6 +32,7 @@ uv sync
 | `myosuite` | `myosuite`, MuJoCo 3.7 or later | [MyoSuite tasks](../guides/benchmark-environments.md#external-suites); not with the `benchmark` extra |
 | `robocasa` | `pyarrow`, `av` | reading [RoboCasa demonstrations](../datasets/trajectories.md#robocasa-demonstrations); RoboCasa itself installs from source |
 | `robodojo` | `h5py` | reading [RoboDojo episodes](../datasets/trajectories.md#robodojo-episodes) |
+| `wam` | `diffusers`, `accelerate` | the pre-trained Wan 2.1 [`VideoVAE`](../models/wam/dreamzero.md) of DreamZero |
 | `test` | `pytest` | running the test suite |
 
 ```bash
@@ -49,4 +50,3 @@ print(torch_world.__version__)
 ::: tip GPU
 Every module and environment is plain PyTorch and runs on whatever device you move it to. Environments take a `device` argument and render batches directly on it.
 :::
-

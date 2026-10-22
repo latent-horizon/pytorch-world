@@ -26,10 +26,10 @@
 |---|---|---|---|---|
 | **隐空间预测** | 下一观测的*嵌入* | 嵌入空间中的预测误差，外加防止坍缩的一项 | [JEPA](../models/jepa/index.md)（LeWM、RoboJEPA）、[DINO-WM](../models/dino/dinowm.md) | V-JEPA 2-AC |
 | **价值等价隐变量** | 下一隐状态、奖励以及后续的价值 | 隐空间一致性与时序差分学习，无解码器 | [TD-MPC2](../models/tdmpc/tdmpc2.md) | MuZero |
-| **动力学与动作一起预测** | 未来隐变量*以及*产生它们的动作块 | 隐空间预测加上对动作的 flow matching | [LeWAM](../models/jepa/lewam.md) | 基于预训练视频扩散模型的世界动作模型 |
+| **生成式视频与动作** | 未来帧（以视频 VAE 隐变量表示）*以及*产生这些帧的动作块 | 去噪（flow matching） | [世界动作模型](../models/wam/index.md)（DreamZero）、[LeWAM](../models/jepa/lewam.md) | 基于视频预训练的机器人策略 |
 | **重建** | 下一隐状态，以及由其解码出的像素 | 观测的似然 | | PlaNet、Dreamer |
 
-预测像素迫使模型解释画面中的一切，包括对控制无关紧要的纹理和噪声；只预测嵌入或价值，则让模型把容量花在可预测且相关的内容上，代价是需要另寻办法防止表征坍缩。生成视频的模型虽然要为像素付出代价，却能继承大规模视频数据集中关于世界如何运动的知识。
+预测像素迫使模型解释画面中的一切，包括对控制无关紧要的纹理和噪声；只预测嵌入或价值，则让模型把容量花在可预测且相关的内容上，代价是需要另寻办法防止表征坍缩。生成式模型虽然要为像素付出代价，却能继承大规模视频数据集中关于世界如何运动的知识。
 
 这些家族中还包括本身并非世界模型的**表征学习器**，例如 I-JEPA、V-JEPA、LeJEPA 和 [DINOv2](../models/dino/dinov2.md)。它们为世界模型预训练所依赖的编码器：DINO-WM 就是在冻结的 DINOv2 特征上进行规划。
 
@@ -111,16 +111,17 @@
 |---|---|---|---|
 | 使用 [`CEM`](../guides/planning.md) 到达目标 | 最终隐状态与目标隐状态之间的距离（`cost`） | 高斯分布，按最优样本重新拟合 | LeWM, DINO-WM, RoboJEPA, 任意 `WorldModel` |
 | 使用 [`MPPI`](../guides/planning.md#mppi-planning-for-reward) 最大化奖励 | 想象的奖励加上视野末端的学习价值 | 高斯分布与策略先验 | TD-MPC2 |
-| 使用 `LeWAMPlanner` 进行策略采样 | 模型自身朝向目标的动力学 | 模型的 flow matching 动作头 | LeWAM |
+| 使用 `WAMPlanner` 进行策略采样 | 模型自身朝向目标的动力学 | 模型的动作头（`sample_actions`） | DreamZero（与 `DreamZeroPolicy` 闭环运行）、LeWAM |
 
-## 两个基类 {#two-base-classes}
+## 基类 {#two-base-classes}
 
-每个模型都继承自 [`torch_world.models`](../api/models.md) 中的两个类之一。
+每个模型都继承自 [`torch_world.models`](../api/models.md) 中的三个类之一。
 
 | 基类 | 你需要实现 | 你将获得 |
 |---|---|---|
 | `JEPA` | `forward(...) -> {"loss": ...}` | `make_target_encoder`, `update_target(momentum)` |
 | `WorldModel` | `encode`, `predict(z, actions)`, `forward` | `rollout`, `cost`, 以及使用 [`CEM`](../guides/planning.md) 进行规划 |
+| `WorldActionModel` | 一个 `WorldModel`，外加 `sample_actions`、`predict_future` 和 `imagine` | 使用 `WAMPlanner` 进行规划；当隐变量有解码器时提供 `decode` |
 
 ## 约定 {#conventions}
 

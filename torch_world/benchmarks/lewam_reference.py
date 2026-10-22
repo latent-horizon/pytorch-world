@@ -99,7 +99,7 @@ class ReferenceLeWAM(nn.Module):
         actions = self.model.predict_actions(z, pad, goal, remaining, generator=generator)
         return self.denormalize_actions(actions, clamp=clamp)
 
-    def predict_future(self, z, actions, *, history_pad=None):
+    def predict_future(self, z, actions, goal=None, *, history_pad=None):
         pad = torch.zeros(z.shape[:2], dtype=torch.bool, device=z.device) if history_pad is None else history_pad
         return self.model.predict_states(z, pad, self.normalize_actions(actions))
 

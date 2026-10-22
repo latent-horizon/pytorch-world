@@ -45,3 +45,24 @@ class WorldModel(nn.Module):
     def cost(self, z: Tensor, goal: Tensor) -> Tensor:
         """Squared distance between the final latent of each rollout ``(B, T, ...)`` and the goal latent ``(B, ...)``."""
         return (z[:, -1] - goal).square().flatten(1).mean(1)
+
+
+class WorldActionModel(WorldModel):
+    """World model that also *outputs* actions: a policy and a dynamics model in one network.
+
+    ``sample_actions(z, goal)`` draws an action chunk from context latents, ``predict_future(z, actions)`` predicts
+    the latents that chunk leads to, and ``imagine(z, goal)`` samples both jointly. ``decode`` maps latents back to
+    pixels when the latent space has a decoder, and returns ``None`` otherwise.
+    """
+
+    def sample_actions(self, z: Tensor, goal: Tensor | None = None, **kwargs) -> Tensor:
+        raise NotImplementedError
+
+    def predict_future(self, z: Tensor, actions: Tensor, goal: Tensor | None = None, **kwargs) -> Tensor:
+        raise NotImplementedError
+
+    def imagine(self, z: Tensor, goal: Tensor | None = None, **kwargs) -> tuple[Tensor, Tensor]:
+        raise NotImplementedError
+
+    def decode(self, z: Tensor) -> Tensor | None:
+        return None

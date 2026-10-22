@@ -28,6 +28,8 @@ myosuite = ["myosuite>=3.0", "mujoco>=3.7"]
 robodojo = ["h5py"]
 robocasa = ["pyarrow", "av"]
 lewam = ["mujoco==3.15.0", "matplotlib", "pillow"]
+# The pre-trained Wan 2.1 video VAE used by DreamZero.
+wam = ["diffusers>=0.33", "accelerate"]
 notebooks = ["matplotlib", "av", "nbclient", "nbformat", "ipykernel"]
 test = ["pytest", "pytest-xdist"]
 

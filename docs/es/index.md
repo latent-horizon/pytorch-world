@@ -40,7 +40,7 @@ uv add torch_world
 
     ---
 
-    Modelos agrupados según cómo aprenden: JEPA, desde el preentrenamiento con imágenes hasta el control multirrobot, y TD-MPC, para control guiado por recompensas. Llegarán más familias.
+    Modelos agrupados según cómo aprenden: JEPA, desde el preentrenamiento con imágenes hasta el control multirrobot; DINO; TD-MPC, para control guiado por recompensas; y world action models, que imaginan vídeo y actúan. Llegarán más familias.
 
     [:octicons-arrow-right-24: Modelos](models/index.md)
 

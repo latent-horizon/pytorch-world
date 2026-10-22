@@ -40,11 +40,11 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 
 | module | contents |
 |---|---|
-| `torch_world.nn` | `VisionTransformer` (image and video), `MaskedPredictor`, `Transformer`, `Block`, `AdaLNBlock`, `Attention`, `MLP`, sin-cos and rotary positions; ready encoders `CLSEncoder`, `PixelPatches` and `PatchTokens.from_hub` (DINOv2); `TextEncoder` and `WordTokenizer` |
+| `torch_world.nn` | `VisionTransformer` (image and video), `MaskedPredictor`, `Transformer`, `Block`, `AdaLNBlock`, `Attention`, `MLP`, sin-cos and rotary positions; ready encoders `CLSEncoder`, `PixelPatches` and `PatchTokens.from_hub` (DINOv2); `TextEncoder` and `WordTokenizer`; video autoencoders `VideoVAE` (Wan 2.1) and `ConvVideoAE`; flow-matching helpers |
 | `torch_world.masks` | `MultiBlockMask` (2D), `MultiBlock3DMask` (video), `frame_causal_mask`, `apply_masks` |
 | `torch_world.losses` | `SIGReg`, `info_nce` |
-| `torch_world.models` | the `JEPA` and `WorldModel` base classes and the models below |
-| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward |
+| `torch_world.models` | the `JEPA`, `WorldModel` and `WorldActionModel` base classes and the models below |
+| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward; `WAMPlanner` and `DreamZeroPolicy` for world action models |
 | `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw` and `PointMass`; `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
@@ -85,6 +85,14 @@ Self-distillation: a student matches an EMA teacher's assignments of image crops
 | `TDMPC2` | [Hansen et al., 2024](https://arxiv.org/abs/2310.16828) | [nicklashansen/tdmpc2](https://github.com/nicklashansen/tdmpc2) | [action/tdmpc2](examples/action/tdmpc2.ipynb) |
 
 TD-MPC world models have no decoder: latent dynamics are trained to predict the next latent, the reward and, by temporal-difference learning, the value. MPPI plans for the highest imagined return, with proposals from a learned policy prior.
+
+### World action models
+
+| model | paper | reference code | notebook |
+|---|---|---|---|
+| `DreamZero` | [Ye et al., 2026](https://arxiv.org/abs/2602.15922) | not used | [action/dreamzero](examples/action/dreamzero.ipynb) |
+
+World action models denoise future video and the actions that produce it together, so the model is both the policy and the world model. DreamZero is an autoregressive joint video-action diffusion transformer on Wan 2.1 video-VAE latents (`pip install torch-world[wam]`); its notebook trains it from scratch on a UR10e arm and compares it with LeWAM.
 
 ## Environment benchmarks
 

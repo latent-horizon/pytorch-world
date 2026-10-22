@@ -59,3 +59,17 @@ model.eval()
 DINO-WM, RoboJEPA and VL-JEPA keep their pre-trained encoder frozen and in eval mode, even after `model.train()`. Pass `model.parameters()` to the optimizer as usual: frozen parameters have no gradient. For VL-JEPA, use `model.param_groups(lr)` to train the Y-encoder at a lower learning rate.
 
 When the encoder is expensive, encode the dataset once and train on the cached features, as [`MedicalVQA.encode`](../datasets/medical-vqa.md#cached-encoder-features) does.
+
+## Multiple GPUs
+
+Models are plain `nn.Module`s, so `DistributedDataParallel` and FSDP2's `fully_shard` wrap them directly. For video-scale data, encode clips once into shards with `write_latent_shard` and stream them with `LatentClips`, which memory-maps each shard so the dataset can be larger than RAM:
+
+```python
+from torch.utils.data import DataLoader, DistributedSampler
+from torch_world.datasets import LatentClips
+
+data = LatentClips("runs/dz/data")          # every *.pt shard: {"latents": (N, ...), "actions": (N, ...), ...}
+loader = DataLoader(data, batch_size=32, sampler=DistributedSampler(data), num_workers=4)
+```
+
+`torch_world.benchmarks.dreamzero` is a complete multi-GPU, multi-node pipeline for DreamZero: distributed encoding, DDP or FSDP2 training, resumable checkpoints and distributed evaluation. See [Training at scale](../models/wam/dreamzero.md#training-at-scale).

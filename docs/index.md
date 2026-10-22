@@ -40,7 +40,7 @@ uv add torch_world
 
     ---
 
-    Models grouped by how they learn: JEPA, from image pretraining to multi-robot control, and TD-MPC, for reward-driven control. More families are coming.
+    Models grouped by how they learn: JEPA, from image pretraining to multi-robot control; DINO; TD-MPC, for reward-driven control; and world action models, which imagine video and act. More families are coming.
 
     [:octicons-arrow-right-24: Models](models/index.md)
 

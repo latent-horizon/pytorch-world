@@ -32,6 +32,7 @@ uv sync
 | `myosuite` | `myosuite`, MuJoCo 3.7 o posterior | [tareas de MyoSuite](../guides/benchmark-environments.md#external-suites); no compatible con el extra `benchmark` |
 | `robocasa` | `pyarrow`, `av` | leer [demostraciones de RoboCasa](../datasets/trajectories.md#robocasa-demonstrations); RoboCasa en sí se instala desde el código fuente |
 | `robodojo` | `h5py` | leer [episodios de RoboDojo](../datasets/trajectories.md#robodojo-episodes) |
+| `wam` | `diffusers`, `accelerate` | el [`VideoVAE`](../models/wam/dreamzero.md) preentrenado de Wan 2.1 de DreamZero |
 | `test` | `pytest` | ejecutar la suite de tests |
 
 ```bash

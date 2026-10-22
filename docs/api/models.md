@@ -4,6 +4,8 @@
 
 ::: torch_world.models.WorldModel
 
+::: torch_world.models.WorldActionModel
+
 ::: torch_world.models.IJEPA
 
 ::: torch_world.models.VJEPA
@@ -35,6 +37,8 @@
 ::: torch_world.models.DINOWM
 
 ::: torch_world.models.TDMPC2
+
+::: torch_world.models.DreamZero
 
 ::: torch_world.models.tdmpc.state_encoder
 

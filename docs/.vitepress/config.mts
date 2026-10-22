@@ -68,7 +68,8 @@ function site(key: string) {
       page('DINOv2', l('/models/dino/dinov2')),
       page('DINO-WM', l('/models/dino/dinowm'))
     ]),
-    group('TD-MPC', [page('Overview', l('/models/tdmpc/')), page('TD-MPC2', l('/models/tdmpc/tdmpc2'))])
+    group('TD-MPC', [page('Overview', l('/models/tdmpc/')), page('TD-MPC2', l('/models/tdmpc/tdmpc2'))]),
+    group('World action models', [page('Overview', l('/models/wam/')), page('DreamZero', l('/models/wam/dreamzero'))])
   ]
 
   const environments: Item[] = [
@@ -118,7 +119,8 @@ function site(key: string) {
       page('LeWAM', l('/examples/action/lewam')),
       page('DINO-WM', l('/examples/action/dinowm')),
       page('RoboJEPA', l('/examples/action/robojepa')),
-      page('TD-MPC2', l('/examples/action/tdmpc2'))
+      page('TD-MPC2', l('/examples/action/tdmpc2')),
+      page('DreamZero', l('/examples/action/dreamzero'))
     ]),
     group('Vision', [
       page('I-JEPA', l('/examples/vision/ijepa')),

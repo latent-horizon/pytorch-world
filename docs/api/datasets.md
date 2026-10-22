@@ -2,6 +2,10 @@
 
 ::: torch_world.datasets.TrajectoryDataset
 
+::: torch_world.datasets.LatentClips
+
+::: torch_world.datasets.write_latent_shard
+
 ::: torch_world.datasets.load_ogbench
 
 ::: torch_world.datasets.load_robocasa

@@ -26,10 +26,10 @@
 |---|---|---|---|---|
 | **潜在予測** | 次の観測の*埋め込み* | 埋め込み空間での予測誤差と、崩壊を防ぐ項 | [JEPA](../models/jepa/index.md)（LeWM、RoboJEPA）、[DINO-WM](../models/dino/dinowm.md) | V-JEPA 2-AC |
 | **価値等価な潜在表現** | 次の潜在表現、報酬、およびその後の価値 | 潜在の一貫性と TD 学習、デコーダなし | [TD-MPC2](../models/tdmpc/tdmpc2.md) | MuZero |
-| **ダイナミクスと行動を同時に** | 未来の潜在表現*と*、それを生み出す行動チャンク | 潜在予測に加え、行動に対する flow matching | [LeWAM](../models/jepa/lewam.md) | 事前学習済み動画拡散モデル上の世界行動モデル |
+| **生成的な動画と行動** | 未来のフレーム（動画 VAE の潜在表現として）*と*、それを生み出す行動チャンク | ノイズ除去（flow matching） | [world action モデル](../models/wam/index.md)（DreamZero）、[LeWAM](../models/jepa/lewam.md) | 動画で事前学習したロボット方策 |
 | **再構成** | 次の潜在状態と、そこから得られるピクセル | 観測の尤度 | | PlaNet、Dreamer |
 
-ピクセルを予測すると、モデルはフレーム内のすべて、つまり制御には関係のないテクスチャやノイズまで説明しなければなりません。埋め込みや価値だけを予測すれば、予測可能で関連性のある部分に容量を使えますが、その代わりに表現の崩壊を防ぐ別の手段が必要になります。動画を生成するモデルはピクセルのコストを払いますが、大規模な動画データセットが持つ、世界がどう動くかについての知識を受け継ぎます。
+ピクセルを予測すると、モデルはフレーム内のすべて、つまり制御には関係のないテクスチャやノイズまで説明しなければなりません。埋め込みや価値だけを予測すれば、予測可能で関連性のある部分に容量を使えますが、その代わりに表現の崩壊を防ぐ別の手段が必要になります。生成モデルはピクセルのコストを払いますが、大規模な動画データセットが持つ、世界がどう動くかについての知識を受け継ぎます。
 
 これらのファミリーには、それ自体は世界モデルではない**表現学習器**も含まれます。I-JEPA、V-JEPA、LeJEPA、[DINOv2](../models/dino/dinov2.md) などです。これらは世界モデルの土台となるエンコーダを事前学習します。DINO-WM は凍結した DINOv2 の特徴量の上でプランニングを行います。
 
@@ -111,16 +111,17 @@
 |---|---|---|---|
 | [`CEM`](../guides/planning.md) によるゴール到達 | 最終的な潜在表現とゴールの潜在表現との距離（`cost`） | 上位の候補に再フィットするガウス分布 | LeWM, DINO-WM, RoboJEPA, 任意の `WorldModel` |
 | [`MPPI`](../guides/planning.md#mppi-planning-for-reward) による報酬 | 想像された報酬と、ホライズン終端での学習済み価値 | ガウス分布と方策の事前分布 | TD-MPC2 |
-| `LeWAMPlanner` による方策サンプリング | ゴールに向かうモデル自身のダイナミクス | モデルの flow matching 行動ヘッド | LeWAM |
+| `WAMPlanner` による方策サンプリング | ゴールに向かうモデル自身のダイナミクス | モデルの行動ヘッド（`sample_actions`） | DreamZero（`DreamZeroPolicy` による閉ループ）, LeWAM |
 
-## 2 つの基底クラス {#two-base-classes}
+## 基底クラス {#two-base-classes}
 
-すべてのモデルは、[`torch_world.models`](../api/models.md) にある 2 つのクラスのいずれかを継承します。
+すべてのモデルは、[`torch_world.models`](../api/models.md) にある 3 つのクラスのいずれかを継承します。
 
 | 基底クラス | 実装するもの | 得られるもの |
 |---|---|---|
 | `JEPA` | `forward(...) -> {"loss": ...}` | `make_target_encoder`, `update_target(momentum)` |
 | `WorldModel` | `encode`, `predict(z, actions)`, `forward` | `rollout`, `cost`, [`CEM`](../guides/planning.md) によるプランニング |
+| `WorldActionModel` | `WorldModel` に加えて `sample_actions`, `predict_future`, `imagine` | `WAMPlanner` によるプランニング、潜在表現にデコーダがある場合は `decode` |
 
 ## 規約 {#conventions}
 
