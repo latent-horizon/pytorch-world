@@ -26,10 +26,10 @@ Os tipos compartilham o que precisam saber sobre geometria, física e dinâmica,
 |---|---|---|---|---|
 | **latent prediction** | o *embedding* da próxima observation | erro de predição no embedding space, mais um termo contra o collapse | [JEPA](../models/jepa/index.md) (LeWM, RoboJEPA), [DINO-WM](../models/dino/dinowm.md) | V-JEPA 2-AC |
 | **value-equivalent latents** | o próximo latent, o reward e o value do que vem depois | consistência de latents e temporal-difference learning, sem decoder | [TD-MPC2](../models/tdmpc/tdmpc2.md) | MuZero |
-| **dynamics e actions juntas** | latents futuros *e* o action chunk que os produz | latent prediction mais flow matching nas actions | [LeWAM](../models/jepa/lewam.md) | world action models sobre video diffusion pré-treinada |
+| **generative video and action** | frames futuros (como video-VAE latents) *e* o action chunk que os produz | denoising (flow matching) | [world action models](../models/wam/index.md) (DreamZero), [LeWAM](../models/jepa/lewam.md) | policies de robôs pré-treinadas em vídeo |
 | **reconstruction** | o próximo latent state, e os pixels a partir dele | likelihood das observations | | PlaNet, Dreamer |
 
-Prever pixels obriga o modelo a dar conta de tudo no frame, inclusive textura e ruído que não importam para o controle; prever apenas embeddings ou values permite gastar capacidade no que é previsível e relevante, ao custo de precisar de outra forma de impedir o collapse da representação. Modelos que geram vídeo pagam pelos pixels, mas herdam o que grandes datasets de vídeo sabem sobre como o mundo se move.
+Prever pixels obriga o modelo a dar conta de tudo no frame, inclusive textura e ruído que não importam para o controle; prever apenas embeddings ou values permite gastar capacidade no que é previsível e relevante, ao custo de precisar de outra forma de impedir o collapse da representação. Modelos generativos pagam pelos pixels, mas herdam o que grandes datasets de vídeo sabem sobre como o mundo se move.
 
 As famílias também incluem **representation learners** que não são world models por si só, como I-JEPA, V-JEPA, LeJEPA e [DINOv2](../models/dino/dinov2.md). Eles pré-treinam os encoders sobre os quais os world models são construídos: DINO-WM planeja sobre features congeladas do DINOv2.
 
@@ -111,16 +111,17 @@ Todo world model aqui imagina com o mesmo `rollout`; eles diferem no critério c
 |---|---|---|---|
 | goal reaching com [`CEM`](../guides/planning.md) | distância do latent final ao do goal (`cost`) | uma gaussiana, reajustada às melhores | LeWM, DINO-WM, RoboJEPA, qualquer `WorldModel` |
 | reward com [`MPPI`](../guides/planning.md#mppi-planning-for-reward) | rewards imaginados mais um value aprendido no horizonte | uma gaussiana e o policy prior | TD-MPC2 |
-| policy sampling com `LeWAMPlanner` | a própria dinâmica do modelo, em direção ao goal | a action head de flow matching do modelo | LeWAM |
+| policy sampling com `WAMPlanner` | a própria dinâmica do modelo, em direção ao goal | a action head do modelo (`sample_actions`) | DreamZero (closed loop com `DreamZeroPolicy`), LeWAM |
 
-## Duas classes base {#two-base-classes}
+## Classes base {#two-base-classes}
 
-Todo modelo é subclasse de uma de duas classes em [`torch_world.models`](../api/models.md).
+Todo modelo é subclasse de uma de três classes em [`torch_world.models`](../api/models.md).
 
 | classe base | você escreve | você ganha |
 |---|---|---|
 | `JEPA` | `forward(...) -> {"loss": ...}` | `make_target_encoder`, `update_target(momentum)` |
 | `WorldModel` | `encode`, `predict(z, actions)`, `forward` | `rollout`, `cost`, planning com [`CEM`](../guides/planning.md) |
+| `WorldActionModel` | um `WorldModel`, mais `sample_actions`, `predict_future` e `imagine` | planning com `WAMPlanner`; `decode` quando os latents têm um decoder |
 
 ## Convenções {#conventions}
 

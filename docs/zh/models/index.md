@@ -1,6 +1,6 @@
 # 模型
 
-模型按**家族**组织。同一家族的模型采用相同的学习方式和基类，因此可以在相同的数据、环境和规划器上互相替换和比较。目前的家族有 **JEPA**、**DINO** 和 **TD-MPC**；后续还会加入更多家族和模型。
+模型按**家族**组织。同一家族的模型采用相同的学习方式和基类，因此可以在相同的数据、环境和规划器上互相替换和比较。目前的家族有 **JEPA**、**DINO**、**TD-MPC** 和**世界动作模型**；后续还会加入更多家族和模型。
 
 <div class="grid cards tw-models tw-models--families">
 
@@ -16,6 +16,10 @@
 
     无解码器的隐空间动力学，通过 TD 学习训练，并以回报为目标进行规划。
 
+-   :material-movie-open-play-outline:{ .lg } **[世界动作模型](wam/index.md)**
+
+    联合去噪未来视频及产生它的动作；模型本身就是策略。
+
 </div>
 
 ## 模型一览 {#every-model-at-a-glance}
@@ -23,7 +27,7 @@
 | 家族 | 分组 | 模型 | 输入 | 基类 | notebook |
 |---|---|---|---|---|---|
 | JEPA | 动作 | [LeWM](jepa/lewm.md) | 帧 + 动作 | `WorldModel` | [action/lewm](../examples/action/lewm.ipynb) |
-| JEPA | 动作 | [LeWAM](jepa/lewam.md) | 帧 + 动作（+ 目标图像） | `WorldModel` | [action/lewam](../examples/action/lewam.ipynb) |
+| JEPA | 动作 | [LeWAM](jepa/lewam.md) | 帧 + 动作（+ 目标图像） | `WorldActionModel` | [action/lewam](../examples/action/lewam.ipynb) |
 | JEPA | 动作 | [RoboJEPA](jepa/robojepa.md) | 多视角帧 + 动作 + 状态 | `WorldModel` | [action/robojepa](../examples/action/robojepa.ipynb) |
 | JEPA | 视觉 | [I-JEPA](jepa/ijepa.md) | 图像 | `JEPA` | [vision/ijepa](../examples/vision/ijepa.ipynb) |
 | JEPA | 视觉 | [LeJEPA](jepa/lejepa.md) | 图像 | `JEPA` | [vision/lejepa](../examples/vision/lejepa.ipynb) |
@@ -33,5 +37,6 @@
 | DINO | 动作 | [DINO-WM](dino/dinowm.md) | 帧 + 动作 + 本体感知 | `WorldModel` | [action/dinowm](../examples/action/dinowm.ipynb) |
 | DINO | 视觉 | [DINOv2](dino/dinov2.md) | 图像 | `nn.Module` | [vision/dinov2](../examples/vision/dinov2.ipynb) |
 | TD-MPC | 控制 | [TD-MPC2](tdmpc/tdmpc2.md) | 状态或帧 + 动作 + 奖励 | `WorldModel` | [action/tdmpc2](../examples/action/tdmpc2.ipynb) |
+| WAM | 动作 | [DreamZero](wam/dreamzero.md) | 视频 VAE 隐变量 + 动作（+ 状态、目标图像） | `WorldActionModel` | [action/dreamzero](../examples/action/dreamzero.ipynb) |
 
-每个模型的 `forward` 都返回一个包含标量 `"loss"` 的 dict。每个 `WorldModel` 还提供 `encode`、`predict` 和 `rollout`，并可直接使用 [`CEM`](../guides/planning.md) 进行规划；TD-MPC2 使用 `MPPI` 以奖励为目标进行规划。如需添加模型，请参阅[接入你自己的模型](../guides/custom-model.md)。
+每个模型的 `forward` 都返回一个包含标量 `"loss"` 的 dict。每个 `WorldModel` 还提供 `encode`、`predict` 和 `rollout`，并可直接使用 [`CEM`](../guides/planning.md) 进行规划；TD-MPC2 使用 `MPPI` 以奖励为目标进行规划。`WorldActionModel` 还能自行采样动作（`sample_actions`），并使用 `WAMPlanner` 进行规划。如需添加模型，请参阅[接入你自己的模型](../guides/custom-model.md)。

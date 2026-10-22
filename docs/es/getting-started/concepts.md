@@ -26,10 +26,10 @@ Los tipos comparten lo que deben saber sobre geometría, física y dinámica, y 
 |---|---|---|---|---|
 | **predicción latente** | el *embedding* de la siguiente observación | error de predicción en el espacio de embeddings, más un término contra el colapso | [JEPA](../models/jepa/index.md) (LeWM, RoboJEPA), [DINO-WM](../models/dino/dinowm.md) | V-JEPA 2-AC |
 | **latentes equivalentes en valor** | el siguiente latente, la recompensa y el valor de lo que sigue | consistencia latente y aprendizaje por diferencias temporales, sin decoder | [TD-MPC2](../models/tdmpc/tdmpc2.md) | MuZero |
-| **dinámica y acciones a la vez** | latentes futuros *y* el bloque de acciones que los produce | predicción latente más flow matching sobre las acciones | [LeWAM](../models/jepa/lewam.md) | world action models sobre difusión de vídeo preentrenada |
+| **vídeo y acción generativos** | fotogramas futuros (como latentes de un VAE de vídeo) *y* el bloque de acciones que los produce | eliminación de ruido (flow matching) | [world action models](../models/wam/index.md) (DreamZero), [LeWAM](../models/jepa/lewam.md) | políticas robóticas preentrenadas con vídeo |
 | **reconstrucción** | el siguiente estado latente, y los píxeles a partir de él | verosimilitud de las observaciones | | PlaNet, Dreamer |
 
-Predecir píxeles obliga al modelo a dar cuenta de todo lo que hay en el fotograma, incluidas texturas y ruido que no importan para el control; predecir solo embeddings o valores le permite dedicar su capacidad a lo que es predecible y relevante, a costa de necesitar otra forma de evitar que la representación colapse. Los modelos que generan vídeo pagan el precio de los píxeles, pero heredan lo que los grandes conjuntos de datos de vídeo saben sobre cómo se mueve el mundo.
+Predecir píxeles obliga al modelo a dar cuenta de todo lo que hay en el fotograma, incluidas texturas y ruido que no importan para el control; predecir solo embeddings o valores le permite dedicar su capacidad a lo que es predecible y relevante, a costa de necesitar otra forma de evitar que la representación colapse. Los modelos generativos pagan el precio de los píxeles, pero heredan lo que los grandes conjuntos de datos de vídeo saben sobre cómo se mueve el mundo.
 
 Las familias también incluyen **aprendices de representaciones** que no son modelos del mundo por sí mismos, como I-JEPA, V-JEPA, LeJEPA y [DINOv2](../models/dino/dinov2.md). Preentrenan los encoders sobre los que se construyen los modelos del mundo: DINO-WM planifica sobre features congeladas de DINOv2.
 
@@ -111,16 +111,17 @@ Todos los modelos del mundo de aquí imaginan con el mismo `rollout`; se diferen
 |---|---|---|---|
 | alcanzar un objetivo con [`CEM`](../guides/planning.md) | distancia del latente final al del objetivo (`cost`) | una gaussiana, reajustada a las mejores | LeWM, DINO-WM, RoboJEPA, cualquier `WorldModel` |
 | recompensa con [`MPPI`](../guides/planning.md#mppi-planning-for-reward) | recompensas imaginadas más un valor aprendido en el horizonte | una gaussiana y el prior de la política | TD-MPC2 |
-| muestreo de la política con `LeWAMPlanner` | la propia dinámica del modelo, hacia el objetivo | la cabeza de acciones con flow matching del modelo | LeWAM |
+| muestreo de la política con `WAMPlanner` | la propia dinámica del modelo, hacia el objetivo | la cabeza de acciones del modelo (`sample_actions`) | DreamZero (en lazo cerrado con `DreamZeroPolicy`), LeWAM |
 
-## Dos clases base {#two-base-classes}
+## Clases base {#two-base-classes}
 
-Todos los modelos heredan de una de las dos clases de [`torch_world.models`](../api/models.md).
+Todos los modelos heredan de una de las tres clases de [`torch_world.models`](../api/models.md).
 
 | clase base | escribes | obtienes |
 |---|---|---|
 | `JEPA` | `forward(...) -> {"loss": ...}` | `make_target_encoder`, `update_target(momentum)` |
 | `WorldModel` | `encode`, `predict(z, actions)`, `forward` | `rollout`, `cost`, planificación con [`CEM`](../guides/planning.md) |
+| `WorldActionModel` | un `WorldModel`, más `sample_actions`, `predict_future` e `imagine` | planificación con `WAMPlanner`; `decode` cuando los latentes tienen un decoder |
 
 ## Convenciones {#conventions}
 

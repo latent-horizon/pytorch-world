@@ -40,7 +40,7 @@ uv add torch_world
 
     ---
 
-    按学习方式组织模型：JEPA，从图像预训练到多机器人控制；以及 TD-MPC，用于奖励驱动的控制。更多家族即将加入。
+    按学习方式组织模型：JEPA，从图像预训练到多机器人控制；DINO；TD-MPC，用于奖励驱动的控制；以及世界动作模型，它们想象视频并据此行动。更多家族即将加入。
 
     [:octicons-arrow-right-24: 模型](models/index.md)
 

@@ -267,20 +267,20 @@ class RobotCube(MujocoEnv, LegacyEnvironment):
                     break
             goal = self.state.clone()
         else:
-            u = torch.rand(self.batch_size, 3, generator=generator)
-            aim = torch.stack(
-                [
-                    _span(self.x_range, u[:, 0]),
-                    _span(self.y_range, u[:, 1]),
-                    _span((3 * self.half, self.hover), u[:, 2]),
-                ],
-                -1,
-            ).to(self.state)
+            aim = self.reach_targets(generator)
             for _ in range(12):
                 self.step(self.scripted(torch.cat([aim, self.state[:, 3:]], -1)))
             goal = self.state.clone()
         self.reset(start)
         return start, goal
+
+    def reach_targets(self, generator: torch.Generator | None = None) -> Tensor:
+        """Random gripper positions ``(B, 3)`` above the workspace, the aims of ``"reach"`` tasks."""
+        u = torch.rand(self.batch_size, 3, generator=generator)
+        return torch.stack(
+            [_span(self.x_range, u[:, 0]), _span(self.y_range, u[:, 1]), _span((3 * self.half, self.hover), u[:, 2])],
+            -1,
+        ).to(self.state)
 
     def scripted(self, goal: Tensor) -> Tensor:
         """Clean expert actions ``(B, 4)`` toward goal states ``(B, 7)`` of the current ``task``."""

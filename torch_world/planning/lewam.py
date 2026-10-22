@@ -1,4 +1,4 @@
-"""Learned LeWAM proposals, optionally ranked/refined by its latent dynamics."""
+"""Learned world-action-model proposals, optionally ranked/refined by the model's own dynamics."""
 
 import math
 
@@ -7,6 +7,10 @@ import torch
 
 class LeWAMPlanner:
     """Sample action chunks, optionally refine and rank them toward a latent goal.
+
+    Works with any ``WorldActionModel`` (LeWAM, DreamZero); ``WAMPlanner`` is the same class. Extra keyword
+    conditions, such as DreamZero's ``past_actions`` and ``states``, are repeated per sample and forwarded to
+    ``sample_actions`` and ``predict_future``; ``goal`` is forwarded to both too.
 
     ``num_samples=1, refinement_steps=0`` evaluates the direct learned policy.
     More samples rank proposals using future latent goal distance. Optional
@@ -32,9 +36,10 @@ class LeWAMPlanner:
         self.noise_scale, self.flow_steps = noise_scale, flow_steps
 
     def __call__(self, model, z, goal, past_actions=None, generator=None, *, history_pad=None, remaining=None, **cond):
-        if cond:
-            raise ValueError("LeWAMPlanner expects state in the latent, not extra conditions")
         b, n = z.size(0), self.num_samples
+        if past_actions is not None:
+            cond["past_actions"] = past_actions
+        cond = {k: v if v is None else v.detach().repeat_interleave(n, 0) for k, v in cond.items()}
         context = z.detach().repeat_interleave(n, 0)
         targets = goal.detach().repeat_interleave(n, 0)
         padding = None if history_pad is None else history_pad.repeat_interleave(n, 0)
@@ -56,6 +61,7 @@ class LeWAMPlanner:
                 steps=self.flow_steps,
                 history_pad=padding,
                 remaining=horizon,
+                **cond,
             )
         if n == 1 and not self.refinement_steps:
             return proposals
@@ -63,7 +69,9 @@ class LeWAMPlanner:
         actions = anchor.clone()
 
         def score(normalized):
-            future = model.predict_future(context, model.denormalize_actions(normalized), history_pad=padding)
+            future = model.predict_future(
+                context, model.denormalize_actions(normalized), targets, history_pad=padding, **cond
+            )
             return model.cost(future, targets) + self.proximity * (normalized - anchor).square().mean((1, 2))
 
         with torch.no_grad():
