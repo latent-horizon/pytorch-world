@@ -16,6 +16,10 @@
 
 ::: torch_world.datasets.robodojo.robot_layout
 
+::: torch_world.datasets.read_video
+
+::: torch_world.datasets.random_clips
+
 ::: torch_world.datasets.MedMNIST
 
 ::: torch_world.datasets.MedicalVQA

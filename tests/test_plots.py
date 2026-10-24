@@ -38,3 +38,11 @@ def test_episodes_animation():
     frames = (torch.rand(3, 4, 3, 8, 8) * 255).to(torch.uint8)
     gif = plots.episodes(frames, success=[True, False, True], titles=["a", "b", "c"], ncols=3)
     assert gif.data[:6] == b"GIF89a" and "image/gif;base64" in gif._repr_html_()
+
+
+def test_pca_colors_and_video():
+    pytest.importorskip("av")
+    maps = plots.pca_colors(torch.randn(4, 3, 5, 16), size=(12, 20))
+    assert maps.shape == (4, 3, 12, 20) and 0 <= maps.min() and maps.max() <= 1
+    mp4 = plots.video(torch.rand(4, 3, 12, 20), maps, fps=2)
+    assert b"ftyp" in mp4.data[:16] and "video/mp4;base64" in mp4._repr_html_()

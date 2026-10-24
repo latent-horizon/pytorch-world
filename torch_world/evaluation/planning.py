@@ -14,7 +14,7 @@ class GoalReaching:
 
     Per policy: ``paths`` are states ``(N, steps + 1, state_dim)``, ``distances`` the distance to the goal at every
     step ``(N, steps + 1)``, ``reached`` whether each step counts as reaching it ``(N, steps + 1)``, ``success``
-    whether the final step does ``(N,)``, ``actions`` the actions taken ``(N, steps, action_dim)`` and ``seconds``
+    whether the episode succeeds ``(N,)`` (at its final step, or at any step with ``success="reached"``), ``actions`` the actions taken ``(N, steps, action_dim)`` and ``seconds``
     the mean wall time of one policy call. ``positions`` ``(N, steps + 1, D)`` and ``goals`` ``(N, D)`` locate what the
     task moves (``env.object_position``), for SPL, ``coverage`` ``(N, steps + 1)`` is the goal-region overlap for environments that
     define it (Push-T), and ``frames`` holds uint8 videos ``(N, steps + 1, 3, H, W)`` when ``record`` was given.
@@ -104,15 +104,20 @@ def goal_reaching(
     goal: Tensor,
     steps: int,
     record: Callable[[object], Tensor] | None = None,
+    success: str = "final",
 ) -> GoalReaching:
     """Run each ``policy(observation) -> action`` for ``steps`` from ``start`` and score it against ``goal`` states.
 
     The environment provides ``distance(states, goal)`` and ``success(states, goal)``, and optionally
     ``object_position(states)`` (for SPL, in environments where a path length is meaningful) and
-    ``coverage(states, goal)``. ``record(env)``, if given, returns images
+    ``coverage(states, goal)``. ``success`` scores an episode by its ``"final"`` step, or by whether it
+    ``"reached"`` the goal at any step after the start, as LeWM's and PLDM's protocols do; the success rates and
+    intervals follow it. ``record(env)``, if given, returns images
     ``(N, 3, H, W)`` of the batch at every step, for example ``lambda env: env.render(size=192)``.
     """
-    paths, distances, success, frames = {}, {}, {}, {}
+    if success not in ("final", "reached"):
+        raise ValueError(f"success must be 'final' or 'reached', not {success!r}")
+    scoring, success, paths, distances, frames = success, {}, {}, {}, {}
     reached, actions, seconds, positions, coverage = {}, {}, {}, {}, {}
     for name, policy in policies.items():
         obs = env.reset(start)
@@ -130,7 +135,7 @@ def goal_reaching(
         paths[name] = torch.stack(states, dim=1)
         distances[name] = env.distance(paths[name], goal)
         reached[name] = env.success(paths[name], goal)
-        success[name] = reached[name][:, -1]
+        success[name] = reached[name][:, -1] if scoring == "final" else reached[name][:, 1:].any(1)
         actions[name] = torch.stack(taken, dim=1)
         seconds[name] = elapsed / max(steps, 1)
         if hasattr(env, "object_position"):
@@ -146,3 +151,28 @@ def goal_reaching(
 def random_policy(env) -> Callable[[Tensor], Tensor]:
     """Uniform actions in ``[-1, 1]^action_dim``."""
     return lambda obs: torch.rand(len(obs), env.action_dim, device=obs.device) * 2 - 1
+
+
+def goal_policy(
+    model, planner, goal_images: Tensor, action_dim: int | None = None, execute: int = 1, **encode
+) -> Callable[[Tensor], Tensor]:
+    """Closed-loop policy that plans with ``planner(model, z, goal)`` from each observation toward goal images.
+
+    Observations and ``goal_images`` ``(B, C, H, W)`` are encoded with ``model.encode`` (one frame, on the model's
+    device; ``encode`` holds extra keyword arguments). Without ``action_dim`` the policy runs the first planned action
+    and plans again. When the planner's steps are chunks of ``k`` environment actions (a model trained with a
+    frameskip of ``k``), pass the environment's ``action_dim``: the policy runs ``execute`` chunks, one action per call,
+    before planning again, and needs ``reset()`` between episodes.
+    """
+    from torch_world.planning.mpc import RecedingHorizon
+
+    device = next(model.parameters()).device
+    with torch.no_grad():
+        goal = model.encode(goal_images[:, None].to(device), **encode)[:, 0]
+
+    def plan(obs: Tensor) -> Tensor:
+        return planner(model, model.encode(obs[:, None].to(device), **encode), goal).to(obs.device)
+
+    if action_dim is None:
+        return lambda obs: plan(obs)[:, 0]
+    return RecedingHorizon(plan, action_dim, execute)

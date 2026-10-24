@@ -136,7 +136,9 @@ def masks(
     return fig
 
 
-def curves(series: dict, smooth: int = 25, logy: bool = True, ylabel: str = "loss", size=(5.2, 2.6)):
+def curves(
+    series: dict, smooth: int = 25, logy: bool = True, ylabel: str = "loss", size=(5.2, 2.6), xlabel: str = "step"
+):
     """Training curves: the raw values as a faint trace under a ``smooth``-point moving average, labeled at the end.
 
     Each series is a list of values, one per step, or a ``(steps, values)`` pair when it is logged on some steps only.
@@ -160,7 +162,7 @@ def curves(series: dict, smooth: int = 25, logy: bool = True, ylabel: str = "los
                 va="center",
                 color=INK_2,
             )
-        ax.set(xlabel="step", ylabel=ylabel)
+        ax.set(xlabel=xlabel, ylabel=ylabel)
         if logy:
             ax.set_yscale("log")
         if len(series) > 1:
@@ -433,6 +435,51 @@ def episodes(
             data = io.FileIO(file.name).readall()
     _plt().close(fig)
     return Animation(data)
+
+
+class Video(Animation):
+    """An MP4 that plays inline in notebooks, looping, and saves with ``save(path)``."""
+
+    def _repr_html_(self) -> str:
+        import base64
+
+        data = base64.b64encode(self.data).decode()
+        return f'<video autoplay loop muted playsinline controls style="width: 100%" src="data:video/mp4;base64,{data}"></video>'
+
+
+def video(*panels: Tensor, fps: int = 6) -> Video:
+    """An MP4 of videos ``(T, 3, H, W)`` in ``[0, 1]``, side by side with a white gap; requires ``av``."""
+    import io
+
+    import av
+
+    gap = torch.ones(len(panels[0]), 3, panels[0].size(-2), 8)
+    strip = torch.cat([x for panel in panels for x in (panel.detach().float().cpu(), gap)][:-1], dim=-1)
+    strip = strip[..., : strip.size(-2) // 2 * 2, : strip.size(-1) // 2 * 2]  # yuv420p needs even sides
+    buffer = io.BytesIO()
+    with av.open(buffer, "w", format="mp4") as container:
+        stream = container.add_stream("libx264", rate=fps, options={"crf": "20"})
+        stream.width, stream.height, stream.pix_fmt = strip.size(-1), strip.size(-2), "yuv420p"
+        for frame in strip.clamp(0, 1).mul(255).byte().permute(0, 2, 3, 1).numpy():
+            container.mux(stream.encode(av.VideoFrame.from_ndarray(frame, format="rgb24")))
+        container.mux(stream.encode())
+    return Video(buffer.getvalue())
+
+
+def pca_colors(tokens: Tensor, size: tuple[int, int] | None = None) -> Tensor:
+    """The three leading principal components of patch tokens ``(N, h, w, D)`` as images ``(N, 3, h, w)``.
+
+    One PCA is fitted over all tokens, so a color means the same thing in every image; each component is scaled to
+    ``[0, 1]`` between its 1st and 99th percentiles. ``size`` upsamples the images bilinearly.
+    """
+    flat = tokens.detach().float().flatten(0, -2)
+    flat = flat - flat.mean(0)
+    pcs = flat @ torch.pca_lowrank(flat, q=3, center=False)[2]
+    lo, hi = pcs.quantile(0.01, dim=0), pcs.quantile(0.99, dim=0)
+    maps = ((pcs - lo) / (hi - lo)).clamp(0, 1).view(*tokens.shape[:-1], 3).permute(0, 3, 1, 2)
+    if size is not None:
+        maps = torch.nn.functional.interpolate(maps, size=size, mode="bilinear", align_corners=False).clamp(0, 1)
+    return maps
 
 
 def _rgb(hex_color: str) -> tuple[float, float, float]:

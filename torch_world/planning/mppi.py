@@ -10,6 +10,10 @@ class MPPI:
     Gaussian is refit to the ``num_elites`` best, weighted by ``softmax(temperature * value)``, with its std clamped to
     ``[min_std, max_std]``. The returned plan is one elite drawn with those weights.
 
+    Given a ``goal`` latent, MPPI plans for any ``WorldModel`` instead: the value of a sequence is minus
+    ``model.cost`` of its rollout from the context, and no trajectories come from a policy prior. ``temperature`` then
+    scales costs, so it depends on their range.
+
     Consecutive calls start from the previous mean shifted by one step; call ``reset`` between episodes.
     """
 
@@ -36,13 +40,26 @@ class MPPI:
         self.mean = None
 
     @torch.no_grad()
-    def __call__(self, model, z: Tensor, generator: torch.Generator | None = None, explore: bool = False) -> Tensor:
-        """Plan ``(B, horizon, action_dim)`` from the last of the context latents ``z`` ``(B, T0, latent_dim)``.
+    def __call__(
+        self,
+        model,
+        z: Tensor,
+        goal: Tensor | None = None,
+        generator: torch.Generator | None = None,
+        explore: bool = False,
+    ) -> Tensor:
+        """Plan ``(B, horizon, action_dim)`` from the context latents ``z`` ``(B, T0, ...)``.
 
-        ``explore`` adds Gaussian noise with the final std to the plan, as the reference does while collecting data.
+        Without ``goal``, the plan maximizes TD-MPC2's ``model.estimate_value`` from the last latent. With a goal
+        ``(B, ...)``, it minimizes ``model.cost`` of the rollout. ``explore`` adds Gaussian noise with the final std
+        to the plan, as the reference does while collecting data.
         """
-        B, S, P, H, A = z.size(0), self.num_samples, self.num_pi_trajs, self.horizon, self.action_dim
-        z = z[:, -1].repeat_interleave(S, dim=0)
+        B, S, H, A = z.size(0), self.num_samples, self.horizon, self.action_dim
+        P = self.num_pi_trajs if goal is None else 0
+        if goal is None:
+            z = z[:, -1].repeat_interleave(S, dim=0)
+        else:
+            z, goal = z.repeat_interleave(S, dim=0), goal.repeat_interleave(S, dim=0)
         actions = z.new_empty(B, S, H, A)
         if P:
             zp = z.view(B, S, -1)[:, :P].flatten(0, 1)
@@ -59,7 +76,11 @@ class MPPI:
         for _ in range(self.iterations):
             noise = torch.randn(B, S - P, H, A, device=z.device, dtype=z.dtype, generator=generator)
             actions[:, P:] = (mean[:, None] + std[:, None] * noise).clamp(-1, 1)
-            value = model.estimate_value(z, actions.flatten(0, 1)).nan_to_num(0).view(B, S)
+            if goal is None:
+                value = model.estimate_value(z, actions.flatten(0, 1))
+            else:
+                value = -model.cost(model.rollout(z, actions.flatten(0, 1)), goal)
+            value = value.nan_to_num(0).view(B, S)
             elite_value, idx = value.topk(self.num_elites, dim=1)
             elites = actions[batch, idx]
             score = (self.temperature * (elite_value - elite_value.max(1, keepdim=True).values)).exp()

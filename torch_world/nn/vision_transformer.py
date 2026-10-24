@@ -37,8 +37,9 @@ class PatchEmbed(nn.Module):
 class VisionTransformer(nn.Module):
     """ViT for images or videos (``num_frames > 1`` uses ``tubelet_size`` frames per token).
 
-    Positions are fixed sin-cos embeddings, or 2D/3D RoPE when ``use_rope``. ``forward`` takes optional
-    index masks and then encodes only the kept tokens, as JEPA context encoders do.
+    Positions are fixed sin-cos embeddings, or 2D/3D RoPE when ``use_rope``. With RoPE, positions come from the
+    input's own grid, so the encoder reads frames of any size. ``forward`` takes optional index masks and then encodes
+    only the kept tokens, as JEPA context encoders do.
     """
 
     def __init__(
@@ -91,13 +92,21 @@ class VisionTransformer(nn.Module):
     def num_patches(self) -> int:
         return self.pos_embed.size(1)
 
+    def embed(self, x: Tensor) -> tuple[Tensor, Tensor]:
+        """Patch tokens ``(B, N, D)`` of ``x`` with their positions added, and their grid coordinates ``(N, A)``."""
+        grid = tuple(s // k for s, k in zip(x.shape[2:], self.patch_embed.proj.kernel_size))
+        x = self.patch_embed(x)
+        if self.use_rope and grid != self.grid:
+            return x, grid_coords(grid).to(x.device)
+        return x + self.pos_embed[:, : x.size(1)], self.coords[: x.size(1)]
+
     def forward(self, x: Tensor, masks: list[Tensor] | None = None) -> Tensor:
-        x = self.patch_embed(x) + self.pos_embed
+        x, coords = self.embed(x)
         B, pos = x.size(0), None
         if masks is not None:
             x = apply_masks(x, masks)
         if self.use_rope:
-            pos = self.coords if masks is None else apply_masks(self.coords.expand(B, -1, -1), masks)
+            pos = coords if masks is None else apply_masks(coords.expand(B, -1, -1), masks)
         if self.cls_token is not None:
             x = torch.cat([self.cls_token.expand(x.size(0), -1, -1), x], dim=1)
             if pos is not None:
