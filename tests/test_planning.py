@@ -1,7 +1,7 @@
 import torch
 
 from torch_world.models import WorldModel
-from torch_world.planning import CEM
+from torch_world.planning import CEM, MPPI
 
 
 class Integrator(WorldModel):
@@ -61,3 +61,11 @@ def test_receding_horizon_runs_chunks_and_replans():
     policy = RecedingHorizon(plan, action_dim=1, execute=2)
     actions = [policy(torch.zeros(2, 1))[0, 0].item() for _ in range(6)]
     assert actions == [0.0, 0.5, 1.0, 1.5, 0.0, 0.5] and policy.calls == 2
+
+
+def test_mppi_reaches_goal_latent_with_any_world_model():
+    z, goal = torch.zeros(2, 1, 2), torch.tensor([[1.0, -0.5], [-0.3, 0.6]])
+    plan = MPPI(horizon=4, action_dim=2, num_samples=256, num_elites=32, num_pi_trajs=0, iterations=8, temperature=100)
+    actions = plan(Integrator(), z, goal, generator=torch.Generator().manual_seed(0))
+    assert actions.shape == (2, 4, 2) and actions.abs().max() <= 1
+    assert (actions.sum(1) - goal).norm(dim=-1).max() < 0.1

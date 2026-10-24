@@ -4,6 +4,7 @@ from torch_world.datasets.ogbench import load_ogbench
 from torch_world.datasets.robocasa import load_robocasa, load_robocasa_scene
 from torch_world.datasets.robodojo import load_robodojo
 from torch_world.datasets.trajectories import TrajectoryDataset
+from torch_world.datasets.videos import random_clips, read_video
 
 __all__ = [
     "LatentClips",
@@ -14,5 +15,7 @@ __all__ = [
     "load_robocasa",
     "load_robocasa_scene",
     "load_robodojo",
+    "random_clips",
+    "read_video",
     "write_latent_shard",
 ]

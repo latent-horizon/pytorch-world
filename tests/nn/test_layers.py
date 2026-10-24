@@ -63,6 +63,13 @@ def test_vit_rope_and_cls():
     assert vit(torch.randn(2, 3, 16, 16), [torch.tensor([[0, 1], [2, 3]])]).shape == (2, 3, 24)
 
 
+def test_vit_rope_reads_other_sizes():
+    video = VisionTransformer(
+        img_size=16, patch_size=8, embed_dim=24, depth=1, num_heads=2, num_frames=4, use_rope=True
+    )
+    assert video(torch.randn(1, 3, 4, 24, 40)).shape == (1, 2 * 3 * 5, 24)
+
+
 def test_from_size():
     vit = VisionTransformer.from_size("tiny", img_size=32, patch_size=16)
     assert vit.embed_dim == 192 and len(vit.transformer.blocks) == 12

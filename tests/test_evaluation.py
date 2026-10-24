@@ -48,3 +48,15 @@ def test_vqa_shuffled_images_mix_the_whole_dataset():
     shuffled = vqa(_Echo(), dataset, tokenizer, candidates, 8, True, torch.Generator().manual_seed(0)).predictions
     assert sorted(shuffled, key=int) == candidates
     assert any(int(p) >= 8 for p in shuffled[:8])
+
+
+def test_goal_reaching_scores_reached_at_any_step():
+    env = PointMass(batch_size=2, size=8)
+    start, goal = torch.tensor([[0.2, 0.5], [0.2, 0.5]]), torch.tensor([[0.4, 0.5], [0.4, 0.5]])
+    overshoot = {"right": lambda obs: torch.tensor([[1.0, 0.0], [1.0, 0.0]])}  # passes the goal, ends 0.3 past it
+    final = goal_reaching(env, overshoot, start, goal, steps=5)
+    reached = goal_reaching(env, overshoot, start, goal, steps=5, success="reached")
+    assert not final.success["right"].any() and reached.success["right"].all()
+    assert reached.intervals()["right"].value == 1.0
+    with pytest.raises(ValueError):
+        goal_reaching(env, overshoot, start, goal, steps=1, success="best")

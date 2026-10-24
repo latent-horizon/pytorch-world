@@ -8,6 +8,8 @@
       options:
         members: [rates, intervals, summary]
 
+::: torch_world.evaluation.goal_policy
+
 ::: torch_world.evaluation.random_policy
 
 ## RoboDojo

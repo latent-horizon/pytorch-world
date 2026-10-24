@@ -1,0 +1,10 @@
+# Owners are requested for review on every pull request that touches their paths.
+# See GOVERNANCE.md for how maintainers are added.
+
+*                       @kleyt0n
+
+/torch_world/models/    @kleyt0n
+/torch_world/planning/  @kleyt0n
+/torch_world/envs/      @kleyt0n
+/docs/                  @kleyt0n
+/.github/               @kleyt0n

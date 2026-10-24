@@ -35,13 +35,18 @@ jobs:
         run: uvx twine check --strict dist/*
 
   test:
-    name: test (python ${{ matrix.python }})
+    name: test (python ${{ matrix.python }}, torch ${{ matrix.torch }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.10", "3.13"]
+        # The two latest PyTorch releases, each on one end of the supported Python range. Bump on a new release.
+        include:
+          - python: "3.10"
+            torch: "2.13"
+          - python: "3.13"
+            torch: "2.14"
     env:
       MUJOCO_GL: osmesa
     steps:
@@ -62,7 +67,9 @@ jobs:
         # CPU wheels of torch: a fraction of the size of the default CUDA build.
         run: |
           uv venv
-          uv pip install --torch-backend cpu -e ".[test,examples,action,benchmark,newton,ogbench,robodojo,robocasa,notebooks,dmcontrol,metaworld,maniskill]"
+          uv pip install --torch-backend cpu "torch==${{ matrix.torch }}.*" -e ".[test,examples,action,benchmark,newton,ogbench,robodojo,robocasa,notebooks,dmcontrol,metaworld,maniskill]"
+      - name: Check the PyTorch version
+        run: uv run --no-sync python -c "import torch; assert torch.__version__.startswith('${{ matrix.torch }}.'), torch.__version__"
       - name: Test
         # One worker per core; software rendering dominates, so tests run in parallel processes.
         run: uv run --no-sync pytest -q -n auto --durations=5
@@ -89,3 +96,24 @@ jobs:
           uv pip install --torch-backend cpu -e ".[test,myosuite]"
       - name: Test
         run: uv run --no-sync pytest -q tests/test_lanes.py
+
+  macos:
+    # Apple silicon, CPU and MPS: the core library, models, planners and the MuJoCo worlds.
+    name: test (macos)
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: pyproject.toml
+      - name: Install
+        run: |
+          uv venv
+          uv pip install -e ".[test,examples,action]"
+      - name: Test
+        run: >-
+          uv run --no-sync pytest -q -n auto tests/models tests/nn tests/test_planning.py tests/test_losses.py
+          tests/test_masks.py tests/test_metrics.py tests/test_envs_datasets.py tests/test_evaluation.py tests/test_devices.py

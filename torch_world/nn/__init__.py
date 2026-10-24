@@ -1,5 +1,5 @@
 from torch_world.nn.attention import Attention
-from torch_world.nn.encoders import CLSEncoder, PatchTokens, PixelPatches
+from torch_world.nn.encoders import CLSEncoder, PatchTokens, PixelPatches, VideoTokens
 from torch_world.nn.flow import euler_sample, interpolate, sample_time, time_embedding, velocity_target
 from torch_world.nn.positional import grid_coords, rope, sincos, sincos_1d, sincos_2d, sincos_3d
 from torch_world.nn.predictor import MaskedPredictor
@@ -22,6 +22,7 @@ __all__ = [
     "PixelPatches",
     "TextEncoder",
     "Transformer",
+    "VideoTokens",
     "VideoVAE",
     "VisionTransformer",
     "WordTokenizer",

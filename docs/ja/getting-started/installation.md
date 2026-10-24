@@ -24,7 +24,7 @@ uv sync
 | extra | インストールされるもの | 用途 |
 |---|---|---|
 | `examples` | `matplotlib` | [`torch_world.plots`](../guides/plots.md) とノートブック |
-| `robotics` | `mujoco` | [`RobotCube`](../guides/environments.md#robotcube) 環境 |
+| `action` | `mujoco` | [`RobotCube`](../guides/environments.md#robotcube) と `PushT` 環境 |
 | `ogbench` | `ogbench`（Python 3.12 以下） | [OGBench タスク](../guides/benchmark-environments.md#ogbench)と[データセット](../datasets/trajectories.md#ogbench-datasets) |
 | `dmcontrol` | `dm_control`（Python 3.12 以下） | [DeepMind Control Suite タスク](../guides/benchmark-environments.md#external-suites) |
 | `metaworld` | `metaworld` | [Meta-World タスク](../guides/benchmark-environments.md#external-suites) |

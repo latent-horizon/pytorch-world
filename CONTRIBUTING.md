@@ -34,7 +34,7 @@ Code is formatted and linted with [ruff](https://docs.astral.sh/ruff/) at a line
 2. Write the docstring: what the model predicts, its loss, and the paper and reference code. It becomes the model's API reference.
 3. Export it from the family's `__init__.py` and from `torch_world.models`.
 4. Add tests under `tests/models/`: output shapes, a finite loss, gradients and, for world models, a planning call.
-5. Add a notebook under `examples/` that trains it on one of the [environments](docs/guides/environments.md) and shows what it learned.
+5. Add a notebook under `examples/` that trains it on one of the [environments](docs/guides/environments.md) and shows what it learned. Start it like the others: the title, an Open in Colab badge, and the setup cell that installs torch-world on Colab.
 6. Add a page in its family's folder under `docs/models/` (for example `docs/models/jepa/`), link it from the family page and add it to the sidebar in `docs/.vitepress/config.mts`.
 
 A new family gets its own folder, `torch_world/models/<family>/` and `docs/models/<family>/`, with an index page that says what the family has in common.
@@ -58,10 +58,15 @@ The site is also in Português, Español, 简体中文 and 日本語. Translatio
 
 Pushes to `main` deploy the site to GitHub Pages. This file and [`docs/contributing.md`](docs/contributing.md) say the same thing; update both.
 
+## Community
+
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). How decisions are made and how to become a maintainer is in [GOVERNANCE.md](GOVERNANCE.md); report security issues privately, as [SECURITY.md](SECURITY.md) explains.
+
 ## Pull requests
 
 - Keep each pull request to one change: a fix, a model, a feature.
 - Add or update tests for the code you touch, and docs for anything user-facing.
 - For a model, say how you checked it against the paper or the reference code.
+- Keep notebooks short and clean: one idea per cell, the shared `fit` loop and `evaluation.goal_policy` instead of hand-written ones, outputs from a real run.
 
 By contributing, you agree that your contributions are licensed under the [Apache 2.0 license](LICENSE.md).

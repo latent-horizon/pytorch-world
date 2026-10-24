@@ -41,6 +41,8 @@ function site(key: string) {
       page('Figures', l('/guides/plots'))
     ]),
     group('Benchmarks', [
+      page('Results', l('/guides/results')),
+      page('Reproduction report', l('/guides/reproduction')),
       page('Benchmark experiments', l('/guides/benchmark-environments')),
       page('Pixel worlds', l('/guides/environments'))
     ])
@@ -52,6 +54,12 @@ function site(key: string) {
       page('Overview', l('/models/jepa/')),
       group('Action', [
         page('LeWM', l('/models/jepa/lewm')),
+        page('PLDM', l('/models/jepa/pldm')),
+        page('LpWM', l('/models/jepa/lpwm')),
+        page('Flow-JEPA', l('/models/jepa/flowjepa')),
+        page('Variational JEPA', l('/models/jepa/varjepa')),
+        page('HWM', l('/models/jepa/hwm')),
+        page('H-JEPA', l('/models/jepa/hjepa')),
         page('LeWAM', l('/models/jepa/lewam')),
         page('RoboJEPA', l('/models/jepa/robojepa'))
       ]),
@@ -59,6 +67,7 @@ function site(key: string) {
         page('I-JEPA', l('/models/jepa/ijepa')),
         page('LeJEPA', l('/models/jepa/lejepa')),
         page('V-JEPA', l('/models/jepa/vjepa')),
+        page('V-JEPA 2.1', l('/models/jepa/vjepa21')),
         page('LeVJEPA', l('/models/jepa/levjepa'))
       ]),
       group('Vision-language', [page('VL-JEPA', l('/models/jepa/vljepa'))])
@@ -113,9 +122,25 @@ function site(key: string) {
   ]
 
   const notebooks: Item[] = [
-    group('Notebooks', [page('Tour', l('/examples/intro')), page('Custom model', l('/examples/custom_model'))]),
+    group('Notebooks', [
+      page('Quick start', l('/examples/quickstart')),
+      page('Tour', l('/examples/intro')),
+      page('Custom model', l('/examples/custom_model'))
+    ]),
+    group('Comparisons', [
+      page('Main benchmark', l('/examples/comparisons/main_benchmark')),
+      page('Frozen vs end-to-end encoders', l('/examples/comparisons/frozen_vs_end_to_end')),
+      page('Planners', l('/examples/comparisons/planners')),
+      page('Flat vs hierarchical', l('/examples/comparisons/flat_vs_hierarchical'))
+    ]),
     group('Action', [
       page('LeWM', l('/examples/action/lewm')),
+      page('PLDM', l('/examples/action/pldm')),
+      page('LpWM', l('/examples/action/lpwm')),
+      page('Flow-JEPA', l('/examples/action/flowjepa')),
+      page('Variational JEPA', l('/examples/action/varjepa')),
+      page('HWM', l('/examples/action/hwm')),
+      page('H-JEPA', l('/examples/action/hjepa')),
       page('LeWAM', l('/examples/action/lewam')),
       page('DINO-WM', l('/examples/action/dinowm')),
       page('RoboJEPA', l('/examples/action/robojepa')),
@@ -126,14 +151,16 @@ function site(key: string) {
       page('I-JEPA', l('/examples/vision/ijepa')),
       page('LeJEPA', l('/examples/vision/lejepa')),
       page('V-JEPA', l('/examples/vision/vjepa')),
+      page('V-JEPA 2.1', l('/examples/vision/vjepa21')),
       page('LeVJEPA', l('/examples/vision/levjepa')),
       page('DINOv2 vs LeVJEPA', l('/examples/vision/dinov2'))
     ]),
     group('Vision-language', [page('VL-JEPA', l('/examples/vqa/vljepa'))]),
+    group('Planning', [page('GRASP', l('/examples/planning/grasp'))]),
     group('Environments', [page('Custom model', l('/examples/envs/custom_model_three_envs'))])
   ]
 
-  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots']
+  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots', 'hub']
   const api: Item[] = [
     group('API', [page('Overview', l('/api/')), ...modules.map((m) => page(`torch_world.${m}`, l(`/api/${m}`)))])
   ]
