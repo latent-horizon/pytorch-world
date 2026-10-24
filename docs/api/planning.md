@@ -2,7 +2,13 @@
 
 ::: torch_world.planning.CEM
 
+::: torch_world.planning.GRASP
+
 ::: torch_world.planning.MPPI
+
+::: torch_world.planning.HierarchicalPlanner
+
+::: torch_world.planning.GradientPlanner
 
 ::: torch_world.planning.LeWAMPlanner
 

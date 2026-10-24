@@ -52,6 +52,12 @@ function site(key: string) {
       page('Overview', l('/models/jepa/')),
       group('Action', [
         page('LeWM', l('/models/jepa/lewm')),
+        page('PLDM', l('/models/jepa/pldm')),
+        page('LpWM', l('/models/jepa/lpwm')),
+        page('Flow-JEPA', l('/models/jepa/flowjepa')),
+        page('Variational JEPA', l('/models/jepa/varjepa')),
+        page('HWM', l('/models/jepa/hwm')),
+        page('H-JEPA', l('/models/jepa/hjepa')),
         page('LeWAM', l('/models/jepa/lewam')),
         page('RoboJEPA', l('/models/jepa/robojepa'))
       ]),
@@ -59,6 +65,7 @@ function site(key: string) {
         page('I-JEPA', l('/models/jepa/ijepa')),
         page('LeJEPA', l('/models/jepa/lejepa')),
         page('V-JEPA', l('/models/jepa/vjepa')),
+        page('V-JEPA 2.1', l('/models/jepa/vjepa21')),
         page('LeVJEPA', l('/models/jepa/levjepa'))
       ]),
       group('Vision-language', [page('VL-JEPA', l('/models/jepa/vljepa'))])
@@ -116,6 +123,12 @@ function site(key: string) {
     group('Notebooks', [page('Tour', l('/examples/intro')), page('Custom model', l('/examples/custom_model'))]),
     group('Action', [
       page('LeWM', l('/examples/action/lewm')),
+      page('PLDM', l('/examples/action/pldm')),
+      page('LpWM', l('/examples/action/lpwm')),
+      page('Flow-JEPA', l('/examples/action/flowjepa')),
+      page('Variational JEPA', l('/examples/action/varjepa')),
+      page('HWM', l('/examples/action/hwm')),
+      page('H-JEPA', l('/examples/action/hjepa')),
       page('LeWAM', l('/examples/action/lewam')),
       page('DINO-WM', l('/examples/action/dinowm')),
       page('RoboJEPA', l('/examples/action/robojepa')),
@@ -126,6 +139,7 @@ function site(key: string) {
       page('I-JEPA', l('/examples/vision/ijepa')),
       page('LeJEPA', l('/examples/vision/lejepa')),
       page('V-JEPA', l('/examples/vision/vjepa')),
+      page('V-JEPA 2.1', l('/examples/vision/vjepa21')),
       page('LeVJEPA', l('/examples/vision/levjepa')),
       page('DINOv2 vs LeVJEPA', l('/examples/vision/dinov2'))
     ]),

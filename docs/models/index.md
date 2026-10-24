@@ -27,11 +27,18 @@ Models are grouped into **families**. Models in a family share a way of learning
 | family | group | model | input | base class | notebook |
 |---|---|---|---|---|---|
 | JEPA | Action | [LeWM](jepa/lewm.md) | frames + actions | `WorldModel` | [action/lewm](../examples/action/lewm.ipynb) |
+| JEPA | Action | [PLDM](jepa/pldm.md) | frames + actions | `WorldModel` | [action/pldm](../examples/action/pldm.ipynb) |
+| JEPA | Action | [LpWM](jepa/lpwm.md) | frames + actions | `WorldModel` | [action/lpwm](../examples/action/lpwm.ipynb) |
+| JEPA | Action | [Flow-JEPA](jepa/flowjepa.md) | frames + actions | `WorldModel` | [action/flowjepa](../examples/action/flowjepa.ipynb) |
+| JEPA | Action | [Variational JEPA](jepa/varjepa.md) | frames + actions | `WorldModel` | [action/varjepa](../examples/action/varjepa.ipynb) |
+| JEPA | Action | [HWM](jepa/hwm.md) | frames + actions | `WorldModel` | [action/hwm](../examples/action/hwm.ipynb) |
+| JEPA | Action | [H-JEPA](jepa/hjepa.md) | frames + actions | `WorldModel` | [action/hjepa](../examples/action/hjepa.ipynb) |
 | JEPA | Action | [LeWAM](jepa/lewam.md) | frames + actions (+ goal image) | `WorldActionModel` | [action/lewam](../examples/action/lewam.ipynb) |
 | JEPA | Action | [RoboJEPA](jepa/robojepa.md) | multi-view frames + actions + states | `WorldModel` | [action/robojepa](../examples/action/robojepa.ipynb) |
 | JEPA | Vision | [I-JEPA](jepa/ijepa.md) | images | `JEPA` | [vision/ijepa](../examples/vision/ijepa.ipynb) |
 | JEPA | Vision | [LeJEPA](jepa/lejepa.md) | images | `JEPA` | [vision/lejepa](../examples/vision/lejepa.ipynb) |
 | JEPA | Vision | [V-JEPA](jepa/vjepa.md) | video | `JEPA` | [vision/vjepa](../examples/vision/vjepa.ipynb) |
+| JEPA | Vision | [V-JEPA 2.1](jepa/vjepa21.md) | video or images | `JEPA` | [vision/vjepa21](../examples/vision/vjepa21.ipynb) |
 | JEPA | Vision | [LeVJEPA](jepa/levjepa.md) | video | `JEPA` | [vision/levjepa](../examples/vision/levjepa.ipynb) |
 | JEPA | Vision-language | [VL-JEPA](jepa/vljepa.md) | images or video + text | `JEPA` | [vqa/vljepa](../examples/vqa/vljepa.ipynb) |
 | DINO | Action | [DINO-WM](dino/dinowm.md) | frames + actions + proprioception | `WorldModel` | [action/dinowm](../examples/action/dinowm.ipynb) |

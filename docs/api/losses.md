@@ -2,6 +2,8 @@
 
 ::: torch_world.losses.SIGReg
 
+::: torch_world.losses.RDMReg
+
 ::: torch_world.losses.info_nce
 
 ::: torch_world.losses.koleo
