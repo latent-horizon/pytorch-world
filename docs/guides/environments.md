@@ -55,7 +55,7 @@ start, goal = env.tasks()  # (B, 2) each, on opposite sides of the wall
 
 ![TwoRooms](../assets/envs/two_rooms.png)
 
-PLDM's Two-Rooms: the point of `PointMass` in a square split by a wall with one door. A move into the wall stops at it. `tasks()` puts the start in one room and the goal in the other, so the way to the goal runs through the door and a planner that only moves toward the goal gets stuck at the wall. `collect` wanders, keeping each action with probability 0.8, so that some episodes cross the door.
+PLDM's Two-Rooms: the point of `PointMass` in a square split by a wall with one door. A move into the wall stops at it. `tasks()` puts the start in one room and the goal in the other, so the way to the goal runs through the door and a planner that only moves toward the goal gets stuck at the wall: the long-horizon test of the [comparisons](../examples/comparisons/flat_vs_hierarchical.md). `collect` wanders, keeping each action with probability 0.8, so that some episodes cross the door.
 
 ```python
 from torch_world.envs import TwoRooms

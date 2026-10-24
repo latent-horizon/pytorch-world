@@ -9,6 +9,7 @@
   <a href="https://github.com/latent-horizon/pytorch-world/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/latent-horizon/pytorch-world/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://latent-horizon.github.io/pytorch-world/"><img alt="Docs" src="https://github.com/latent-horizon/pytorch-world/actions/workflows/docs.yml/badge.svg"></a>
   <a href="LICENSE.md"><img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue"></a>
+  <a href="https://colab.research.google.com/github/latent-horizon/pytorch-world/blob/main/examples/quickstart.ipynb"><img alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 </p>
 
 PyTorch World (`torch_world`) is a library of world models for PyTorch. It gives world-model research shared parts (layers, masking, objectives, planners, environments) so that a new model is a short file and existing models are easy to compare.
@@ -29,12 +30,13 @@ from torch_world.planning import CEM
 
 model = LeWM(CLSEncoder(img_size=32, patch_size=8, embed_dim=64), action_dim=2, embed_dim=64)
 episodes = PointMass(batch_size=64).collect(4)                 # pixels (64, 4, 3, 32, 32), actions (64, 4, 2)
-loss = model(episodes["pixels"], episodes["actions"])["loss"]  # prediction + SIGReg
+loss = model(episodes["pixels"], episodes["actions"])["loss"]  # prediction + SIGReg; train with any optimizer
 
-model.eval()
-z, goal = model.encode(episodes["pixels"][:, :1]), model.encode(episodes["pixels"][:, -1:])[:, 0]
-actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
+z, goal = model.eval().encode(episodes["pixels"][:, :1]), model.encode(episodes["pixels"][:, -1:])[:, 0]
+actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2): the plan toward the goal image
 ```
+
+Train it end to end and plan in a few minutes: [examples/quickstart.ipynb](examples/quickstart.ipynb), or [open it in Colab](https://colab.research.google.com/github/latent-horizon/pytorch-world/blob/main/examples/quickstart.ipynb).
 
 ## Structure
 
@@ -128,6 +130,17 @@ model = hub.from_pretrained("latenthorizon/lewm-pusht")
 | [`latenthorizon/dinowm-pusht`](https://huggingface.co/latenthorizon/dinowm-pusht) | DINO-WM on frozen DINOv2 ViT-S/14 | Push-T expert data, MuJoCo `PushT` | 94.0% (50 tasks) |
 
 Each model card gives the recipe, the evaluation protocol and intermediate checkpoints. See the [reproduction report](docs/guides/reproduction.md) for how they compare with the papers.
+
+## Comparisons
+
+Models and planners side by side on the same data and tasks, with success rates and their 95% intervals. Results: [benchmark results](docs/guides/results.md); each model against its paper: [reproduction report](docs/guides/reproduction.md).
+
+| notebook | compares |
+|---|---|
+| [comparisons/main_benchmark](examples/comparisons/main_benchmark.ipynb) | LeWM, PLDM, DINO-WM, V-JEPA 2-AC and TD-MPC2 |
+| [comparisons/frozen_vs_end_to_end](examples/comparisons/frozen_vs_end_to_end.ipynb) | frozen DINOv2 and V-JEPA 2.1 encoders against LeJEPA and end-to-end LeWM |
+| [comparisons/planners](examples/comparisons/planners.ipynb) | CEM, MPPI and GRASP at several horizons |
+| [comparisons/flat_vs_hierarchical](examples/comparisons/flat_vs_hierarchical.ipynb) | LeWM against HWM and H-JEPA on long-horizon tasks |
 
 ## Environment benchmarks
 
