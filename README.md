@@ -42,9 +42,9 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 |---|---|
 | `torch_world.nn` | `VisionTransformer` (image and video), `MaskedPredictor`, `Transformer`, `Block`, `AdaLNBlock`, `Attention`, `MLP`, sin-cos and rotary positions; ready encoders `CLSEncoder`, `PixelPatches`, `PatchTokens.from_hub` (DINOv2) and `VideoTokens.from_hub` (V-JEPA 2); `TextEncoder` and `WordTokenizer`; video autoencoders `VideoVAE` (Wan 2.1) and `ConvVideoAE`; flow-matching helpers |
 | `torch_world.masks` | `MultiBlockMask` (2D), `MultiBlock3DMask` (video), `frame_causal_mask`, `apply_masks` |
-| `torch_world.losses` | `SIGReg`, `info_nce` |
+| `torch_world.losses` | `SIGReg`, `RDMReg`, `info_nce` |
 | `torch_world.models` | the `JEPA`, `WorldModel` and `WorldActionModel` base classes and the models below |
-| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward; `WAMPlanner` and `DreamZeroPolicy` for world action models |
+| `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, for reward (TD-MPC2) or toward a goal; `GRASP`, by gradient descent; `HierarchicalPlanner`, for two-level models; `WAMPlanner` and `DreamZeroPolicy` for world action models |
 | `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw`, `PointMass` and `TwoRooms` (PLDM's long-horizon task); `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos, and `goal_policy` to plan toward goal images; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
@@ -61,8 +61,15 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `IJEPA` | [Assran et al., 2023](https://arxiv.org/abs/2301.08243) | [facebookresearch/ijepa](https://github.com/facebookresearch/ijepa) | [vision/ijepa](examples/vision/ijepa.ipynb) |
 | `VJEPA` (and V-JEPA 2) | [Bardes et al., 2024](https://arxiv.org/abs/2404.08471), [Assran et al., 2025](https://arxiv.org/abs/2506.09985) | [facebookresearch/jepa](https://github.com/facebookresearch/jepa), [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) | [vision/vjepa](examples/vision/vjepa.ipynb) |
 | `LeJEPA` | [Balestriero & LeCun, 2025](https://arxiv.org/abs/2511.08544) | [galilai-group/lejepa](https://github.com/galilai-group/lejepa) | [vision/lejepa](examples/vision/lejepa.ipynb) |
+| `VJEPA21` | [Mur-Labadia et al., 2026](https://arxiv.org/abs/2603.14482) | [facebookresearch/vjepa2](https://github.com/facebookresearch/vjepa2) | [vision/vjepa21](examples/vision/vjepa21.ipynb) |
 | `LeVJEPA` | [Kuhn et al., 2026](https://arxiv.org/abs/2608.27395) | [galilai-group/levjepa](https://github.com/galilai-group/levjepa) | [vision/levjepa](examples/vision/levjepa.ipynb) |
 | `VLJEPA` | [Chen et al., 2026](https://arxiv.org/abs/2512.10942) | not released | [vqa/vljepa](examples/vqa/vljepa.ipynb) |
+| `PLDM` | [Sobal et al., 2025](https://arxiv.org/abs/2502.14819) | [vladisai/PLDM](https://github.com/vladisai/PLDM) | [action/pldm](examples/action/pldm.ipynb) |
+| `LpWM` | [Kuang et al., 2026](https://arxiv.org/abs/2608.22764) | [YilunKuang/lpworldmodel](https://github.com/YilunKuang/lpworldmodel) | [action/lpwm](examples/action/lpwm.ipynb) |
+| `FlowJEPA` | [Huo et al., 2026](https://arxiv.org/abs/2608.29029) | [HuoYanchen/Flow-JEPA](https://github.com/HuoYanchen/Flow-JEPA) | [action/flowjepa](examples/action/flowjepa.ipynb) |
+| `VariationalJEPA` | [Huang, 2026](https://arxiv.org/abs/2601.14354) | [YongchaoHuang/VJEPA](https://github.com/YongchaoHuang/VJEPA) | [action/varjepa](examples/action/varjepa.ipynb) |
+| `HWM` | [Zhang et al., 2026](https://arxiv.org/abs/2604.03208) | [kevinghst/HWM_PLDM](https://github.com/kevinghst/HWM_PLDM) | [action/hwm](examples/action/hwm.ipynb) |
+| `HJEPA` | [Zhang et al., 2026](https://arxiv.org/abs/2610.06805) | [kevinghst/H-JEPA](https://github.com/kevinghst/H-JEPA) | [action/hjepa](examples/action/hjepa.ipynb) |
 | `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) | [action/lewam](examples/action/lewam.ipynb) |
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) | [action/lewm](examples/action/lewm.ipynb) |
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) | [action/robojepa](examples/action/robojepa.ipynb) |
@@ -93,6 +100,15 @@ TD-MPC world models have no decoder: latent dynamics are trained to predict the 
 | `DreamZero` | [Ye et al., 2026](https://arxiv.org/abs/2602.15922) | not used | [action/dreamzero](examples/action/dreamzero.ipynb) |
 
 World action models denoise future video and the actions that produce it together, so the model is both the policy and the world model. DreamZero is an autoregressive joint video-action diffusion transformer on Wan 2.1 video-VAE latents (`pip install torch-world[wam]`); its notebook trains it from scratch on a UR10e arm and compares it with LeWAM.
+
+### Planners
+
+| planner | paper | notebook |
+|---|---|---|
+| `CEM` | [Rubinstein, 1999](https://doi.org/10.1023/A:1010091220143) | [action/lewm](examples/action/lewm.ipynb) |
+| `MPPI` | [Williams et al., 2017](https://arxiv.org/abs/1707.02342) | [action/tdmpc2](examples/action/tdmpc2.ipynb) |
+| `GRASP` | [Psenka et al., 2026](https://arxiv.org/abs/2602.00475) | [planning/grasp](examples/planning/grasp.ipynb) |
+| `HierarchicalPlanner` | [Zhang et al., 2026](https://arxiv.org/abs/2604.03208) | [action/hwm](examples/action/hwm.ipynb) |
 
 ## Environment benchmarks
 

@@ -45,6 +45,34 @@ planner(model, z, goal, states=env.state[:, None], embodiment=ids)
 
 Pass a `torch.Generator` as `generator` for reproducible plans.
 
+## GRASP: gradient-based planning
+
+[`GRASP`](../api/planning.md) ([Psenka et al., 2026](https://arxiv.org/abs/2602.00475)) optimizes the plan by gradient descent instead of sampling. The latents between the current one and the goal become free variables, initialized on the line between them, so every step is predicted in parallel from its own start latent:
+
+```
+loss = Σ_t |F(sg(s_t), a_t) − s_{t+1}|² + goal_weight · Σ_t cost(F(sg(s_t), a_t), g)
+```
+
+The stop-gradient `sg` means actions get gradients through the model but latents never do through its state Jacobian. Each iteration takes an Adam step on both, then adds Gaussian noise to the latents to escape local minima. Every `sync_every` iterations a few Adam steps on the actions alone minimize `model.cost` of a full rollout, which keeps the plan feasible.
+
+```python
+from torch_world.planning import GRASP
+
+planner = GRASP(horizon=5, action_dim=2, bounds=(-1, 1))   # defaults: the authors' LeWM settings
+actions = planner(model, z, goal)                          # (B, horizon, action_dim)
+```
+
+| argument | meaning |
+|---|---|
+| `iterations` | gradient steps on states and actions (750) |
+| `lr_states`, `lr_actions` | Adam learning rates of the latents and the actions |
+| `noise` | std of the Gaussian noise added to the latents after each step |
+| `goal_weight` | weight of the per-step goal term |
+| `sync_every`, `sync_steps`, `sync_lr` | how often and how hard actions are refined on the full rollout (`sync_every=0` disables it) |
+| `bounds` | clamp actions to the action space |
+
+`GRASP` takes the same `past_actions`, conditioning and `generator` as `CEM`. It needs a differentiable model and runs with gradients enabled even under `torch.no_grad`, without accumulating any into the model's parameters. See [the notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/planning/grasp.ipynb) for GRASP against CEM on Two-Rooms.
+
 ## MPPI: planning for reward
 
 [TD-MPC2](../models/tdmpc/tdmpc2.md) plans for the highest return instead of toward a goal. [`MPPI`](../api/planning.md) scores action sequences with `model.estimate_value`: predicted rewards over the horizon plus a learned value at its end. Each iteration it adds `num_pi_trajs` sequences from the model's policy prior to Gaussian samples, and refits the Gaussian to the `num_elites` best, weighted by `softmax(temperature * value)`. The plan it returns is one elite drawn with those weights.

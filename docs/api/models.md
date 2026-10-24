@@ -10,6 +10,12 @@
 
 ::: torch_world.models.VJEPA
 
+::: torch_world.models.VJEPA21
+
+::: torch_world.models.VJEPA21Encoder
+
+::: torch_world.models.VJEPA21Predictor
+
 ::: torch_world.models.LeJEPA
 
 ::: torch_world.models.LeVJEPA
@@ -21,6 +27,24 @@
 ::: torch_world.models.LeWAM
 
 ::: torch_world.models.LeWM
+
+::: torch_world.models.PLDM
+
+::: torch_world.models.PLDMEncoder
+
+::: torch_world.models.LpWM
+
+::: torch_world.models.FlowJEPA
+
+::: torch_world.models.VariationalJEPA
+
+::: torch_world.models.HWM
+
+::: torch_world.models.MacroLevel
+
+::: torch_world.models.HJEPA
+
+::: torch_world.models.MacroPool
 
 ::: torch_world.models.RoboJEPA
 
@@ -49,4 +73,3 @@
 ::: torch_world.models.tdmpc.ShiftAug
 
 ::: torch_world.models.tdmpc.mlp
-
