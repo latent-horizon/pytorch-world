@@ -5,10 +5,12 @@ from torch import Tensor
 
 from torch_world.envs.point_mass import PointMass
 from torch_world.envs.sdf import capsule, circle, ellipse, fill, grid, paint, polygon, shade, union
+from torch_world.envs.two_rooms import Rooms
 
 SKY, HORIZON, SUN = (0.33, 0.6, 0.88), (0.98, 0.86, 0.7), (1.0, 0.95, 0.74)
 FAR_HILLS, NEAR_HILLS, CLOUD = (0.56, 0.68, 0.64), (0.3, 0.5, 0.36), (1.0, 1.0, 1.0)
 FAR_PALM, NEAR_PALM = (0.43, 0.57, 0.52), (0.2, 0.37, 0.27)
+ROCK, ROCK_EDGE = (0.47, 0.38, 0.3), (0.31, 0.24, 0.19)
 CLOUDS = [(0.2, 0.2, 1.0), (0.55, 0.3, 0.8), (0.88, 0.47, 0.65)]
 PALMS = [(0.1, 0.84, 0.3, NEAR_PALM), (0.66, 0.8, 0.17, FAR_PALM), (0.93, 0.86, 0.24, NEAR_PALM)]
 
@@ -32,12 +34,15 @@ FEATHERS = [
 ]
 
 
-class Macaw(PointMass):
+class Macaw(Rooms, PointMass):
     """A Hyacinth macaw flying over the Pantanal, on ``size x size`` RGB images: the same dynamics as ``PointMass``.
 
     The state is the bird's position, kept in ``[low, high]^2``. Its wings beat a quarter cycle per step, so a single
     frame does not tell the phase but a short history does. ``render(state)`` without a phase draws the bird gliding,
     as used for goal images. Rendering is resolution-free: a ``Macaw(size=192)`` draws the same states sharper.
+
+    With ``rooms``, a rock wall splits the sky with one gap the bird must fly through, as in PLDM's Two-Rooms (see
+    ``Rooms``): ``tasks`` gives goals on the other side, and ``collect`` keeps each action with probability 0.8.
     """
 
     env_id = "Macaw-v0"
@@ -50,6 +55,8 @@ class Macaw(PointMass):
         max_step: float = 0.1,
         scale: float = 1.0,
         device=None,
+        rooms: bool = False,
+        door_width: float = 0.3,
         *,
         quality="high",
         render_size=None,
@@ -57,7 +64,7 @@ class Macaw(PointMass):
         observation="rgb",
     ):
         super().__init__(batch_size, size, max_step, device=device)
-        self.scale = scale
+        self.scale, self.rooms, self.door_width, self.margin = scale, rooms, door_width, 0.05
         self.phase = torch.zeros(batch_size, device=device)
         self.landscape = landscape(size, device)
         self._configure_benchmark(
@@ -77,17 +84,34 @@ class Macaw(PointMass):
         self.phase = self.phase + math.pi / 2
         return super().step(action)
 
-    def render(self, state: Tensor | None = None, phase: Tensor | None = None) -> Tensor:
-        """Images ``(B, 3, size, size)`` in ``[0, 1]``; ``phase`` ``(B,)`` sets the wing beat."""
+    def collect(self, num_steps: int, generator: torch.Generator | None = None, keep: float | None = None):
+        keep = (0.8 if self.rooms else 0.0) if keep is None else keep
+        return super().collect(num_steps, generator, keep)
+
+    def render(self, state: Tensor | None = None, phase: Tensor | None = None, goal: Tensor | None = None) -> Tensor:
+        """Images ``(B, 3, size, size)`` in ``[0, 1]``; ``phase`` ``(B,)`` sets the wing beat.
+
+        ``goal`` ``(B, 2)`` draws a translucent gliding macaw where the goal is, for videos; models see plain frames.
+        """
         if state is None:
             state, phase = self.state, self.phase if phase is None else phase
         phase = torch.zeros(len(state), device=state.device) if phase is None else phase
+        image = self.landscape.to(state.device).expand(len(state), -1, -1, -1)
+        if goal is not None:
+            goal = goal.to(state.device)
+            image = image + 0.35 * (self._bird(image, goal, torch.zeros_like(phase)) - image)
+        if self.rooms:
+            x, y = grid(self.size, state.device)
+            image = paint(image, self.wall_sdf(x, y), shade(1 - x.sub(0.5).abs() * 12, ROCK_EDGE, ROCK), self.size)
+        return self._bird(image, state, phase)
+
+    def _bird(self, image: Tensor, state: Tensor, phase: Tensor) -> Tensor:
+        """``image`` with the macaw drawn at ``state`` ``(B, 2)`` with wing beat ``phase`` ``(B,)``."""
         x, y = grid(self.size, state.device)
         dx, dy = (x - state[:, 0, None, None]) / self.scale, (y - state[:, 1, None, None]) / self.scale
         pitch = -0.1
         px, py = dx * math.cos(pitch) + dy * math.sin(pitch), -dx * math.sin(pitch) + dy * math.cos(pitch)
         ppu = self.size * self.scale
-        image = self.landscape.to(state.device).expand(len(state), -1, -1, -1)
         lift = phase.sin()[:, None, None]
 
         def draw(sdf, color):

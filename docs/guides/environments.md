@@ -2,7 +2,7 @@
 
 For the 43 registered planning, MuJoCo, Newton, and Isaac Lab tasks, the contributor API, and reproducible LeWM notebooks, see [Benchmark environments](benchmark-environments.md). Tasks are grouped into planning puzzles, control, navigation and locomotion, and manipulation; see the [Environments](../environments/index.md) page. This page describes the original pixel-world interface.
 
-`torch_world.envs` holds worlds to train and test world models in: two light pixel worlds that run on the GPU with nothing but PyTorch, and a MuJoCo pick-and-place task with real robot arms. All are batched (one object steps `batch_size` worlds at once) and return RGB images in `[0, 1]`.
+`torch_world.envs` holds worlds to train and test world models in: three light pixel worlds that run on the GPU with nothing but PyTorch, and a MuJoCo pick-and-place task with real robot arms. All are batched (one object steps `batch_size` worlds at once) and return RGB images in `[0, 1]`.
 
 All of them share one interface:
 
@@ -34,12 +34,35 @@ goals = env.sample_goals(distance=(0.2, 0.5))  # goal states at a given distance
 
 ![Macaw](../assets/envs/macaw.png)
 
-A Hyacinth macaw flying over the Pantanal: the dynamics of `PointMass` behind a detailed scene. Its wings beat a quarter cycle per step, so a single frame does not tell the phase but a short history does. `render(state)` without a phase draws the bird gliding, as used for goal images. Rendering is resolution-free: `Macaw(size=192)` draws the same states sharper.
+A Hyacinth macaw flying over the Pantanal: the dynamics of `PointMass` behind a detailed scene. Its wings beat a quarter cycle per step, so a single frame does not tell the phase but a short history does. `render(state)` without a phase draws the bird gliding, as used for goal images. Rendering is resolution-free: `Macaw(size=192)` draws the same states sharper. For videos, `render(state, phase, goal=goal)` also draws a translucent macaw where the goal is; models see plain frames.
 
 ```python
 from torch_world.envs import Macaw
 
 env = Macaw(batch_size=16, size=64)
+```
+
+With `rooms=True`, a rock wall with one gap splits the sky: the [TwoRooms](#tworooms) task, flown by the macaw. `tasks()` puts the goal on the other side of the wall, and `collect` keeps each action with probability 0.8 so that some flights cross the gap. The model notebooks use it.
+
+![Macaw with rooms](../assets/envs/macaw_rooms.png)
+
+```python
+env = Macaw(batch_size=64, rooms=True)
+start, goal = env.tasks()  # (B, 2) each, on opposite sides of the wall
+```
+
+## TwoRooms
+
+![TwoRooms](../assets/envs/two_rooms.png)
+
+PLDM's Two-Rooms: the point of `PointMass` in a square split by a wall with one door. A move into the wall stops at it. `tasks()` puts the start in one room and the goal in the other, so the way to the goal runs through the door and a planner that only moves toward the goal gets stuck at the wall. `collect` wanders, keeping each action with probability 0.8, so that some episodes cross the door.
+
+```python
+from torch_world.envs import TwoRooms
+
+env = TwoRooms(batch_size=64, size=64)
+episodes = env.collect(32)
+start, goal = env.tasks()  # (B, 2) each, in opposite rooms
 ```
 
 ## RobotCube
