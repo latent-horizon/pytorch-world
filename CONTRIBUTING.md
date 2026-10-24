@@ -58,6 +58,10 @@ The site is also in Português, Español, 简体中文 and 日本語. Translatio
 
 Pushes to `main` deploy the site to GitHub Pages. This file and [`docs/contributing.md`](docs/contributing.md) say the same thing; update both.
 
+## Community
+
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). How decisions are made and how to become a maintainer is in [GOVERNANCE.md](GOVERNANCE.md); report security issues privately, as [SECURITY.md](SECURITY.md) explains.
+
 ## Pull requests
 
 - Keep each pull request to one change: a fix, a model, a feature.

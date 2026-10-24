@@ -24,7 +24,7 @@ uv sync
 | extra | 安装内容 | 用途 |
 |---|---|---|
 | `examples` | `matplotlib` | [`torch_world.plots`](../guides/plots.md) 及示例 notebook |
-| `robotics` | `mujoco` | [`RobotCube`](../guides/environments.md#robotcube) 环境 |
+| `action` | `mujoco` | [`RobotCube`](../guides/environments.md#robotcube) 和 `PushT` 环境 |
 | `ogbench` | `ogbench`，需 Python 3.12 或更早版本 | [OGBench 任务](../guides/benchmark-environments.md#ogbench)与[数据集](../datasets/trajectories.md#ogbench-datasets) |
 | `dmcontrol` | `dm_control`，需 Python 3.12 或更早版本 | [DeepMind Control Suite 任务](../guides/benchmark-environments.md#external-suites) |
 | `metaworld` | `metaworld` | [Meta-World 任务](../guides/benchmark-environments.md#external-suites) |

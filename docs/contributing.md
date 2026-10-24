@@ -58,6 +58,10 @@ The site is also in Português, Español, 简体中文 and 日本語. Translatio
 
 Pushes to `main` deploy the site to GitHub Pages. This page and `CONTRIBUTING.md` at the repository root say the same thing; update both.
 
+## Community
+
+Everyone taking part follows the [Code of Conduct](https://github.com/latent-horizon/pytorch-world/blob/main/CODE_OF_CONDUCT.md). How decisions are made and how to become a maintainer is in [GOVERNANCE.md](https://github.com/latent-horizon/pytorch-world/blob/main/GOVERNANCE.md); report security issues privately, as [SECURITY.md](https://github.com/latent-horizon/pytorch-world/blob/main/SECURITY.md) explains.
+
 ## Pull requests
 
 - Keep each pull request to one change: a fix, a model, a feature.
