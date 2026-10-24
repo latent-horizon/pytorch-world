@@ -41,6 +41,8 @@ function site(key: string) {
       page('Figures', l('/guides/plots'))
     ]),
     group('Benchmarks', [
+      page('Results', l('/guides/results')),
+      page('Reproduction report', l('/guides/reproduction')),
       page('Benchmark experiments', l('/guides/benchmark-environments')),
       page('Pixel worlds', l('/guides/environments'))
     ])
@@ -120,7 +122,17 @@ function site(key: string) {
   ]
 
   const notebooks: Item[] = [
-    group('Notebooks', [page('Tour', l('/examples/intro')), page('Custom model', l('/examples/custom_model'))]),
+    group('Notebooks', [
+      page('Quick start', l('/examples/quickstart')),
+      page('Tour', l('/examples/intro')),
+      page('Custom model', l('/examples/custom_model'))
+    ]),
+    group('Comparisons', [
+      page('Main benchmark', l('/examples/comparisons/main_benchmark')),
+      page('Frozen vs end-to-end encoders', l('/examples/comparisons/frozen_vs_end_to_end')),
+      page('Planners', l('/examples/comparisons/planners')),
+      page('Flat vs hierarchical', l('/examples/comparisons/flat_vs_hierarchical'))
+    ]),
     group('Action', [
       page('LeWM', l('/examples/action/lewm')),
       page('PLDM', l('/examples/action/pldm')),
@@ -144,6 +156,7 @@ function site(key: string) {
       page('DINOv2 vs LeVJEPA', l('/examples/vision/dinov2'))
     ]),
     group('Vision-language', [page('VL-JEPA', l('/examples/vqa/vljepa'))]),
+    group('Planning', [page('GRASP', l('/examples/planning/grasp'))]),
     group('Environments', [page('Custom model', l('/examples/envs/custom_model_three_envs'))])
   ]
 
