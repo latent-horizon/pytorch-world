@@ -93,3 +93,36 @@ class PatchTokens(nn.Module):
         if self.normalize:
             x = (x - self.mean) / self.std
         return self.model.forward_features(x)["x_norm_patchtokens"]
+
+
+class VideoTokens(PatchTokens):
+    """Wraps a V-JEPA 2 or 2.1 video encoder to return the patch tokens ``(N, P, D)`` of single images.
+
+    Each image is repeated over one tubelet (``frames`` frames) so that the video encoder sees a still clip. Inputs and
+    ``size`` and ``normalize`` are as in ``PatchTokens``. ``VideoTokens.from_hub`` loads a released model.
+
+    Assran et al., "V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning", 2025.
+    Paper: https://arxiv.org/abs/2506.09985
+    Code: https://github.com/facebookresearch/vjepa2
+    """
+
+    def __init__(self, model: nn.Module, size: int | None = None, normalize: bool = False, frames: int = 2):
+        super().__init__(model, size, normalize)
+        self.frames = frames
+
+    @classmethod
+    def from_hub(cls, name: str = "vjepa2_1_vit_base_384", size: int | None = 384) -> "VideoTokens":
+        """A frozen, normalized released encoder: ``vjepa2_vit_large`` and up, or ``vjepa2_1_vit_base_384`` and up.
+
+        Needs ``timm`` and ``einops``, which the hub code imports.
+        """
+        encoder = torch.hub.load("facebookresearch/vjepa2", name, verbose=False)[0]
+        return cls(encoder, size=size, normalize=True).requires_grad_(False).eval()
+
+    def forward(self, x: Tensor) -> Tensor:
+        x = x.float() / 255 if x.dtype == torch.uint8 else x
+        if self.size is not None:
+            x = F.interpolate(x, size=self.size, mode="bilinear", antialias=True)
+        if self.normalize:
+            x = (x - self.mean) / self.std
+        return self.model(x[:, :, None].expand(-1, -1, self.frames, -1, -1))

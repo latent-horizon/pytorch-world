@@ -8,6 +8,8 @@
 
 ::: torch_world.nn.PatchTokens
 
+::: torch_world.nn.VideoTokens
+
 ::: torch_world.nn.TextEncoder
 
 ::: torch_world.nn.WordTokenizer

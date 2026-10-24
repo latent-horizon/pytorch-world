@@ -3,4 +3,4 @@
 ::: torch_world.plots
     options:
       show_root_heading: false
-      members: [style, images, masks, curves, trajectories, distances, bars, answers, probes]
+      members: [style, images, masks, curves, trajectories, distances, bars, answers, probes, video, pca_colors]

@@ -1,3 +1,5 @@
+import math
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
@@ -82,9 +84,17 @@ class RoboJEPA(WorldModel):
         return self
 
     @torch.no_grad()
-    def encode(self, frames: Tensor, grid: tuple[int, int]) -> Tensor:
-        """``frames`` ``(B, T, V, C, H, W)`` to layer-normalized features ``(B, T, V, h, w, D)`` with the frozen encoder."""
-        z = self.encoder(frames.flatten(0, 2)).unflatten(1, grid).unflatten(0, frames.shape[:3])
+    def encode(self, frames: Tensor, grid: tuple[int, int] | None = None) -> Tensor:
+        """``frames`` ``(B, T, V, C, H, W)`` to layer-normalized features ``(B, T, V, h, w, D)`` with the frozen encoder.
+
+        Frames ``(B, T, C, H, W)`` are one view. Without ``grid``, the patch grid is taken to be square.
+        """
+        frames = frames[:, :, None] if frames.dim() == 5 else frames
+        z = self.encoder(frames.flatten(0, 2))
+        if grid is None:
+            side = math.isqrt(z.size(1))
+            grid = (side, z.size(1) // side)
+        z = z.unflatten(1, grid).unflatten(0, frames.shape[:3])
         return F.layer_norm(z, z.shape[-1:])
 
     def _positions(self, T: int, V: int, H: int, W: int, device) -> Tensor:
