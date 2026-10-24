@@ -24,7 +24,7 @@ uv sync
 | extra | instala | para |
 |---|---|---|
 | `examples` | `matplotlib` | [`torch_world.plots`](../guides/plots.md) e os notebooks |
-| `robotics` | `mujoco` | o environment [`RobotCube`](../guides/environments.md#robotcube) |
+| `action` | `mujoco` | os environments [`RobotCube`](../guides/environments.md#robotcube) e `PushT` |
 | `ogbench` | `ogbench`, no Python 3.12 ou anterior | [tarefas do OGBench](../guides/benchmark-environments.md#ogbench) e [datasets](../datasets/trajectories.md#ogbench-datasets) |
 | `dmcontrol` | `dm_control`, no Python 3.12 ou anterior | [tarefas do DeepMind Control Suite](../guides/benchmark-environments.md#external-suites) |
 | `metaworld` | `metaworld` | [tarefas do Meta-World](../guides/benchmark-environments.md#external-suites) |

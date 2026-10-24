@@ -1,0 +1,40 @@
+name: gpu
+
+# CUDA tests on a self-hosted runner labelled `gpu`. They run on main, nightly and by hand, never on pull requests,
+# so code from forks never reaches the runner. Register the runner with the labels `self-hosted`, `linux` and `gpu`.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpu-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (cuda)
+    if: github.repository == 'latent-horizon/pytorch-world'
+    runs-on: [self-hosted, linux, gpu]
+    timeout-minutes: 30
+    env:
+      MUJOCO_GL: egl
+      UV_PYTHON_PREFERENCE: only-managed
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          uv venv
+          uv pip install --torch-backend auto -e ".[test,examples,action]"
+      - name: Check the GPU
+        run: uv run --no-sync python -c "import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name())"
+      - name: Test
+        run: uv run --no-sync pytest -q tests/test_devices.py tests/models tests/test_planning.py

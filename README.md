@@ -119,13 +119,24 @@ Subclass `JEPA` (representation learning) or `WorldModel` (action-conditioned dy
 pytest
 ```
 
+## Releases
+
+Releases follow [semantic versioning](https://semver.org); before 1.0, a minor version (0.x) may change public APIs, and its release notes say how to migrate. A minor release ships about once a month, or sooner when a model lands; patch releases ship as soon as a fix is merged. Only the latest release gets fixes (see [SECURITY.md](SECURITY.md)). The [changelog](https://latent-horizon.github.io/pytorch-world/changelog) collects the release notes.
+
+To cut a release, a maintainer:
+
+1. bumps `__version__` in `torch_world/__init__.py` on `main`, through a pull request;
+2. tags that commit `vX.Y.Z` (or `vX.Y.ZrcN` for a pre-release) and pushes the tag.
+
+The [release workflow](.github/workflows/release.yml) then checks that the tag matches `__version__`, runs CI, builds the wheel and sdist, publishes them to [PyPI](https://pypi.org/project/torch-world/) by trusted publishing (no stored token, with attestations), creates the GitHub release with generated notes and rebuilds the docs.
+
 ## Contributors
 
 <a href="https://github.com/latent-horizon/pytorch-world/graphs/contributors">
   <img alt="Contributors" src="https://contrib.rocks/image?repo=latent-horizon/pytorch-world">
 </a>
 
-Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md) and how the project is [governed](GOVERNANCE.md). Report vulnerabilities privately, as [SECURITY.md](SECURITY.md) explains.
 
 ## Supported by
 
