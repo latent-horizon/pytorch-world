@@ -94,14 +94,18 @@ class PointMass(LegacyEnvironment):
     def success(self, states: Tensor, goal: Tensor) -> Tensor:
         return self.distance(states, goal) <= self.radius
 
-    def collect(self, num_steps: int, generator: torch.Generator | None = None) -> dict[str, Tensor]:
+    def collect(self, num_steps: int, generator: torch.Generator | None = None, keep: float = 0.0) -> dict[str, Tensor]:
         """Random-action episodes: ``pixels`` ``(B, T, 3, size, size)``, ``actions`` ``(B, T, 2)``, ``states`` ``(B, T, 2)``.
 
-        ``actions[:, t]`` is applied at ``states[:, t]``.
+        Each step keeps the previous action with probability ``keep``, so that episodes wander further. ``actions[:, t]``
+        is applied at ``states[:, t]``.
         """
         pixels, states, actions = [self.reset(generator=generator)], [self.state], []
         for _ in range(num_steps - 1):
             action = (torch.rand(self.batch_size, 2, generator=generator) * 2 - 1).to(self.state.device)
+            if keep and actions:
+                kept = (torch.rand(self.batch_size, 1, generator=generator) < keep).to(self.state.device)
+                action = torch.where(kept, actions[-1], action)
             actions.append(action)
             pixels.append(self.step(action))
             states.append(self.state)

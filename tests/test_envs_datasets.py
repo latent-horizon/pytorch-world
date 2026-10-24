@@ -79,3 +79,13 @@ def test_macaw_flies_in_bounds_and_flaps():
     assert torch.allclose(env.render(env.state)[0], first[0])
     data = env.collect(5, generator=torch.Generator().manual_seed(0))
     assert ((data["states"] >= Macaw.low) & (data["states"] <= Macaw.high)).all()
+
+
+def test_macaw_goal_ghost_only_changes_videos():
+    from torch_world.envs import Macaw
+
+    env = Macaw(batch_size=2, size=32)
+    state, goal = torch.tensor([[0.3, 0.4], [0.6, 0.6]]), torch.tensor([[0.7, 0.3], [0.3, 0.7]])
+    plain = env.render(state)
+    assert torch.equal(plain, Macaw(batch_size=2, size=32).render(state))
+    assert not torch.equal(plain, env.render(state, goal=goal))

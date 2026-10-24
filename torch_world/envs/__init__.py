@@ -7,6 +7,7 @@ from torch_world.envs.physics_scenes import Scene
 from torch_world.envs.point_mass import PointMass
 from torch_world.envs.registry import EnvSpec, get_spec, list_envs, make, register_env, register_task
 from torch_world.envs.rendering import QUALITY_PRESETS, RenderQuality
+from torch_world.envs.two_rooms import TwoRooms
 from torch_world.envs.utils import run_policy
 
 if TYPE_CHECKING:
@@ -59,6 +60,7 @@ __all__ = [
     "RobotCube",
     "Scene",
     "Transition",
+    "TwoRooms",
     "get_spec",
     "list_envs",
     "make",

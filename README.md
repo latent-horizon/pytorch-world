@@ -45,7 +45,7 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `torch_world.losses` | `SIGReg`, `info_nce` |
 | `torch_world.models` | the `JEPA`, `WorldModel` and `WorldActionModel` base classes and the models below |
 | `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, TD-MPC2's planner for reward; `WAMPlanner` and `DreamZeroPolicy` for world action models |
-| `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw` and `PointMass`; `run_policy` |
+| `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw`, `PointMass` and `TwoRooms` (PLDM's long-horizon task); `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
 | `torch_world.metrics` | the metrics of the papers: linear, k-NN and attentive probes, RankMe, LiDAR, rollout error, SSIM, PSNR, Chamfer distance, recall@k; for robotics, success rates with confidence intervals, steps to success, progress, SPL and smoothness |
