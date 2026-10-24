@@ -147,7 +147,7 @@ function site(key: string) {
     group('Environments', [page('Custom model', l('/examples/envs/custom_model_three_envs'))])
   ]
 
-  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots']
+  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots', 'hub']
   const api: Item[] = [
     group('API', [page('Overview', l('/api/')), ...modules.map((m) => page(`torch_world.${m}`, l(`/api/${m}`)))])
   ]

@@ -50,6 +50,7 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos, and `goal_policy` to plan toward goal images; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
 | `torch_world.metrics` | the metrics of the papers: linear, k-NN and attentive probes, RankMe, LiDAR, rollout error, SSIM, PSNR, Chamfer distance, recall@k; for robotics, success rates with confidence intervals, steps to success, progress, SPL and smoothness |
 | `torch_world.utils` | `fit`, a short training loop; `ema_update`, `linear_schedule`, `recompute_batchnorm` |
+| `torch_world.hub` | save, load and share checkpoints: safetensors weights, a config that rebuilds the model, a model card (`pip install torch-world[hub]`) |
 | `torch_world.plots` | matplotlib figures for notebooks (optional dependency) |
 
 ## Models
@@ -109,6 +110,24 @@ World action models denoise future video and the actions that produce it togethe
 | `MPPI` | [Williams et al., 2017](https://arxiv.org/abs/1707.02342) | [action/tdmpc2](examples/action/tdmpc2.ipynb) |
 | `GRASP` | [Psenka et al., 2026](https://arxiv.org/abs/2602.00475) | [planning/grasp](examples/planning/grasp.ipynb) |
 | `HierarchicalPlanner` | [Zhang et al., 2026](https://arxiv.org/abs/2604.03208) | [action/hwm](examples/action/hwm.ipynb) |
+
+## Pretrained checkpoints
+
+Load a trained model in one line with `torch_world.hub` (`pip install "torch-world[hub]"`):
+
+```python
+from torch_world import hub
+
+model = hub.from_pretrained("latenthorizon/lewm-pusht")
+```
+
+| checkpoint | model | trained on | Push-T success |
+|---|---|---|---|
+| [`latenthorizon/lewm-pusht`](https://huggingface.co/latenthorizon/lewm-pusht) | LeWM, 18M | Push-T expert data, MuJoCo `PushT` | 80.4% (500 tasks) |
+| [`latenthorizon/lewm-pusht-pymunk`](https://huggingface.co/latenthorizon/lewm-pusht-pymunk) | LeWM, 18M | Push-T expert data, reference pymunk env | 83.8% (500 tasks) |
+| [`latenthorizon/dinowm-pusht`](https://huggingface.co/latenthorizon/dinowm-pusht) | DINO-WM on frozen DINOv2 ViT-S/14 | Push-T expert data, MuJoCo `PushT` | 94.0% (50 tasks) |
+
+Each model card gives the recipe, the evaluation protocol and intermediate checkpoints. See the [reproduction report](docs/guides/reproduction.md) for how they compare with the papers.
 
 ## Environment benchmarks
 

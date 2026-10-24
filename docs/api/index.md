@@ -15,3 +15,4 @@ Generated from the docstrings of `torch_world`.
 | [`torch_world.metrics`](metrics.md) | the metrics of the papers, on plain tensors: linear, k-NN and attentive probes; RankMe and LiDAR; rollout error, SSIM, PSNR and Chamfer distance; recall@k and top-k accuracy; for robotics, success rates with confidence intervals, steps to success, progress, SPL and smoothness |
 | [`torch_world.utils`](utils.md) | `fit`, a training loop; `ema_update`, `linear_schedule`, `recompute_batchnorm` |
 | [`torch_world.plots`](plots.md) | matplotlib figures for notebooks (optional dependency) |
+| [`torch_world.hub`](hub.md) | `save_pretrained`, `from_pretrained`, `push_to_hub` and `model_card`: checkpoints as safetensors with a config that rebuilds the model (optional dependency) |

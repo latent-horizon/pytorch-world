@@ -30,8 +30,10 @@ robocasa = ["pyarrow", "av"]
 lewam = ["mujoco==3.15.0", "matplotlib", "pillow"]
 # The pre-trained Wan 2.1 video VAE used by DreamZero.
 wam = ["diffusers>=0.33", "accelerate"]
+# Saving, loading and sharing checkpoints with torch_world.hub.
+hub = ["safetensors>=0.4", "huggingface_hub>=0.23"]
 notebooks = ["matplotlib", "av", "nbclient", "nbformat", "ipykernel"]
-test = ["pytest", "pytest-xdist"]
+test = ["pytest", "pytest-xdist", "safetensors>=0.4"]
 
 [dependency-groups]
 # The VitePress site (package.json) renders the API reference and notebooks with these.
