@@ -46,6 +46,20 @@
 
 ::: torch_world.models.MacroPool
 
+::: torch_world.models.AdaJEPA
+
+::: torch_world.models.TDJEPA
+
+::: torch_world.models.jepa.drq_encoder
+
+::: torch_world.models.CausalJEPA
+
+::: torch_world.models.SlotEncoder
+
+::: torch_world.models.CFJEPA
+
+::: torch_world.models.VLAJEPA
+
 ::: torch_world.models.RoboJEPA
 
 ::: torch_world.models.jepa.EmbodimentLinear
@@ -63,6 +77,16 @@
 ::: torch_world.models.TDMPC2
 
 ::: torch_world.models.DreamZero
+
+::: torch_world.models.DreamerV3
+
+::: torch_world.models.dreamer.conv_encoder
+
+::: torch_world.models.dreamer.conv_decoder
+
+::: torch_world.models.dreamer.two_hot
+
+::: torch_world.models.dreamer.two_hot_inv
 
 ::: torch_world.models.tdmpc.state_encoder
 

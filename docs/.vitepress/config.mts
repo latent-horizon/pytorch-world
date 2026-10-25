@@ -60,6 +60,10 @@ function site(key: string) {
         page('Variational JEPA', l('/models/jepa/varjepa')),
         page('HWM', l('/models/jepa/hwm')),
         page('H-JEPA', l('/models/jepa/hjepa')),
+        page('AdaJEPA', l('/models/jepa/adajepa')),
+        page('TD-JEPA', l('/models/jepa/tdjepa')),
+        page('Causal-JEPA', l('/models/jepa/causaljepa')),
+        page('CF-JEPA', l('/models/jepa/cfjepa')),
         page('LeWAM', l('/models/jepa/lewam')),
         page('RoboJEPA', l('/models/jepa/robojepa'))
       ]),
@@ -70,7 +74,8 @@ function site(key: string) {
         page('V-JEPA 2.1', l('/models/jepa/vjepa21')),
         page('LeVJEPA', l('/models/jepa/levjepa'))
       ]),
-      group('Vision-language', [page('VL-JEPA', l('/models/jepa/vljepa'))])
+      group('Vision-language', [page('VL-JEPA', l('/models/jepa/vljepa'))]),
+      group('Vision-language-action', [page('VLA-JEPA', l('/models/jepa/vlajepa'))])
     ]),
     group('DINO', [
       page('Overview', l('/models/dino/')),
@@ -78,6 +83,7 @@ function site(key: string) {
       page('DINO-WM', l('/models/dino/dinowm'))
     ]),
     group('TD-MPC', [page('Overview', l('/models/tdmpc/')), page('TD-MPC2', l('/models/tdmpc/tdmpc2'))]),
+    group('Dreamer', [page('Overview', l('/models/dreamer/')), page('DreamerV3', l('/models/dreamer/dreamerv3'))]),
     group('World action models', [page('Overview', l('/models/wam/')), page('DreamZero', l('/models/wam/dreamzero'))])
   ]
 
@@ -141,10 +147,16 @@ function site(key: string) {
       page('Variational JEPA', l('/examples/action/varjepa')),
       page('HWM', l('/examples/action/hwm')),
       page('H-JEPA', l('/examples/action/hjepa')),
+      page('AdaJEPA', l('/examples/action/adajepa')),
+      page('TD-JEPA', l('/examples/action/tdjepa')),
+      page('Causal-JEPA', l('/examples/action/causaljepa')),
+      page('CF-JEPA', l('/examples/action/cfjepa')),
+      page('VLA-JEPA', l('/examples/action/vlajepa')),
       page('LeWAM', l('/examples/action/lewam')),
       page('DINO-WM', l('/examples/action/dinowm')),
       page('RoboJEPA', l('/examples/action/robojepa')),
       page('TD-MPC2', l('/examples/action/tdmpc2')),
+      page('DreamerV3', l('/examples/action/dreamerv3')),
       page('DreamZero', l('/examples/action/dreamzero'))
     ]),
     group('Vision', [
