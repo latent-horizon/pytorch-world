@@ -76,3 +76,16 @@ def test_actions_from_a_recorded_state_replay_the_step(without_shadows):
     env.reset(data["states"][:, 10])
     env.step(data["actions"][:, 10])
     assert (env.state[:, :3] - data["states"][:, 11, :3]).norm(dim=-1).median() < 3e-3
+
+
+def test_reach_play_data_holds_each_pose(without_shadows):
+    try:
+        env = without_shadows(RobotCube("ur10e", batch_size=4, size=16, task="reach", control_dt=0.2, max_step=0.1))
+    except OSError as error:
+        pytest.skip(f"cannot download the robot model: {error}")
+    data = env.collect(1 + 2 * 16, generator=torch.Generator().manual_seed(0), every=16)
+    gripper, cube = data["states"][..., :3], data["states"][..., 4:]
+    assert (data["actions"][:, :-1, 3] > 0).float().mean() > 0.9  # the gripper stays open
+    assert (gripper[:, 16] - gripper[:, 12]).norm(dim=-1).max() < 0.03  # it holds the first pose
+    assert (gripper[:, 32] - gripper[:, 16]).norm(dim=-1).max() > 0.03  # and moves on to a new one
+    assert (cube - cube[:, :1]).norm(dim=-1).max() < 0.01  # the cube stays put
