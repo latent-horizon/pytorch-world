@@ -71,11 +71,16 @@ Train it end to end and plan in a few minutes: [examples/quickstart.ipynb](examp
 | `LpWM` | [Kuang et al., 2026](https://arxiv.org/abs/2608.22764) | [YilunKuang/lpworldmodel](https://github.com/YilunKuang/lpworldmodel) | [action/lpwm](examples/action/lpwm.ipynb) |
 | `FlowJEPA` | [Huo et al., 2026](https://arxiv.org/abs/2608.29029) | [HuoYanchen/Flow-JEPA](https://github.com/HuoYanchen/Flow-JEPA) | [action/flowjepa](examples/action/flowjepa.ipynb) |
 | `VariationalJEPA` | [Huang, 2026](https://arxiv.org/abs/2601.14354) | [YongchaoHuang/VJEPA](https://github.com/YongchaoHuang/VJEPA) | [action/varjepa](examples/action/varjepa.ipynb) |
+| `AdaJEPA` | [Wang et al., 2026](https://arxiv.org/abs/2606.32026) | [agentic-learning-ai-lab/adajepa](https://github.com/agentic-learning-ai-lab/adajepa) | [action/adajepa](examples/action/adajepa.ipynb) |
+| `CausalJEPA` | [Nam et al., 2026](https://arxiv.org/abs/2602.11389) | [galilai-group/cjepa](https://github.com/galilai-group/cjepa) | [action/causaljepa](examples/action/causaljepa.ipynb) |
+| `CFJEPA` | [Byrd et al., 2026](https://arxiv.org/abs/2610.00727) | not released | [action/cfjepa](examples/action/cfjepa.ipynb) |
+| `TDJEPA` | [Bagatella et al., 2025](https://arxiv.org/abs/2510.00739) | not released | [action/tdjepa](examples/action/tdjepa.ipynb) |
 | `HWM` | [Zhang et al., 2026](https://arxiv.org/abs/2604.03208) | [kevinghst/HWM_PLDM](https://github.com/kevinghst/HWM_PLDM) | [action/hwm](examples/action/hwm.ipynb) |
 | `HJEPA` | [Zhang et al., 2026](https://arxiv.org/abs/2610.06805) | [kevinghst/H-JEPA](https://github.com/kevinghst/H-JEPA) | [action/hjepa](examples/action/hjepa.ipynb) |
 | `LeWAM` | [Fu et al., 2026](https://arxiv.org/abs/2610.12818) | [MinghaoFu/lewam](https://github.com/MinghaoFu/lewam) | [action/lewam](examples/action/lewam.ipynb) |
 | `LeWM` | [Maes et al., 2026](https://arxiv.org/abs/2603.19312) | [lucas-maes/le-wm](https://github.com/lucas-maes/le-wm) | [action/lewm](examples/action/lewm.ipynb) |
 | `RoboJEPA` | [Zholus et al., 2026](https://arxiv.org/abs/2610.10515) | [facebookresearch/robo_jepa](https://github.com/facebookresearch/robo_jepa) | [action/robojepa](examples/action/robojepa.ipynb) |
+| `VLAJEPA` | [Sun et al., 2026](https://arxiv.org/abs/2602.10098) | [ginwind/VLA-JEPA](https://github.com/ginwind/VLA-JEPA) | [action/vlajepa](examples/action/vlajepa.ipynb) |
 
 Joint-embedding predictive architectures (JEPAs) predict the *representation* of a target from the representation of a context, instead of reconstructing pixels. Action-conditioned JEPAs are world models: they predict the next latent state from the current one and an action, and planning searches for the actions that bring the imagined latent closest to a goal.
 
@@ -95,6 +100,14 @@ Self-distillation: a student matches an EMA teacher's assignments of image crops
 | `TDMPC2` | [Hansen et al., 2024](https://arxiv.org/abs/2310.16828) | [nicklashansen/tdmpc2](https://github.com/nicklashansen/tdmpc2) | [action/tdmpc2](examples/action/tdmpc2.ipynb) |
 
 TD-MPC world models have no decoder: latent dynamics are trained to predict the next latent, the reward and, by temporal-difference learning, the value. MPPI plans for the highest imagined return, with proposals from a learned policy prior.
+
+### Dreamer
+
+| model | paper | reference code | notebook |
+|---|---|---|---|
+| `DreamerV3` | [Hafner et al., 2023](https://arxiv.org/abs/2301.04104) | [danijar/dreamerv3](https://github.com/danijar/dreamerv3) | [action/dreamerv3](examples/action/dreamerv3.ipynb) |
+
+Dreamer learns a recurrent state-space model by reconstructing pixels, rewards and episode ends, and trains an actor and a critic on imagined rollouts. It is the library's non-JEPA reference: the same `WorldModel` interface, so CEM plans on its states as well.
 
 ### World action models
 

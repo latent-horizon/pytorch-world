@@ -39,7 +39,7 @@ Models and planners compared on one task, with one dataset and one protocol. Eac
 
 ## Model notebooks
 
-Each model's own notebook, on Two-Rooms flown by the macaw ([`Macaw(rooms=True)`](environments.md#macaw)): 32 tasks with the goal on the other side of the wall, 40 to 60 steps, reached at any step.
+Each model's own notebook, with the goal on the other side of the wall, reached at any step within 40 to 60 steps. The first six fly the macaw over Two-Rooms ([`Macaw(rooms=True)`](environments.md#macaw)) on 32 tasks; the others use [`TwoRooms`](environments.md#tworooms) itself, with the setting in parentheses.
 
 | model | planner | success | random actions |
 |---|---|---|---|
@@ -49,6 +49,10 @@ Each model's own notebook, on Two-Rooms flown by the macaw ([`Macaw(rooms=True)`
 | [Flow-JEPA](../examples/action/flowjepa.ipynb) | CEM on sampled futures | 66% [48, 80] | 12% |
 | [Variational JEPA](../examples/action/varjepa.ipynb) | CEM on the mean | 47% [31, 64] (on samples: 12%) | 3% |
 | [LpWM](../examples/action/lpwm.ipynb) | CEM, 5 steps | 38% [23, 55] | 9% |
+| [TD-JEPA](../examples/action/tdjepa.ipynb) | none: zero-shot policy π_z, z = ψ(goal) (64 tasks) | **98% [92, 100]** | 3% |
+| [AdaJEPA](../examples/action/adajepa.ipynb) | CEM, 10 steps, one adaptation step per replan (32 tasks, 32×32) | 69% [51, 82] (frozen: 44%) | 9% |
+| [DreamerV3](../examples/action/dreamerv3.ipynb) | actor trained on hindsight goals (32 tasks) | 41% [26, 58] (CEM on the model state: 16%) | 3% |
+| [CF-JEPA](../examples/action/cfjepa.ipynb) | CEM on the controllable part (64 tasks, 3 drifting discs) | 16% [9, 26] (LeWM: 44%) | 5% |
 
 The settings differ from notebook to notebook (data windows, frameskip, horizon), so this table shows what each model does with its own recipe, not a controlled comparison; the comparisons below are.
 
