@@ -354,3 +354,10 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 ```
 
 これは JEPA 世界モデルである LeWM を点質量 (point mass) 環境で学習し、ゴール画像に向けてプランニングします。各行の意味は[クイックスタート](getting-started/quickstart.md)を読むか、[ツアーノートブック](examples/intro.ipynb)を開いてください。
+
+
+## 1 分で {#in-one-minute}
+
+<div class="tw-film">
+<video src="../assets/video/pytorch-world.mp4" poster="../assets/video/pytorch-world-poster.jpg" title="1 分でわかる pytorch-world" preload="none" playsinline controls></video>
+</div>

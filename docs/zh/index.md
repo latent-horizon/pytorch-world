@@ -354,3 +354,10 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 ```
 
 这段代码在 point mass 环境上训练 LeWM（一个 JEPA 世界模型），并朝目标图像进行规划。阅读[快速开始](getting-started/quickstart.md)了解每一行的作用，或打开[入门 notebook](examples/intro.ipynb)。
+
+
+## 一分钟了解 {#in-one-minute}
+
+<div class="tw-film">
+<video src="../assets/video/pytorch-world.mp4" poster="../assets/video/pytorch-world-poster.jpg" title="一分钟了解 pytorch-world" preload="none" playsinline controls></video>
+</div>
