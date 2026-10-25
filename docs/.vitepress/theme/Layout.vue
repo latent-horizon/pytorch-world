@@ -4,7 +4,6 @@ import { useData, useRoute } from 'vitepress'
 import { nextTick, onMounted, watch } from 'vue'
 import Footer from './Footer.vue'
 import { translate } from '../i18n'
-import { initCarousels } from './carousel.js'
 import { initPixels } from './pixels.js'
 import { initFilm } from './film.js'
 
@@ -13,8 +12,8 @@ const t = (text: string) => translate(localeIndex.value, text)
 const route = useRoute()
 const repo = 'https://github.com/latent-horizon/pytorch-world'
 
-// The home page hero, environment rows and film are plain markup; enhance them after every navigation.
-const enhance = () => nextTick(() => (initPixels(), initCarousels(), initFilm()))
+// The home page hero and film are plain markup; enhance them after every navigation.
+const enhance = () => nextTick(() => (initPixels(), initFilm()))
 onMounted(enhance)
 watch(() => route.path, enhance)
 </script>

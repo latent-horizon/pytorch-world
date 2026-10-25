@@ -185,7 +185,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 .vp-doc .header-anchor,
 .vp-doc .tw-button,
 .vp-doc .grid.cards a,
-.vp-doc .tw-carousel a {
+.vp-doc .tw-gallery a {
   background-image: none;
 }
 
@@ -632,118 +632,69 @@ html:not(.dark) .VPNavBarTitle .logo {
   outline-offset: 2px;
 }
 
-/* ---------- environment carousels (home page) ---------- */
+/* ---------- environment galleries (home page): twelve columns of tiles, fewer on narrow screens ---------- */
 
-.vp-doc .tw-carousel {
-  position: relative;
-  margin: 8px 0 32px;
+.vp-doc .tw-gallery {
+  margin: 8px 0 36px;
 }
 
-.vp-doc .tw-carousel > p {
-  display: flex;
-  gap: 14px;
+.vp-doc .tw-gallery > p {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 18px 10px;
   margin: 0;
-  padding: 4px 0 12px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
 }
 
-.vp-doc .tw-carousel > p::-webkit-scrollbar {
-  display: none;
-}
-
-/* Fade a side only while more tiles lie beyond it. */
-.vp-doc .tw-carousel--more-after > p {
-  -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, #000 92%, transparent);
-}
-
-.vp-doc .tw-carousel--more-before > p {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%);
-  mask-image: linear-gradient(90deg, transparent, #000 8%);
-}
-
-.vp-doc .tw-carousel--more-before.tw-carousel--more-after > p {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-.vp-doc .tw-carousel a {
-  flex: 0 0 144px;
+.vp-doc .tw-gallery a {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  scroll-snap-align: start;
+  min-width: 0;
   color: inherit;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   line-height: 1.25;
   text-align: center;
-  overflow-wrap: anywhere;
 }
 
-.vp-doc .tw-carousel img {
+/* one line per name, so every row of tiles stays level */
+.vp-doc .tw-gallery a span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.vp-doc .tw-gallery img {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: cover;
   border: 1px solid var(--tw-border);
-  border-radius: 10px;
+  border-radius: 8px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.vp-doc .tw-carousel a:hover img {
+.vp-doc .tw-gallery a:hover img {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px -14px #d4577c80;
 }
 
-.vp-doc .tw-carousel__arrow {
-  position: absolute;
-  top: 72px;
-  transform: translateY(-50%);
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 60px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--tw-ink);
-  opacity: 0.45;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.vp-doc .tw-carousel:hover .tw-carousel__arrow,
-.vp-doc .tw-carousel__arrow:focus-visible {
-  opacity: 0.9;
-}
-
-.vp-doc .tw-carousel__arrow:hover {
-  opacity: 1;
-}
-
-.vp-doc .tw-carousel__arrow[hidden] {
-  display: none;
-}
-
-.vp-doc .tw-carousel__arrow--prev {
-  left: -38px;
-}
-
-.vp-doc .tw-carousel__arrow--next {
-  right: -38px;
-}
-
-@media (max-width: 1279px) {
-  .vp-doc .tw-carousel__arrow--prev {
-    left: -8px;
+@media (max-width: 1023px) {
+  .vp-doc .tw-gallery > p {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
+}
 
-  .vp-doc .tw-carousel__arrow--next {
-    right: -8px;
+@media (max-width: 719px) {
+  .vp-doc .tw-gallery > p {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px 8px;
+  }
+}
+
+@media (max-width: 479px) {
+  .vp-doc .tw-gallery > p {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

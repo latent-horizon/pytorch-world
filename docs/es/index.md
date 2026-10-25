@@ -92,7 +92,7 @@ uv add torch_world
 
 ### Integrados {#built-in}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![Checkpoints-v0](../assets/envs/success/checkpoints_v0.gif){ loading=lazy width="120" height="120" }<span>Checkpoints</span>](examples/envs/puzzles/checkpoints_v0.ipynb)
 [![IceMaze-v0](../assets/envs/success/icemaze_v0.gif){ loading=lazy width="120" height="120" }<span>IceMaze</span>](examples/envs/puzzles/icemaze_v0.ipynb)
@@ -131,7 +131,7 @@ uv add torch_world
 
 ### OGBench {#ogbench}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![pointmaze-medium-navigate-v0](../assets/envs/ogbench/pointmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>pointmaze-medium-navigate</span>](environments/index.md#ogbench)
 [![antmaze-medium-navigate-v0](../assets/envs/ogbench/antmaze-medium-navigate.gif){ loading=lazy width="120" height="120" }<span>antmaze-medium-navigate</span>](environments/index.md#ogbench)
@@ -151,7 +151,7 @@ uv add torch_world
 
 ### DeepMind Control Suite {#deepmind-control-suite}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![acrobot-swingup](../assets/envs/dmcontrol/acrobot-swingup.gif){ loading=lazy width="120" height="120" }<span>acrobot-swingup</span>](environments/index.md#deepmind-control-suite)
 [![ball_in_cup-catch](../assets/envs/dmcontrol/ball_in_cup-catch.gif){ loading=lazy width="120" height="120" }<span>ball_in_cup-catch</span>](environments/index.md#deepmind-control-suite)
@@ -178,7 +178,7 @@ uv add torch_world
 
 ### Meta-World {#meta-world}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![reach-v3](../assets/envs/metaworld/reach-v3.gif){ loading=lazy width="120" height="120" }<span>reach-v3</span>](environments/index.md#meta-world)
 [![push-v3](../assets/envs/metaworld/push-v3.gif){ loading=lazy width="120" height="120" }<span>push-v3</span>](environments/index.md#meta-world)
@@ -195,7 +195,7 @@ uv add torch_world
 
 ### ManiSkill {#maniskill}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![PickCube-v1](../assets/envs/maniskill/PickCube-v1.gif){ loading=lazy width="120" height="120" }<span>PickCube-v1</span>](environments/index.md#maniskill)
 [![PushCube-v1](../assets/envs/maniskill/PushCube-v1.gif){ loading=lazy width="120" height="120" }<span>PushCube-v1</span>](environments/index.md#maniskill)
@@ -214,7 +214,7 @@ uv add torch_world
 
 ### MyoSuite {#myosuite}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![myoFingerReachRandom-v0](../assets/envs/myosuite/myoFingerReachRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerReachRandom-v0</span>](environments/index.md#myosuite)
 [![myoFingerPoseRandom-v0](../assets/envs/myosuite/myoFingerPoseRandom-v0.gif){ loading=lazy width="120" height="120" }<span>myoFingerPoseRandom-v0</span>](environments/index.md#myosuite)
@@ -231,7 +231,7 @@ uv add torch_world
 
 ### RoboCasa {#robocasa}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![ArrangeBreadBasket](../assets/envs/robocasa/ArrangeBreadBasket.gif){ loading=lazy width="120" height="120" }<span>Arrange Bread Basket</span>](environments/index.md#robocasa)
 [![ArrangeTea](../assets/envs/robocasa/ArrangeTea.gif){ loading=lazy width="120" height="120" }<span>Arrange Tea</span>](environments/index.md#robocasa)
@@ -288,7 +288,7 @@ uv add torch_world
 
 ### RoboDojo {#robodojo}
 
-<div class="tw-carousel">
+<div class="tw-gallery">
 
 [![stack_bowls](../assets/envs/robodojo/stack_bowls.gif){ loading=lazy width="120" height="120" }<span>stack bowls</span>](environments/index.md#robodojo)
 [![push_T](../assets/envs/robodojo/push_T.gif){ loading=lazy width="120" height="120" }<span>push T</span>](environments/index.md#robodojo)
