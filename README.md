@@ -47,6 +47,7 @@ Train it end to end and plan in a few minutes: [examples/quickstart.ipynb](examp
 | `torch_world.losses` | `SIGReg`, `RDMReg`, `info_nce` |
 | `torch_world.models` | the `JEPA`, `WorldModel` and `WorldActionModel` base classes and the models below |
 | `torch_world.planning` | `CEM`, for any `WorldModel`, scoring the final or every imagined step; `MPPI`, for reward (TD-MPC2) or toward a goal; `GRASP`, by gradient descent; `HierarchicalPlanner`, for two-level models; `WAMPlanner` and `DreamZeroPolicy` for world action models |
+| `torch_world.safety` | the Latent Safety Filter for any `WorldModel`: `FailureMargin` on latents, `SafetyValue` (reachability by DDPG in imagination, `fit_safety_value`), and `SafetyFilter`, which overrides a task policy only when its next state would be unsafe |
 | `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw`, `PointMass` and `TwoRooms` (PLDM's long-horizon task, with optional drifting distractors and a floor tint); `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos, and `goal_policy` to plan toward goal images; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |

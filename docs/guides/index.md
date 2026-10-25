@@ -42,6 +42,7 @@ Plug your own component into the library. Each guide states the interface, gives
 | [Masking](masking.md) | image blocks, video tubes, frame-causal attention |
 | [Planning](planning.md) | rollouts, costs, CEM, closed-loop control, goal-reaching evaluation |
 | [Metrics](metrics.md) | probes, collapse checks, prediction error, control metrics |
+| [Safety](safety.md) | failure margins, reachability values learned in a world model's imagination, and the Latent Safety Filter |
 | [Figures](plots.md) | the plotting functions used in the notebooks |
 
 ## Benchmarks

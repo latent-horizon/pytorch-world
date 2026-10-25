@@ -37,6 +37,7 @@ function site(key: string) {
       page('Training', l('/guides/training')),
       page('Masking', l('/guides/masking')),
       page('Planning', l('/guides/planning')),
+      page('Safety', l('/guides/safety')),
       page('Metrics', l('/guides/metrics')),
       page('Figures', l('/guides/plots'))
     ]),
@@ -169,10 +170,11 @@ function site(key: string) {
     ]),
     group('Vision-language', [page('VL-JEPA', l('/examples/vqa/vljepa'))]),
     group('Planning', [page('GRASP', l('/examples/planning/grasp'))]),
+    group('Safety', [page('Latent safety filter', l('/examples/safety/latent_safety_filter'))]),
     group('Environments', [page('Custom model', l('/examples/envs/custom_model_three_envs'))])
   ]
 
-  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots', 'hub']
+  const modules = ['nn', 'masks', 'losses', 'models', 'planning', 'safety', 'envs', 'datasets', 'evaluation', 'metrics', 'utils', 'plots', 'hub']
   const api: Item[] = [
     group('API', [page('Overview', l('/api/')), ...modules.map((m) => page(`torch_world.${m}`, l(`/api/${m}`)))])
   ]
