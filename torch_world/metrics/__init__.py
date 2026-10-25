@@ -1,3 +1,4 @@
+from torch_world.metrics.calibration import crps, energy_score, gaussian_nll, interval_coverage, spread_skill
 from torch_world.metrics.control import Rate, first_success, path_length, progress, smoothness, spl, success_rate
 from torch_world.metrics.prediction import chamfer_distance, psnr, rollout_error, ssim
 from torch_world.metrics.probes import AttentiveProbe, Probe, attentive_probe, knn_accuracy, linear_probe, r2_score
@@ -10,7 +11,11 @@ __all__ = [
     "Rate",
     "attentive_probe",
     "chamfer_distance",
+    "crps",
+    "energy_score",
     "first_success",
+    "gaussian_nll",
+    "interval_coverage",
     "knn_accuracy",
     "lidar",
     "linear_probe",
@@ -23,6 +28,7 @@ __all__ = [
     "rollout_error",
     "smoothness",
     "spl",
+    "spread_skill",
     "ssim",
     "success_rate",
     "topk_accuracy",

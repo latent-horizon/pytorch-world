@@ -4,10 +4,10 @@ Models and planners compared on one task, with one dataset and one protocol. Eac
 
 ## Protocol
 
-- **Task**: [`TwoRooms`](environments.md#tworooms), PLDM's two rooms joined by a door, seen as 64×64 images. Each policy gets 60 steps to reach a goal image, from starts with the goal in the **same room** (short) and in the **other room** (long: the way goes through the door): 32 tasks of each kind in the main benchmark and the encoder comparison, 64 in the others. Each notebook gives its planners' settings.
+- **Task**: [`TwoRooms`](environments.md#tworooms), PLDM's two rooms joined by a door, seen as 64×64 images. Each policy gets 60 steps to reach a goal image, from starts with the goal in the **same room** (short) and in the **other room** (long: the way goes through the door): 32 tasks of each kind in the main benchmark and the encoder and representation comparisons, 24 in the robustness comparison, 64 in the others. Each notebook gives its planners' settings.
 - **Data**: 1024 episodes of 65 steps from a wandering policy that keeps its previous action with probability 0.8; no rewards and no expert. Every model trains on the same episodes.
 - **Success**: coming within 0.1 of the goal at any step, as in LeWM's and PLDM's protocols, with its 95% Wilson interval. Random actions set the floor.
-- **Scale**: small models (predictors of 4 blocks of width 128 to 512) trained for 5 epochs on one GPU, so these numbers compare methods at a small budget, not at the papers' scale. See the [reproduction report](reproduction.md) for each model against its paper.
+- **Scale**: small models (predictors of 4 blocks of width 128 to 512) trained for 5 epochs on one GPU (10 in the deterministic vs stochastic comparison), so these numbers compare methods at a small budget, not at the papers' scale. See the [reproduction report](reproduction.md) for each model against its paper.
 
 ## Main benchmark
 
@@ -79,3 +79,50 @@ MPPI, which weights every sample by its cost instead of keeping a top set, beats
 | H-JEPA | hierarchical, gradient | **78% [67, 86]** | **67% [55, 77]** | 10,200 |
 
 H-JEPA, whose two levels train together end to end, more than doubles flat LeWM on the long tasks, at a third of its planning time. HWM, whose upper level learns on a frozen latent space, does worse than flat planning here, as in its own notebook; at this scale its macro-actions do not yet lead the low level around the wall.
+
+## Deterministic vs stochastic
+
+[comparisons/deterministic_vs_stochastic](../examples/comparisons/deterministic_vs_stochastic.ipynb): LeWM, a point forecast, against Flow-JEPA (flow matching over the next 8 embeddings) and Variational JEPA (a Gaussian over the next embedding), with the same encoder and predictor size, 10 epochs each, planned with the same CEM (8 steps, path cost); and the calibration of their 8-step predictions on 1024 held-out windows, 32 futures each, errors in units of each model's embedding spread.
+
+| model | planner | same room | other room | ms / step | RMSE | spread / skill | 90% interval covers | CRPS |
+|---|---|---|---|---|---|---|---|---|
+| LeWM | CEM | 67% [55, 77] | 23% [15, 35] | 1,000 | **0.204** | 0 | 0% | 0.121 |
+| Flow-JEPA | CEM on sampled futures | **95% [87, 98]** | **64% [52, 75]** | 3,390 | 0.227 | 1.54 | 96% | **0.117** |
+| Variational JEPA | CEM on the mean | 83% [72, 90] | 11% [5, 21] | 1,000 | 0.293 | 1.92 | 98% | 0.192 |
+| Variational JEPA | CEM on samples | 83% [72, 90] | 9% [4, 19] | 1,020 | | | | |
+| random actions | | 55% [43, 66] | 8% [3, 17] | | | | | |
+
+64 tasks of each kind. Flow-JEPA nearly triples LeWM's success through the door, at three times its planning time; it is also the only one of the three trained to predict all 8 steps at once from one frame, so part of the gain is likely that multi-step objective rather than sampling itself. Variational JEPA plans alike on its mean and on samples, as its paper expects, and does no better than random actions across the wall. Neither stochastic model is overconfident: both spread more than they err (spread / skill above 1, intervals that cover more than their level), most at the first step, and the gap narrows with the horizon. Variational JEPA's variance mostly matches the noise of its own target distribution, about 8 times its actual squared error. Scored as distributions (CRPS, energy score), Flow-JEPA's futures only match LeWM's single prediction, which is the most accurate point forecast in the first steps.
+
+## Robustness
+
+[comparisons/robustness](../examples/comparisons/robustness.ipynb): the main benchmark's five models, recipes and planners, trained on clean Two-Rooms frames and evaluated with three drifting colored discs in every image (distractors) or with the floor tinted green, a color absent from training (background shift). Starts and goals are the same under every condition; the drop is 1 − success / clean success.
+
+| model | same room: clean | distractors | background | other room: clean | distractors | background |
+|---|---|---|---|---|---|---|
+| PLDM | **100% [86, 100]** | **100% [86, 100]** (0%) | **100% [86, 100]** (0%) | **75% [55, 88]** | **75% [55, 88]** (0%) | **79% [60, 91]** (−6%) |
+| DINO-WM | 88% [69, 96] | 83% [64, 93] (5%) | 62% [43, 79] (29%) | 29% [15, 49] | 21% [9, 40] (29%) | 29% [15, 49] (0%) |
+| V-JEPA 2-AC | 83% [64, 93] | 75% [55, 88] (10%) | 54% [35, 72] (35%) | 29% [15, 49] | 33% [18, 53] (−14%) | 29% [15, 49] (0%) |
+| LeWM | 62% [43, 79] | 79% [60, 91] (−27%) | 46% [28, 65] (27%) | 29% [15, 49] | 29% [15, 49] (0%) | 0% [0, 14] (100%) |
+| TD-MPC2 | 4% [1, 20] | 4% [1, 20] (0%) | 4% [1, 20] (0%) | 0% [0, 14] | 0% [0, 14] | 0% [0, 14] |
+| random actions | 62% [43, 79] | 62% [43, 79] | 62% [43, 79] | 0% [0, 14] | 0% [0, 14] | 0% [0, 14] |
+
+24 tasks of each kind per condition (relative drop in parentheses); the run takes 1 h 42 min on one GB10. PLDM is the only model the nuisances do not touch: its encoder barely moves when discs or a tint are added (0.36 and 0.01 times a 0.1 step in its planning cost). The background shift is the harder nuisance for the others: DINO-WM, V-JEPA 2-AC and LeWM all lose ground in the same room, and LeWM, whose latent moves 15 times a goal-sized step under the tint, no longer crosses the door at all, the one drop clear of the intervals. Distractors change no success rate by more than the intervals but make the agents several times slower to reach the goal. TD-MPC2 reaches almost no goal under any condition, so its flat line says nothing about robustness; random actions are identical across conditions by construction. With 24 tasks the intervals are about ±20 points, about the run-to-run spread of LeWM between this run and the main benchmark.
+
+## Representation vs planning
+
+[comparisons/representation_vs_planning](../examples/comparisons/representation_vs_planning.ipynb): the five main-benchmark models and three cheap JEPAs (LpWM, Variational JEPA, Flow-JEPA), each measured on held-out frames (probes, RankMe, LiDAR, prediction error, and how well its planning cost follows the geodesic distance), then planned with the main benchmark's protocol (64 tasks pooled). Rank correlation of each measure with success, with exact permutation p-values over the 8! orderings:
+
+| measure | Spearman ρ | p | Kendall τ | p |
+|---|---|---|---|---|
+| position R² (linear) | +0.63 | 0.10 | +0.47 | 0.14 |
+| room accuracy (linear) | +0.17 | 0.69 | +0.15 | 0.70 |
+| room accuracy (kNN) | −0.01 | 0.99 | −0.04 | 0.98 |
+| 8×8 cell (attentive probe) | −0.18 | 0.67 | −0.25 | 0.47 |
+| RankMe | −0.17 | 0.69 | −0.04 | 1.00 |
+| LiDAR | −0.51 | 0.20 | −0.25 | 0.47 |
+| 1-step prediction error | +0.22 | 0.61 | +0.25 | 0.47 |
+| 8-step prediction error | +0.11 | 0.81 | +0.11 | 0.81 |
+| distance fidelity | **+0.75** | 0.038 | **+0.62** | 0.042 |
+
+With eight models, no measure predicts planning success once the nine tests are corrected for (Bonferroni threshold 0.0056). The probes saturate (R² ≥ 0.978 and room ≥ 99.6% for every model but TD-MPC2), RankMe mostly tracks the size of the latent, LiDAR leans the wrong way (Flow-JEPA and PLDM score lowest and plan best), and the best predictor (LeWM) plans at 50% while PLDM, ten times worse at prediction, plans at 94%. Only distance fidelity, the rank correlation between a model's planning cost and the geodesic distance through the door, comes near, driven by PLDM (best fidelity, 94% success) and TD-MPC2 (which plans with a value function, 31%); a real test needs many more models, such as hyperparameter sweeps of one method.

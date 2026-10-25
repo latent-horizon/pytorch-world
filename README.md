@@ -51,7 +51,7 @@ Train it end to end and plan in a few minutes: [examples/quickstart.ipynb](examp
 | `torch_world.envs` | MuJoCo worlds: `RobotCube` (reach or pick-and-place with a UR10e or SO-101 arm, after OGBench `cube-single`) and `PushT`; the batched pixel worlds `Macaw`, `PointMass` and `TwoRooms` (PLDM's long-horizon task, with optional drifting distractors and a floor tint); `run_policy` |
 | `torch_world.datasets` | `TrajectoryDataset`, sliding windows over episodes; `MedMNIST` and `MedicalVQA`, templated medical VQA in the style of MMBU |
 | `torch_world.evaluation` | `goal_reaching` for planners in any environment, with success rates and recorded videos, and `goal_policy` to plan toward goal images; `vqa` and `compare` for retrieval question answering, with a shuffled-image control |
-| `torch_world.metrics` | the metrics of the papers: linear, k-NN and attentive probes, RankMe, LiDAR, rollout error, SSIM, PSNR, Chamfer distance, recall@k; for robotics, success rates with confidence intervals, steps to success, progress, SPL and smoothness |
+| `torch_world.metrics` | the metrics of the papers: linear, k-NN and attentive probes, RankMe, LiDAR, rollout error, SSIM, PSNR, Chamfer distance, recall@k; calibration of sampled predictions (CRPS, energy score, interval coverage, spread / skill); for robotics, success rates with confidence intervals, steps to success, progress, SPL and smoothness |
 | `torch_world.utils` | `fit`, a short training loop; `ema_update`, `linear_schedule`, `recompute_batchnorm` |
 | `torch_world.hub` | save, load and share checkpoints: safetensors weights, a config that rebuilds the model, a model card (`pip install torch-world[hub]`) |
 | `torch_world.plots` | matplotlib figures for notebooks (optional dependency) |
