@@ -747,6 +747,78 @@ html:not(.dark) .VPNavBarTitle .logo {
   }
 }
 
+/* ---------- the film (home page): a dark frame, a poster and one frosted play button ---------- */
+
+.vp-doc .tw-film {
+  position: relative;
+  margin: 24px 0 16px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #000;
+  box-shadow: 0 0 0 1px #ffffff14, 0 40px 90px -40px #0b1a33b3;
+}
+
+.vp-doc .tw-film video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vp-doc .tw-film__play {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  padding-left: 4px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  color: #fff;
+  background: #ffffff1f;
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px #ffffff40, 0 10px 40px -10px #000c;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, opacity 0.3s ease;
+}
+
+.vp-doc .tw-film__play:hover {
+  transform: translateX(-50%) scale(1.06);
+  background: #ffffff33;
+}
+
+.vp-doc .tw-film__play:focus-visible {
+  outline: 2px solid var(--vp-c-brand-2);
+  outline-offset: 4px;
+}
+
+.vp-doc .tw-film--playing .tw-film__play {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 719px) {
+  .vp-doc .tw-film {
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px #ffffff14, 0 24px 50px -32px #0b1a33b3;
+  }
+
+  .vp-doc .tw-film__play {
+    width: 42px;
+    height: 42px;
+    padding-left: 3px;
+    bottom: 6%;
+  }
+
+  .vp-doc .tw-film__play svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 /* ---------- model cards: name, a muted summary, chips pinned to the bottom ---------- */
 
 .vp-doc .grid.cards.tw-models > ul > li {

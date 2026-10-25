@@ -354,3 +354,10 @@ actions = CEM(horizon=5, action_dim=2)(model, z, goal)         # (64, 5, 2)
 ```
 
 This trains LeWM, a JEPA world model, on a point mass and plans toward a goal image. Read the [quick start](getting-started/quickstart.md) for what each line does, or open the [tour notebook](examples/intro.ipynb).
+
+
+## In one minute
+
+<div class="tw-film">
+<video src="./assets/video/pytorch-world.mp4" poster="./assets/video/pytorch-world-poster.jpg" title="pytorch-world in one minute" preload="none" playsinline controls></video>
+</div>
