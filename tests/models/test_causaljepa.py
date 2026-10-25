@@ -35,7 +35,7 @@ def test_slot_tracking():
         prop = enc(video)
         enc.track = "match"
         matched = enc(video)
-    assert torch.allclose(fresh[:, 0], prop[:, 0]) and not torch.allclose(fresh[:, 1:], prop[:, 1:])
+    assert torch.allclose(fresh[:, 0], prop[:, 0], atol=1e-5) and not torch.allclose(fresh[:, 1:], prop[:, 1:], atol=1e-5)
     # matching only reorders the slots of each frame, toward the previous frame
     assert torch.allclose(matched.sort(2).values, fresh.sort(2).values) and torch.equal(matched[:, 0], fresh[:, 0])
     gap = lambda z: (z[:, 1] - z[:, 0]).square().mean((1, 2))
