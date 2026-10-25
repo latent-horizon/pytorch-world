@@ -6003,6 +6003,10 @@ examples = [
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "matplotlib", version = "3.11.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
 ]
+hub = [
+    { name = "huggingface-hub" },
+    { name = "safetensors" },
+]
 lewam = [
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
     { name = "matplotlib", version = "3.11.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-lewam') or (extra == 'extra-11-torch-world-benchmark' and extra == 'extra-11-torch-world-myosuite')" },
@@ -6049,6 +6053,7 @@ robodojo = [
 test = [
     { name = "pytest" },
     { name = "pytest-xdist" },
+    { name = "safetensors" },
 ]
 wam = [
     { name = "accelerate" },
@@ -6071,6 +6076,7 @@ requires-dist = [
     { name = "diffusers", marker = "extra == 'wam'", specifier = ">=0.33" },
     { name = "dm-control", marker = "python_full_version < '3.13' and extra == 'dmcontrol'", specifier = ">=1.0.20" },
     { name = "h5py", marker = "extra == 'robodojo'" },
+    { name = "huggingface-hub", marker = "extra == 'hub'", specifier = ">=0.23" },
     { name = "ipykernel", marker = "extra == 'notebooks'" },
     { name = "mani-skill", marker = "(python_full_version < '3.13' and platform_machine == 'x86_64' and extra == 'maniskill') or (sys_platform != 'linux' and extra == 'maniskill')", specifier = ">=3.0" },
     { name = "matplotlib", marker = "extra == 'examples'" },
@@ -6090,9 +6096,11 @@ requires-dist = [
     { name = "pyarrow", marker = "extra == 'robocasa'" },
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-xdist", marker = "extra == 'test'" },
+    { name = "safetensors", marker = "extra == 'hub'", specifier = ">=0.4" },
+    { name = "safetensors", marker = "extra == 'test'", specifier = ">=0.4" },
     { name = "torch", specifier = ">=2.1" },
 ]
-provides-extras = ["action", "benchmark", "dmcontrol", "examples", "lewam", "maniskill", "metaworld", "myosuite", "newton", "notebooks", "ogbench", "robocasa", "robodojo", "test", "wam"]
+provides-extras = ["action", "benchmark", "dmcontrol", "examples", "hub", "lewam", "maniskill", "metaworld", "myosuite", "newton", "notebooks", "ogbench", "robocasa", "robodojo", "test", "wam"]
 
 [package.metadata.requires-dev]
 docs = [
