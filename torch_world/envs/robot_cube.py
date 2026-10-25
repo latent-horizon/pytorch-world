@@ -363,8 +363,12 @@ class RobotCube(MujocoEnv, LegacyEnvironment):
         noise: float = 0.04,
         cameras: list[str] | None = None,
         generator: torch.Generator | None = None,
+        every: int = 32,
     ) -> dict:
         """Play data from the noisy expert, retargeted after every placement, as in OGBench's ``play`` datasets.
+
+        For ``"reach"``, the noisy expert moves the open gripper to a new random pose every ``every`` steps and holds
+        it there, so the ``every`` steps from a multiple of ``every`` reach one pose, as a ``"reach"`` task does.
 
         Returns ``pixels`` ``(B, T, 3, size, size)`` (or ``(B, T, V, 3, size, size)`` for a list of ``cameras``),
         ``actions`` ``(B, T, 4)`` and ``states`` ``(B, T, 7)``; ``actions[:, t]`` is applied at ``states[:, t]``.
@@ -378,14 +382,19 @@ class RobotCube(MujocoEnv, LegacyEnvironment):
 
         self.reset(generator=generator)
         pixels, states, actions = [observe()], [self.state], []
-        target = self.sample_targets(generator=generator)
-        for _ in range(num_steps - 1):
+        reach = self.task == "reach"
+        target = self.reach_targets(generator) if reach else self.sample_targets(generator=generator)
+        for t in range(num_steps - 1):
             n = torch.randn(self.batch_size, 4, generator=generator).to(self.state)
-            action = (self.expert(target) + noise * n).clamp(-1, 1)
+            expert = self.scripted(torch.cat([target, self.state[:, 3:]], -1)) if reach else self.expert(target)
+            action = (expert + noise * n).clamp(-1, 1)
             actions.append(action)
             self.step(action)
             pixels.append(observe())
             states.append(self.state)
+            if reach:
+                target = self.reach_targets(generator) if (t + 1) % every == 0 else target
+                continue
             done = _placed(
                 self.state, torch.cat([self.state[:, :4], target, self.state[:, 6:]], -1), self.radius, self.half
             )
