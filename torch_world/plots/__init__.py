@@ -482,5 +482,60 @@ def pca_colors(tokens: Tensor, size: tuple[int, int] | None = None) -> Tensor:
     return maps
 
 
+def scatter(
+    panels: dict[str, dict[str, float]],
+    y: dict,
+    ylabel: str = "success rate",
+    titles: dict[str, str] | None = None,
+    logx: tuple[str, ...] = (),
+    ncols: int = 3,
+    size: float = 2.4,
+):
+    """Small multiples of one measure ``y`` ``{series: value}`` against others: one panel per key of ``panels``, each
+    holding ``{series: x}``, with one ringed point per series in its categorical color and a shared legend.
+
+    Values of ``y`` with ``low`` and ``high`` (``metrics.Rate``) get a vertical whisker for their confidence interval,
+    and values in ``[0, 1]`` are shown as percentages. ``titles`` adds a second line under a panel's name, for example
+    its rank correlation with ``y``; panels named in ``logx`` use a log x axis.
+    """
+    names = list(y)
+    colors = {name: SERIES[i % len(SERIES)] for i, name in enumerate(names)}
+    percent = all(0 <= float(v) <= 1 for v in y.values())
+    with style() as plt:
+        nrows = -(-len(panels) // ncols)
+        fig, axes = plt.subplots(
+            nrows, ncols, figsize=(size * ncols, (size + 0.25) * nrows + 0.35), squeeze=False, layout="constrained"
+        )
+        for i, ax in enumerate(axes.flat):
+            if i >= len(panels):
+                ax.axis("off")
+                continue
+            panel, xs = list(panels.items())[i]
+            for name in names:
+                if name not in xs:
+                    continue
+                x, v = float(xs[name]), y[name]
+                if hasattr(v, "low"):
+                    ax.plot([x, x], [v.low, v.high], color=colors[name], lw=1, alpha=0.45, solid_capstyle="butt")
+                ax.plot(x, float(v), "o", color=colors[name], ms=6.5, mec=SURFACE, mew=1.2, zorder=3)
+            ax.set_title(panel + (f"\n{titles[panel]}" if titles and panel in titles else ""))
+            if panel in logx:
+                ax.set_xscale("log")
+                ax.xaxis.set_major_formatter(lambda v, _: f"{v:g}")
+                ax.xaxis.set_minor_formatter(lambda v, _: "")
+            if percent:
+                ax.yaxis.set_major_formatter(lambda v, _: f"{v:.0%}")
+            ax.set_ylabel(ylabel if i % ncols == 0 else None)
+            ax.margins(x=0.12, y=0.08)
+        key = [
+            plt.Line2D([], [], ls="", marker="o", ms=6.5, color=colors[name], mec=SURFACE, mew=1.2, label=name)
+            for name in names
+        ]
+        fig.legend(handles=key, loc="outside lower center", ncols=min(len(names), 4), handletextpad=0.3)
+        fig.get_layout_engine().set(w_pad=0.04, h_pad=0.06)
+    _plt().close(fig)
+    return fig
+
+
 def _rgb(hex_color: str) -> tuple[float, float, float]:
     return tuple(int(hex_color[i : i + 2], 16) / 255 for i in (1, 3, 5))

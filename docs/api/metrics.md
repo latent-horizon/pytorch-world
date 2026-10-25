@@ -30,6 +30,18 @@ Functions on plain tensors, so they apply to any model's features or predictions
 
 ::: torch_world.metrics.chamfer_distance
 
+## Calibration
+
+::: torch_world.metrics.crps
+
+::: torch_world.metrics.energy_score
+
+::: torch_world.metrics.interval_coverage
+
+::: torch_world.metrics.spread_skill
+
+::: torch_world.metrics.gaussian_nll
+
 ## Robotics and control
 
 ::: torch_world.metrics.success_rate

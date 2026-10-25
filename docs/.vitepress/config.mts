@@ -138,7 +138,10 @@ function site(key: string) {
       page('Main benchmark', l('/examples/comparisons/main_benchmark')),
       page('Frozen vs end-to-end encoders', l('/examples/comparisons/frozen_vs_end_to_end')),
       page('Planners', l('/examples/comparisons/planners')),
-      page('Flat vs hierarchical', l('/examples/comparisons/flat_vs_hierarchical'))
+      page('Flat vs hierarchical', l('/examples/comparisons/flat_vs_hierarchical')),
+      page('Deterministic vs stochastic', l('/examples/comparisons/deterministic_vs_stochastic')),
+      page('Robustness', l('/examples/comparisons/robustness')),
+      page('Representation vs planning', l('/examples/comparisons/representation_vs_planning'))
     ]),
     group('Action', [
       page('LeWM', l('/examples/action/lewm')),
