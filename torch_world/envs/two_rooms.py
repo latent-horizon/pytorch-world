@@ -2,7 +2,9 @@ import torch
 from torch import Tensor
 
 from torch_world.envs.point_mass import PointMass
-from torch_world.envs.sdf import box, grid, paint, shade, union
+from torch_world.envs.sdf import box, circle, grid, paint, shade, union
+
+DISTRACTOR_COLORS = [(0.86, 0.2, 0.18), (0.95, 0.6, 0.1), (0.2, 0.62, 0.3), (0.6, 0.25, 0.7), (0.1, 0.6, 0.7)]
 
 
 class Rooms:
@@ -74,6 +76,11 @@ class TwoRooms(Rooms, PointMass):
     planning toward the goal gets stuck against the wall. ``collect`` keeps each action with probability 0.8, so that
     some episodes cross the door.
 
+    Two nuisances test robustness without changing the task. ``distractors`` colored discs drift through the image on
+    their own, unaffected by the actions and by the wall; they move one ``max_step`` per step in a direction that keeps
+    with probability 0.8. ``floor`` tints the floor toward an RGB color (a background shift). Both are drawn into every
+    image, goal images included; the state, distances and success ignore them.
+
     Sobal et al., "Learning from Reward-Free Offline Data: A Case for Planning with Latent Dynamics Models", 2025.
     Paper: https://arxiv.org/abs/2502.14819
     """
@@ -92,18 +99,56 @@ class TwoRooms(Rooms, PointMass):
         door: float = 0.5,
         door_width: float = 0.2,
         substeps: int = 4,
+        distractors: int = 0,
+        floor: tuple[float, float, float] | None = None,
         device=None,
     ):
         super().__init__(batch_size, size, max_step, sigma, device=device)
         self.wall, self.door, self.door_width, self.substeps, self.margin = wall, door, door_width, substeps, sigma / 2
+        if distractors > len(DISTRACTOR_COLORS):
+            raise ValueError(f"at most {len(DISTRACTOR_COLORS)} distractors, not {distractors}")
+        self.floor = floor
+        self.distractors = torch.rand(batch_size, distractors, 2, device=device)
+        self.headings = torch.rand(batch_size, distractors, device=device) * 2 * torch.pi
+
+    def reset(self, state: Tensor | None = None, generator: torch.Generator | None = None) -> Tensor:
+        n = self.distractors.size(1)
+        self.distractors = torch.rand(self.batch_size, n, 2, generator=generator).to(self.distractors)
+        self.headings = (torch.rand(self.batch_size, n, generator=generator) * 2 * torch.pi).to(self.headings)
+        return super().reset(state, generator)
+
+    def step(self, action: Tensor) -> Tensor:
+        if self.distractors.size(1):
+            turn = torch.rand(self.headings.shape) >= 0.8
+            new = torch.rand(self.headings.shape) * 2 * torch.pi
+            self.headings = torch.where(turn.to(self.headings.device), new.to(self.headings), self.headings)
+            move = self.max_step * torch.stack([self.headings.cos(), self.headings.sin()], -1)
+            self.distractors = (self.distractors + move).clamp(0, 1)
+        return super().step(action)
 
     def collect(self, num_steps: int, generator: torch.Generator | None = None, keep: float = 0.8):
         return super().collect(num_steps, generator, keep)
 
     def render(self, state: Tensor | None = None) -> Tensor:
-        """Images ``(B, 3, size, size)`` in ``[0, 1]``: the point over a light floor, the wall in gray."""
+        """Images ``(B, 3, size, size)`` in ``[0, 1]``: the point over a light floor, the wall in gray, and the
+        distractors, if any, at their current positions (those of the first episode when ``state`` has another batch
+        size)."""
         state = self.state if state is None else state
         x, y = grid(self.size, state.device)
-        return paint(
-            super().render(state), self.wall_sdf(x, y), shade(y, (0.4, 0.4, 0.42), (0.3, 0.3, 0.32)), self.size
-        )
+        image = super().render(state)
+        if self.floor is not None:
+            agent = (
+                (-((x - state[:, 0, None, None]).square() + (y - state[:, 1, None, None]).square()) / 2)
+                .div(self.sigma**2)
+                .exp()[:, None]
+            )
+            tint = torch.tensor(self.floor, device=image.device)[:, None, None] - image
+            image = image + 0.6 * (1 - agent) * tint
+        image = paint(image, self.wall_sdf(x, y), shade(y, (0.4, 0.4, 0.42), (0.3, 0.3, 0.32)), self.size)
+        distractors = self.distractors.to(state.device)
+        if len(distractors) != len(state):
+            distractors = distractors[:1].expand(len(state), -1, -1)
+        for i, color in enumerate(DISTRACTOR_COLORS[: distractors.size(1)]):
+            center = distractors[:, i, :, None, None].unbind(1)
+            image = paint(image, circle(x, y, center, 1.5 * self.sigma), color, self.size)
+        return image
