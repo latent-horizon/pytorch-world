@@ -48,6 +48,10 @@ path = "torch_world/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["torch_world"]
 
+# The examples and docs carry notebooks and videos that push the sdist past the PyPI file limit.
+[tool.hatch.build.targets.sdist]
+include = ["torch_world", "tests", "README.md", "LICENSE.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
