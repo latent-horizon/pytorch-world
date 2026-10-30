@@ -1,4 +1,6 @@
-/* pytorch-world: a minimal theme on a grainy sunset sky. */
+/* pytorch-world: a minimal theme after latenthorizon.xyz, ink on white under a grainy blue horizon. */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap");
 
 /* ---------- type: Codec Pro, self-hosted from docs/public/fonts/codec-pro, Inter while it loads ---------- */
 
@@ -36,59 +38,60 @@
 }
 
 :root {
-  --tw-night: #0b1a33;
-  --tw-dusk: #1b3a6b;
-  --tw-blue: #3f7cc4;
-  --tw-rose: #d4577c;
-  --tw-coral: #f27c5f;
-  --tw-amber: #f8b56c;
-  --tw-glow: #fde4c3;
+  /* Latent Horizon (latenthorizon.xyz): ink on white, and one grainy blue horizon */
+  --tw-ink-1: #191919;
+  --tw-muted: #858585;
+  --tw-night: #0f2443;
+  --tw-dusk: #24598c;
+  --tw-accent: #3768a9;
+  --tw-cobalt: #386ec5;
+  --tw-cornflower: #6f9fe5;
+  --tw-sky: #73a9df;
+  --tw-ice: #b6d6fb;
+  --tw-mist: #e2efff;
+  --tw-glow: #d8eeff;
+  --tw-amber: #e0a24a;
 
-  --tw-sky: linear-gradient(
-    172deg,
-    var(--tw-night) 0%,
-    var(--tw-dusk) 22%,
-    var(--tw-blue) 44%,
-    var(--tw-rose) 64%,
-    var(--tw-coral) 80%,
-    var(--tw-amber) 93%,
-    var(--tw-glow) 100%
-  );
-  --tw-horizon: linear-gradient(90deg, var(--tw-blue), var(--tw-rose), var(--tw-coral), var(--tw-amber));
-  --tw-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --tw-horizon: linear-gradient(90deg, var(--tw-ice), var(--tw-cornflower), var(--tw-cobalt));
+  --tw-grain-sphere: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='.8' intercept='.55'/%3E%3CfeFuncG type='linear' slope='.8' intercept='.55'/%3E%3CfeFuncB type='linear' slope='.8' intercept='.55'/%3E%3CfeFuncA type='table' tableValues='1 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --tw-radius: 14px;
 
   --vp-font-family-base: "Codec Pro", "Inter", ui-sans-serif, system-ui, sans-serif;
   --vp-font-family-mono: "JetBrains Mono", ui-monospace, "Menlo", "Monaco", monospace;
+  --tw-font-label: "DM Mono", ui-monospace, monospace;
 }
 
-/* ---------- color schemes: VitePress's own surfaces, with the sunset only in links and accents ---------- */
+/* ---------- color schemes: VitePress's own surfaces, with the horizon blues in links and accents ---------- */
 
 :root {
-  --vp-c-brand-1: #c4466e;
-  --vp-c-brand-2: #e0603f;
-  --vp-c-brand-3: #d4577c;
-  --vp-c-brand-soft: #f27c5f1f;
+  --vp-c-brand-1: #3768a9;
+  --vp-c-brand-2: #24598c;
+  --vp-c-brand-3: #386ec5;
+  --vp-c-brand-soft: #73a9df24;
 
   --tw-surface: var(--vp-c-bg);
   --tw-surface-2: var(--vp-c-bg-soft);
   --tw-border: var(--vp-c-divider);
   --tw-ink: var(--vp-c-text-1);
-  --tw-heading: linear-gradient(100deg, var(--tw-dusk) 0%, var(--tw-blue) 45%, var(--tw-rose) 100%);
 }
 
 .dark {
-  --vp-c-brand-1: #f6a283;
-  --vp-c-brand-2: #fbc58a;
-  --vp-c-brand-3: #d4577c;
-  --vp-c-brand-soft: #f27c5f24;
+  --vp-c-brand-1: #8ab8f0;
+  --vp-c-brand-2: #b6d6fb;
+  --vp-c-brand-3: #386ec5;
+  --vp-c-brand-soft: #73a9df29;
 
+  --tw-accent: #8ab8f0;
   --tw-surface: var(--vp-c-bg-alt);
-  --tw-heading: linear-gradient(100deg, var(--tw-glow) 0%, var(--tw-amber) 40%, var(--tw-coral) 75%, var(--tw-rose) 100%);
+}
+
+::selection {
+  background: var(--tw-mist);
+  color: var(--tw-dusk);
 }
 
 .dark ::selection {
-  background: #f27c5f47;
+  background: #386ec552;
   color: #fff;
 }
 
@@ -104,9 +107,14 @@ html:not(.dark) .VPNavBarTitle .logo {
   letter-spacing: -0.01em;
 }
 
+/* nav labels: small uppercase mono, as on latenthorizon.xyz */
 .VPNavBarMenuLink,
 .VPNavBarMenuGroup .button {
-  font-weight: 500;
+  font-family: var(--tw-font-label);
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
 }
 
 .VPNavBarMenuLink:not(.active):not(:hover),
@@ -137,8 +145,8 @@ html:not(.dark) .VPNavBarTitle .logo {
 .vp-doc h1,
 .vp-doc h2,
 .vp-doc h3 {
-  font-weight: 650;
-  letter-spacing: -0.025em;
+  font-weight: 550;
+  letter-spacing: -0.035em;
 }
 
 .dark .vp-doc h2,
@@ -147,13 +155,11 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .vp-doc h1 {
-  font-size: 36px;
+  font-size: 38px;
   line-height: 1.2;
-  font-weight: 700;
-  background: var(--tw-heading);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--tw-ink);
   margin-bottom: 0.8em;
 }
 
@@ -201,8 +207,8 @@ html:not(.dark) .VPNavBarTitle .logo {
 .dark .vp-doc a > code,
 .dark .vp-doc a code {
   color: var(--vp-c-brand-1);
-  background: color-mix(in srgb, var(--tw-coral) 9%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tw-coral) 20%, transparent);
+  background: color-mix(in srgb, var(--tw-accent) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tw-accent) 20%, transparent);
 }
 
 .vp-doc div[class*="language-"] {
@@ -249,7 +255,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .dark .vp-doc tbody tr:hover {
-  background: color-mix(in srgb, var(--tw-amber) 4%, transparent);
+  background: color-mix(in srgb, var(--tw-sky) 5%, transparent);
 }
 
 .vp-doc table code {
@@ -304,7 +310,7 @@ html:not(.dark) .VPNavBarTitle .logo {
   background:
     linear-gradient(var(--tw-surface), var(--tw-surface)) padding-box,
     var(--tw-horizon) border-box;
-  box-shadow: 0 14px 34px -18px #d4577c80;
+  box-shadow: 0 14px 34px -18px #386ec540;
 }
 
 .dark .vp-doc .grid.cards > ul > li {
@@ -315,7 +321,7 @@ html:not(.dark) .VPNavBarTitle .logo {
   background:
     linear-gradient(180deg, var(--tw-surface-2), var(--tw-surface)) padding-box,
     var(--tw-horizon) border-box;
-  box-shadow: 0 18px 40px -22px #f27c5f66;
+  box-shadow: 0 18px 40px -22px #386ec566;
 }
 
 .dark .vp-doc .grid.cards hr {
@@ -343,7 +349,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .vp-doc .grid.cards .tw-icon.lg {
-  color: var(--tw-coral);
+  color: var(--tw-accent);
 }
 
 .vp-doc .tw-button {
@@ -370,58 +376,91 @@ html:not(.dark) .VPNavBarTitle .logo {
   padding-top: 32px !important;
 }
 
-/* home hero: the sky */
+/* home hero: ink on the page, and a grainy blue horizon rising from the bottom edge (latenthorizon.xyz) */
 .tw-hero {
+  --tw-horizon-d: max(92%, 680px); /* the sphere's diameter */
+  --tw-horizon-cap: 230px; /* how much of it shows above the bottom edge */
   position: relative;
   isolation: isolate;
   overflow: hidden;
   margin: 0 0 50px;
-  padding: 90px 30px 70px;
+  padding: 72px 30px calc(var(--tw-horizon-cap) + 70px);
   border-radius: 22px;
-  background: var(--tw-sky);
-  color: #fff8f0;
+  background: var(--vp-c-bg);
+  color: var(--tw-ink);
   text-align: center;
 }
 
-.tw-hero::before {
-  /* the sun, setting */
+.tw-hero::before,
+.tw-hero::after {
   content: "";
   position: absolute;
   z-index: -1;
   left: 50%;
-  bottom: -62%;
-  width: 62%;
+  top: calc(100% - var(--tw-horizon-cap));
+  width: var(--tw-horizon-d);
   aspect-ratio: 1;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(circle, #ffe9c8cc 0%, #ffc98566 24%, #f27c5f26 46%, transparent 68%);
+  pointer-events: none;
+}
+
+.tw-hero::before {
+  /* the sphere: two soft lights over a diagonal blue, multiplied by grain (noise stretched to about x0.85 to x1) */
+  background:
+    var(--tw-grain-sphere) 0 0 / 160px,
+    radial-gradient(at 74% 10%, #d8eeff 0%, #0000 44%),
+    radial-gradient(at 22% 24%, #7da9ed 0%, #0000 56%),
+    linear-gradient(135deg, #b6d6fb 0%, #6f9fe5 55%, #386ec5 100%);
+  background-blend-mode: multiply, normal, normal, normal;
+  box-shadow: inset 0 3px 12px #e4f2ff80;
 }
 
 .tw-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image: var(--tw-grain);
-  mix-blend-mode: soft-light;
-  opacity: 0.9;
-  pointer-events: none;
+  /* light drifting across it */
+  background:
+    radial-gradient(at 68% 22%, #d8eeff 0%, #0000 52%),
+    radial-gradient(at 23% 46%, #5488db80 0%, #0000 60%);
+  animation: tw-horizon-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes tw-horizon-drift {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tw-hero::after {
+    animation: none;
+  }
 }
 
 .vp-doc .tw-hero img {
   display: inline-block;
-  width: min(560px, 92%);
+  width: min(600px, 96%);
   height: auto;
-  filter: drop-shadow(0 8px 30px #0b1a3355);
+}
+
+.vp-doc .tw-hero .tw-logo--dark,
+.dark .vp-doc .tw-hero .tw-logo--light {
+  display: none;
+}
+
+.dark .vp-doc .tw-hero .tw-logo--dark {
+  display: inline-block;
 }
 
 .vp-doc .tw-hero p {
-  margin: 28px auto 0;
-  max-width: 680px;
+  margin: 22px auto 0;
+  max-width: 660px;
   font-size: 19px;
   line-height: 1.6;
-  color: #fff6ee;
-  text-shadow: 0 1px 18px #0b1a3373;
+  letter-spacing: -0.01em;
+  color: var(--vp-c-text-2);
 }
 
 .vp-doc .tw-hero .tw-actions {
@@ -437,27 +476,33 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .vp-doc .tw-hero .tw-button {
-  color: #fff8f0;
-  border: 1px solid #fff8f099;
-  background: #0b1a332e;
+  font-family: var(--tw-font-label);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 0.95em 1.9em;
+  color: var(--tw-ink);
+  border: 1px solid var(--vp-c-divider);
+  background: color-mix(in srgb, var(--vp-c-bg) 70%, transparent);
   backdrop-filter: blur(6px);
 }
 
 .vp-doc .tw-hero .tw-button--primary {
-  color: var(--tw-night);
-  background: #fff8f0;
-  border-color: #fff8f0;
+  color: var(--vp-c-bg);
+  background: var(--tw-ink);
+  border-color: var(--tw-ink);
 }
 
 .vp-doc .tw-hero .tw-button:hover {
-  color: var(--tw-night);
-  background: var(--tw-glow);
-  border-color: var(--tw-glow);
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg);
+  border-color: var(--vp-c-brand-1);
 }
 
-/* install snippet inside the hero: a frosted pill */
+/* install snippet inside the hero: a hairline pill */
 .vp-doc .tw-hero .tw-install {
-  margin: 36px auto 0;
+  margin: 34px auto 0;
   width: fit-content;
   max-width: 100%;
 }
@@ -465,9 +510,8 @@ html:not(.dark) .VPNavBarTitle .logo {
 .vp-doc .tw-hero .tw-install div[class*="language-"] {
   margin: 0;
   border-radius: 999px;
-  background: #0b1a3359;
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 0 1px #fff8f033;
+  background: var(--vp-c-bg-soft);
+  box-shadow: inset 0 0 0 1px var(--vp-c-divider);
 }
 
 .vp-doc .tw-hero .tw-install pre {
@@ -477,17 +521,17 @@ html:not(.dark) .VPNavBarTitle .logo {
 
 .vp-doc .tw-hero .tw-install code {
   padding: 0;
-  font-size: 16px;
-  color: #fff8f0;
+  font-size: 15px;
+  color: var(--tw-ink);
 }
 
 .vp-doc .tw-hero .tw-install code::before {
   content: "$ ";
-  color: #fff8f099;
+  color: var(--vp-c-text-3);
 }
 
 .vp-doc .tw-hero .tw-install code span {
-  color: #fff8f0 !important;
+  color: var(--tw-ink) !important;
 }
 
 .vp-doc .tw-hero .tw-install .lang {
@@ -502,29 +546,18 @@ html:not(.dark) .VPNavBarTitle .logo {
   border-color: transparent;
   border-radius: 999px;
   background-color: transparent;
-  filter: brightness(2.2);
 }
 
 .vp-doc .tw-hero .tw-install button.copy:hover {
   opacity: 1;
 }
 
-/* pixel field: a WebGL canvas between the sky and the content (see pixels.js) */
-.tw-hero .tw-pixels {
-  image-rendering: pixelated;
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
 @media (max-width: 719px) {
   .tw-hero {
+    --tw-horizon-cap: 190px;
     margin: 0 -24px 40px;
     border-radius: 0;
-    padding: 60px 20px 50px;
+    padding: 52px 20px calc(var(--tw-horizon-cap) + 48px);
   }
 }
 
@@ -580,7 +613,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .tw-home .vp-doc .grid.cards > ul > li:hover .tw-icon.lg {
-  color: var(--tw-coral);
+  color: var(--tw-accent);
 }
 
 /* body: secondary text, a touch smaller */
@@ -676,7 +709,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 
 .vp-doc .tw-gallery a:hover img {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -14px #d4577c80;
+  box-shadow: 0 10px 24px -14px #386ec540;
 }
 
 @media (max-width: 1023px) {
@@ -799,7 +832,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 
 .vp-doc .tw-contributors__list a:hover img {
   transform: translateY(-2px);
-  box-shadow: 0 0 0 2px var(--vp-c-brand-2), 0 10px 24px -12px #d4577c80;
+  box-shadow: 0 0 0 2px var(--vp-c-brand-2), 0 10px 24px -12px #386ec540;
 }
 
 /* ---------- the film (home page): a dark frame, a poster and one frosted play button ---------- */
@@ -967,8 +1000,8 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .vp-doc .tw-models .tw-chips a:hover {
-  border-color: color-mix(in srgb, var(--tw-coral) 55%, transparent);
-  background: color-mix(in srgb, var(--tw-coral) 10%, transparent);
+  border-color: color-mix(in srgb, var(--tw-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--tw-accent) 10%, transparent);
   color: var(--vp-c-brand-1);
 }
 
@@ -1106,17 +1139,17 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .tw-diagram .twd-head-accent {
-  fill: var(--tw-coral);
+  fill: var(--tw-accent);
 }
 
 .tw-diagram .twd-plan {
-  stroke: var(--tw-coral);
+  stroke: var(--tw-accent);
   stroke-dasharray: 5 5;
   marker-end: url(#twd-arrow-accent);
 }
 
 .tw-diagram .twd-plan-text {
-  fill: var(--tw-coral);
+  fill: var(--tw-accent);
 }
 
 .tw-diagram .twd-box {
@@ -1131,18 +1164,18 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .tw-diagram .twd-box-cost {
-  stroke: var(--tw-coral);
+  stroke: var(--tw-accent);
 }
 
 .tw-diagram .twd-z {
-  fill: color-mix(in srgb, var(--tw-blue) 18%, transparent);
-  stroke: var(--tw-blue);
+  fill: color-mix(in srgb, var(--tw-cobalt) 18%, transparent);
+  stroke: var(--tw-cobalt);
   stroke-width: 1.5;
 }
 
 .tw-diagram .twd-zhat {
-  fill: color-mix(in srgb, var(--tw-rose) 16%, transparent);
-  stroke: var(--tw-rose);
+  fill: color-mix(in srgb, var(--tw-cornflower) 16%, transparent);
+  stroke: var(--tw-cornflower);
   stroke-width: 1.5;
   stroke-dasharray: 4 3;
 }
@@ -1174,14 +1207,14 @@ html:not(.dark) .VPNavBarTitle .logo {
 }
 
 .api-kind--class {
-  color: var(--tw-blue);
+  color: var(--tw-cobalt);
   background-color: #3f7cc41f;
 }
 
 .api-kind--function,
 .api-kind--method {
-  color: var(--tw-rose);
-  background-color: #d4577c1f;
+  color: var(--tw-cornflower);
+  background-color: #6f9fe524;
 }
 
 .api-kind--module {
@@ -1203,7 +1236,7 @@ html:not(.dark) .VPNavBarTitle .logo {
 .dark .api-kind--function,
 .dark .api-kind--method {
   color: #f08aa6;
-  background-color: #d4577c26;
+  background-color: #6f9fe52e;
 }
 
 .dark .api-kind--module {

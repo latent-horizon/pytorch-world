@@ -11,7 +11,8 @@ next: false
 
 <div class="tw-hero">
 
-![pytorch-world](../assets/banner-dark.png)
+![pytorch-world](../assets/banner-light.png){ .tw-logo--light }
+![pytorch-world](../assets/banner-dark.png){ .tw-logo--dark }
 
 PyTorch のための世界モデル。世界がどう変化するかを学習し、次に起こることを想像してプランニングします。共通の部品により、どのモデルも短く、比較しやすく保たれています。
 

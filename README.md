@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="pytorch-world" src="docs/assets/banner-sky.png">
+  <img alt="pytorch-world" src="docs/assets/banner-horizon.png">
 </p>
 
 <p align="center">
@@ -13,6 +13,15 @@
 </p>
 
 PyTorch World (`torch_world`) is a library of world models for PyTorch. It gives world-model research shared parts (layers, masking, objectives, planners, environments) so that a new model is a short file and existing models are easy to compare.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/benchmark-dark.png">
+    <img alt="Main benchmark on Two-Rooms: PLDM reaches the other room 88% of the time in 23 ms per step; V-JEPA 2-AC 44%, LeWM 34%, DINO-WM 28% and TD-MPC2 0%, while most reach goals in the same room" src="docs/assets/benchmark-light.png">
+  </picture>
+</p>
+
+<p align="center"><sub><a href="docs/guides/results.md">Benchmark results</a> · <a href="examples/comparisons/main_benchmark.ipynb">notebook</a></sub></p>
 
 ```bash
 uv add torch_world                 # core: depends only on torch
