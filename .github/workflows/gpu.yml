@@ -1,7 +1,8 @@
 name: gpu
 
 # CUDA tests on a self-hosted runner labelled `gpu`. They run on main, nightly and by hand, never on pull requests,
-# so code from forks never reaches the runner. Register the runner with the labels `self-hosted`, `linux` and `gpu`.
+# so code from forks never reaches the runner. Register the runner with the labels `self-hosted`, `linux` and `gpu`,
+# then set the repository variable `GPU_RUNNER` to `true`. Without it the job is skipped instead of queueing forever.
 on:
   push:
     branches: [main]
@@ -19,7 +20,7 @@ concurrency:
 jobs:
   test:
     name: test (cuda)
-    if: github.repository == 'latent-horizon/pytorch-world'
+    if: github.repository == 'latent-horizon/pytorch-world' && vars.GPU_RUNNER == 'true'
     runs-on: [self-hosted, linux, gpu]
     timeout-minutes: 30
     env:
