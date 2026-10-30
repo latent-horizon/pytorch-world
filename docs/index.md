@@ -11,7 +11,8 @@ next: false
 
 <div class="tw-hero">
 
-![pytorch-world](assets/banner-dark.png)
+![pytorch-world](assets/banner-light.png){ .tw-logo--light }
+![pytorch-world](assets/banner-dark.png){ .tw-logo--dark }
 
 World models for PyTorch. Learn how a world evolves, then plan by imagining what comes next. Shared parts keep every model short and easy to compare.
 

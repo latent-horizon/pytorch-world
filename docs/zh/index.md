@@ -11,7 +11,8 @@ next: false
 
 <div class="tw-hero">
 
-![pytorch-world](../assets/banner-dark.png)
+![pytorch-world](../assets/banner-light.png){ .tw-logo--light }
+![pytorch-world](../assets/banner-dark.png){ .tw-logo--dark }
 
 面向 PyTorch 的世界模型。学习世界如何演化，再通过想象接下来会发生什么来进行规划。共享组件让每个模型都保持简洁、便于比较。
 

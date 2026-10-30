@@ -11,7 +11,8 @@ next: false
 
 <div class="tw-hero">
 
-![pytorch-world](../assets/banner-dark.png)
+![pytorch-world](../assets/banner-light.png){ .tw-logo--light }
+![pytorch-world](../assets/banner-dark.png){ .tw-logo--dark }
 
 World models para PyTorch. Aprenda como um mundo evolui e depois planeje imaginando o que vem a seguir. Componentes compartilhados deixam cada modelo compacto e fácil de comparar.
 
