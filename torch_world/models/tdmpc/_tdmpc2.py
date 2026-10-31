@@ -127,6 +127,13 @@ class TDMPC2(WorldModel):
     after, this step's update. Train with ``param_groups``, clip with ``clip_grad_norm`` and call ``update_target``
     after every optimizer step. The reference's multi-task embeddings are not included.
 
+    With ``goal_conditioned``, observations carry a goal stacked on their channel (or feature) dimension ``2``, as
+    ``(B, T, 2 * C, ...)``: the encoder maps the observation and the goal separately, and the latent is both, side by
+    side, ``(..., 2 * latent_dim)``. Dynamics move the observation's half and carry the goal's, so the consistency
+    loss has no reason to drop the goal, and the reward, Q-functions and policy read it, as they read the task
+    embedding in the reference's multi-task agent. Train on goals relabelled in hindsight, with rewards that measure
+    progress to them.
+
     Hansen et al., "TD-MPC2: Scalable, Robust World Models for Continuous Control", ICLR 2024.
     Paper: https://arxiv.org/abs/2310.16828
     Code: https://github.com/nicklashansen/tdmpc2
@@ -137,6 +144,7 @@ class TDMPC2(WorldModel):
         action_dim: dimension of one action.
         discount: reward discount; ``TDMPC2.episode_discount`` gives the reference's choice for an episode length.
         episodic: learn a termination head, used in the TD targets and to stop imagined returns.
+        goal_conditioned: observations carry a goal on dimension 2; every head reads its latent.
     """
 
     history = 1
@@ -164,6 +172,7 @@ class TDMPC2(WorldModel):
         entropy_coef: float = 1e-4,
         scale_momentum: float = 0.99,
         episodic: bool = False,
+        goal_conditioned: bool = False,
     ):
         super().__init__()
         self.action_dim, self.num_q, self.discount, self.rho = action_dim, num_q, discount, rho
@@ -171,12 +180,14 @@ class TDMPC2(WorldModel):
         self.log_std_min, self.log_std_max = log_std_min, log_std_max
         self.consistency_coef, self.reward_coef, self.value_coef = consistency_coef, reward_coef, value_coef
         self.termination_coef, self.entropy_coef, self.scale_momentum = termination_coef, entropy_coef, scale_momentum
-        za, hidden = latent_dim + action_dim, [mlp_dim, mlp_dim]
+        self.latent_dim, self.goal_conditioned = latent_dim, goal_conditioned
+        z_dim = 2 * latent_dim if goal_conditioned else latent_dim  # what the heads read: the goal's latent too
+        za, hidden = z_dim + action_dim, [mlp_dim, mlp_dim]
         self.encoder = encoder
-        self.dynamics = _init(mlp([za, *hidden, latent_dim], act=SimNorm(simnorm_dim)))
+        self.dynamics = _init(mlp([latent_dim + action_dim, *hidden, latent_dim], act=SimNorm(simnorm_dim)))
         self.reward = _init(mlp([za, *hidden, num_bins]))
-        self.termination = _init(mlp([latent_dim, *hidden, 1])) if episodic else None
-        self.policy = _init(mlp([latent_dim, *hidden, 2 * action_dim]))
+        self.termination = _init(mlp([z_dim, *hidden, 1])) if episodic else None
+        self.policy = _init(mlp([z_dim, *hidden, 2 * action_dim]))
         self.qs = nn.ModuleList(_init(mlp([za, *hidden, num_bins], dropout=dropout)) for _ in range(num_q))
         for head in [self.reward, *self.qs]:
             nn.init.zeros_(head[-1].weight)
@@ -234,11 +245,19 @@ class TDMPC2(WorldModel):
         return -(self.two_hot(target) * logits.log_softmax(-1)).sum(-1)
 
     def encode(self, obs: Tensor) -> Tensor:
-        """``(B, T, ...)`` to ``(B, T, latent_dim)``."""
+        """``(B, T, ...)`` to ``(B, T, latent_dim)``, or ``(B, T, 2 * latent_dim)`` with ``goal_conditioned``."""
+        if self.goal_conditioned:
+            return torch.cat([self._encode(half) for half in obs.chunk(2, dim=2)], dim=-1)
+        return self._encode(obs)
+
+    def _encode(self, obs: Tensor) -> Tensor:
         return self.encoder(obs.flatten(0, 1)).unflatten(0, obs.shape[:2])
 
     def predict(self, z: Tensor, actions: Tensor) -> Tensor:
-        """Next latents from latents ``(..., latent_dim)`` and actions ``(..., action_dim)``."""
+        """Next latents from latents ``(..., latent_dim)`` and actions ``(..., action_dim)``; a goal's half is kept."""
+        if self.goal_conditioned:
+            z, goal = z.split(self.latent_dim, dim=-1)
+            return torch.cat([self.dynamics(torch.cat([z, actions], dim=-1)), goal], dim=-1)
         return self.dynamics(torch.cat([z, actions], dim=-1))
 
     def q(self, z: Tensor, actions: Tensor, reduce: str = "all", target: bool = False, detach: bool = False) -> Tensor:

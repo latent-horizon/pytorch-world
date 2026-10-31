@@ -90,6 +90,30 @@ def test_pixel_encoder_latent():
     assert z.shape == (2, 512) and torch.allclose(z.view(2, -1, 8).sum(-1), torch.ones(2, 64))
 
 
+def test_goal_conditioned_latents_carry_the_goal():
+    model = TDMPC2(
+        state_encoder(6, latent_dim=32, hidden_dim=16),
+        action_dim=2,
+        latent_dim=32,
+        mlp_dim=32,
+        goal_conditioned=True,
+        episodic=True,
+    )
+    obs, actions, rewards = batch()
+    goal = torch.randn(8, 1, 6).expand(-1, 4, -1)
+    out = model(torch.cat([obs, goal], dim=2), actions, rewards)
+    assert all(v.isfinite() for v in out.values())
+    z = model.encode(torch.cat([obs, goal], dim=2))
+    assert z.shape == (8, 4, 64)
+    assert torch.allclose(z[..., :32], model._encode(obs)) and torch.allclose(z[..., 32:], model._encode(goal))
+    # dynamics move the observation's half and carry the goal's; the heads read both
+    assert torch.equal(model.rollout(z[:, :1], actions)[..., 32:], z[:, :1, 32:].expand(-1, 4, -1))
+    assert model.reward[0][0].in_features == model.qs[0][0][0].in_features == 66
+    assert model.policy[0][0].in_features == model.termination[0][0].in_features == 64
+    planner = MPPI(horizon=3, action_dim=2, num_samples=32, num_elites=4, num_pi_trajs=4, iterations=2)
+    assert planner(model.eval(), z[:, :1]).shape == (8, 3, 2)
+
+
 def test_episode_discount():
     assert TDMPC2.episode_discount(1000) == 0.995
     assert TDMPC2.episode_discount(10) == 0.95
