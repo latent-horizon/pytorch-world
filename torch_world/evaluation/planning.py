@@ -128,6 +128,8 @@ def goal_reaching(
             if t < steps:
                 tic = time.perf_counter()
                 action = policy(obs)
+                if isinstance(action, Tensor) and action.is_cuda:
+                    torch.cuda.synchronize(action.device)  # count the queued GPU work in the step's time
                 elapsed += time.perf_counter() - tic
                 taken.append(torch.as_tensor(action).float().cpu())
                 obs = env.step(action)

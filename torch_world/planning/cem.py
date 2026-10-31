@@ -10,7 +10,9 @@ class CEM:
     Each iteration samples ``num_samples`` sequences from a diagonal Gaussian, rolls them out with the model and
     refits the Gaussian to the ``num_elites`` cheapest under ``model.cost``. The ``"final"`` objective scores the last
     imagined latent; ``"path"`` averages the cost of every imagined latent, which rewards getting close early. Under
-    MPC, where only the first action runs, ``"path"`` keeps the planner from postponing its moves.
+    MPC, where only the first action runs, ``"path"`` keeps the planner from postponing its moves. With ``keep_mean``
+    the first sample of every iteration is the current mean, as in stable-worldmodel's CEM, so a good mean is never
+    lost to an unlucky draw.
     """
 
     def __init__(
@@ -23,6 +25,7 @@ class CEM:
         std: float = 1.0,
         bounds: tuple[float, float] | None = None,
         objective: str = "final",
+        keep_mean: bool = False,
     ):
         if objective not in ("final", "path"):
             raise ValueError(f"objective must be 'final' or 'path', not {objective!r}")
@@ -31,6 +34,7 @@ class CEM:
         self.std = std
         self.bounds = bounds
         self.objective = objective
+        self.keep_mean = keep_mean
 
     @torch.no_grad()
     def __call__(
@@ -57,6 +61,8 @@ class CEM:
                 B, S, self.horizon, self.action_dim, device=z.device, dtype=z.dtype, generator=generator
             )
             samples = mean[:, None] + std[:, None] * noise
+            if self.keep_mean:
+                samples[:, 0] = mean
             if self.bounds is not None:
                 samples = samples.clamp(*self.bounds)
             rollout = model.rollout(z, torch.cat([past, samples.flatten(0, 1)], dim=1), **cond)

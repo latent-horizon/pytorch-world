@@ -52,11 +52,19 @@ class Rooms:
             state = self.free(self.batch_size, generator=generator)
         return super().reset(state, generator)
 
-    def tasks(self, generator: torch.Generator | None = None, same_room: bool = False) -> tuple[Tensor, Tensor]:
-        """Start and goal states ``(B, 2)`` in opposite rooms, or in the same room with ``same_room``."""
+    def tasks(
+        self, generator: torch.Generator | None = None, same_room: bool = False, min_distance: float = 0.0
+    ) -> tuple[Tensor, Tensor]:
+        """Start and goal states ``(B, 2)`` in opposite rooms, or in the same room with ``same_room``.
+
+        Goals closer than ``min_distance`` to their start are drawn again, so no task is solved in a step or two.
+        """
         room = torch.randint(2, (self.batch_size,), generator=generator)
         goal_room = room if same_room else 1 - room
-        return self.free(self.batch_size, room, generator), self.free(self.batch_size, goal_room, generator)
+        start, goal = self.free(self.batch_size, room, generator), self.free(self.batch_size, goal_room, generator)
+        while (near := (goal - start).norm(dim=-1) < min_distance).any():
+            goal[near] = self.free(int(near.sum()), goal_room[near.cpu()], generator)
+        return start, goal
 
     def wall_sdf(self, x: Tensor, y: Tensor) -> Tensor:
         """Signed distance to the wall, on image coordinates ``x``, ``y`` in ``[0, 1]``."""
