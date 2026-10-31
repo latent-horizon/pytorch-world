@@ -273,7 +273,7 @@ export default defineConfig({
     )
   },
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/pytorch-world/logo-light.png' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/pytorch-world/logo.png' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
     ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap' }],
@@ -288,7 +288,7 @@ export default defineConfig({
     config: (md) => md.use(torchWorld)
   },
   themeConfig: {
-    logo: '/logo-white.png',
+    logo: '/logo.png',
     nav: en.nav,
     sidebar: en.sidebar,
     socialLinks: [{ icon: 'github', link: repo }],

@@ -97,11 +97,6 @@
 
 /* ---------- nav ---------- */
 
-html:not(.dark) .VPNavBarTitle .logo {
-  filter: brightness(0);
-  opacity: 0.85;
-}
-
 .VPNavBarTitle .title {
   font-weight: 600;
   letter-spacing: -0.01em;
