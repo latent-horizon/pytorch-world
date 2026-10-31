@@ -66,8 +66,7 @@ const external = (url: string) => url.includes('//')
     <div class="tw-footer__grid">
       <div class="tw-footer__brand">
         <a :href="withBase(l('/'))" class="tw-footer__home">
-          <img class="tw-footer__logo tw-light" :src="withBase('/logo-light.png')" alt="" width="28" height="28" />
-          <img class="tw-footer__logo tw-dark" :src="withBase('/logo-white.png')" alt="" width="28" height="28" />
+          <img class="tw-footer__logo" :src="withBase('/logo.png')" alt="" width="28" height="28" />
           <span>PyTorch World</span>
         </a>
         <p class="tw-footer__tagline">{{ t('tagline') }}</p>
