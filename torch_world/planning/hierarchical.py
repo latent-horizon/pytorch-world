@@ -5,7 +5,7 @@ import copy
 import torch
 from torch import Tensor
 
-from torch_world.planning.cem import _repeat
+from torch_world.planning.cem import _repeat, fp32_cost
 
 
 class GradientPlanner:
@@ -13,7 +13,8 @@ class GradientPlanner:
 
     ``num_samples`` candidates per batch element start from ``N(0, std^2)``, one of them at the mean, and are optimized
     with Adam on ``model.cost`` for ``iterations`` steps, clipped to ``bounds`` after each step. The cheapest candidate
-    seen is returned. Only the actions receive gradients; put the model in eval mode first.
+    seen is returned, ranked by an fp32 cost even under ``torch.autocast``. Only the actions receive gradients; put the
+    model in eval mode first.
     """
 
     def __init__(
@@ -43,7 +44,7 @@ class GradientPlanner:
         best, best_cost = actions.detach().clone(), torch.full((B * S,), float("inf"), device=z.device)
         with torch.enable_grad():
             for step in range(self.iterations + 1):
-                cost = model.cost(model.rollout(z, actions), goal)
+                cost = fp32_cost(model, model.rollout(z, actions), goal)
                 with torch.no_grad():
                     better = cost < best_cost
                     best[better], best_cost[better] = actions[better], cost[better]
