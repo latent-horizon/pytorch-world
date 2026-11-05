@@ -80,6 +80,13 @@ MPPI, which weights every sample by its cost instead of keeping a top set, beats
 
 H-JEPA, whose two levels train together end to end, more than doubles flat LeWM on the long tasks, at a third of its planning time. HWM, whose upper level learns on a frozen latent space, does worse than flat planning here, as in its own notebook; at this scale its macro-actions do not yet lead the low level around the wall.
 
+The subgoal hand-off in `HierarchicalPlanner` matches the reference implementation (`TwoLvlPlanner` in HWM_PLDM): the low level targets the first predicted waypoint, over `stride` primitive actions. What differs is how the notebooks train and plan HWM, compared with the paper's Diverse Maze setup, where hierarchical planning beats flat (83% against 44% on the longest goals):
+- **High-level loss.** The notebooks train the upper level with teacher forcing only, the paper's Franka and Push-T recipe. On Diverse Maze the paper trains it on its own 6-step autoregressive rollouts instead, which is how the planner uses it: 5 macro-actions rolled out from a single waypoint. A teacher-forced upper level is only trained one waypoint ahead, so its later waypoints can drift, and the first waypoint, the subgoal, is then chosen to suit a drifted endpoint. `HWM(..., gamma_tf_high=0.0, gamma_roll_high=1.0)` gives the maze recipe ([HWM](../models/jepa/hwm.md)).
+- **Planning schedule.** The paper shortens the high horizon as the episode runs (`shrink_every=4, min_horizon=3`), scores the last three low-level latents, plans with MPPI, and switches to flat planning toward the goal for the last 15 steps. The notebooks keep a fixed horizon of 5 macro-actions and plan both levels with CEM.
+- **Encoder.** HWM's upper level never shapes the latent space; on these small, SIGReg-trained encoders a 4-step jump is harder to predict than on the paper's PLDM encoder, which was trained with an inverse-dynamics term. H-JEPA's upper level trains its own encoder end to end, which is why it does not have the problem.
+
+The notebooks have not yet been rerun with the maze recipe ([#48](https://github.com/latent-horizon/pytorch-world/issues/48)).
+
 ## Deterministic vs stochastic
 
 [comparisons/deterministic_vs_stochastic](../examples/comparisons/deterministic_vs_stochastic.ipynb): LeWM, a point forecast, against Flow-JEPA (flow matching over the next 8 embeddings) and Variational JEPA (a Gaussian over the next embedding), with the same encoder and predictor size, 10 epochs each, planned with the same CEM (8 steps, path cost); and the calibration of their 8-step predictions on 1024 held-out windows, 32 futures each, errors in units of each model's embedding spread.
