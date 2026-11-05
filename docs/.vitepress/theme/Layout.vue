@@ -4,7 +4,6 @@ import { useData, useRoute } from 'vitepress'
 import { nextTick, onMounted, watch } from 'vue'
 import Footer from './Footer.vue'
 import { translate } from '../i18n'
-import { initFilm } from './film.js'
 import { initContributors } from './contributors.js'
 
 const { frontmatter, localeIndex } = useData()
@@ -12,8 +11,8 @@ const t = (text: string) => translate(localeIndex.value, text)
 const route = useRoute()
 const repo = 'https://github.com/latent-horizon/pytorch-world'
 
-// The home page film and contributors are plain markup; enhance them after every navigation.
-const enhance = () => nextTick(() => (initFilm(), initContributors()))
+// The contributors are plain markup; enhance them after every navigation.
+const enhance = () => nextTick(initContributors)
 onMounted(enhance)
 watch(() => route.path, enhance)
 </script>
