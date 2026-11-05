@@ -64,7 +64,12 @@ class HWM(WorldModel):
     the ℓ1 teacher-forcing loss, the low level also with the ℓ1 multi-step rollout loss on a random crop of
     ``low.history + 1`` frames, and SIGReg keeps the latents from collapsing as the encoder learns from pixels::
 
-        loss = tf_low + gamma_roll * roll_low + lamb * sigreg + tf_high
+        loss = tf_low + gamma_roll * roll_low + lamb * sigreg + gamma_tf_high * tf_high + gamma_roll_high * roll_high
+
+    ``roll_high`` is the high level's ℓ1 loss on its own autoregressive rollout from the first waypoint, the objective
+    the paper uses for the high level on Diverse Maze (``gamma_tf_high=0, gamma_roll_high=1``); the defaults keep its
+    teacher-forcing recipe for Franka and Push-T. Planning rolls the high level out over several macro-actions, which
+    the rollout loss trains for.
 
     Zhang et al., "Hierarchical Planning with Latent World Models", 2026.
     Paper: https://arxiv.org/abs/2604.03208
@@ -75,6 +80,8 @@ class HWM(WorldModel):
         action_dim: dimension of one primitive action.
         stride: primitive steps between waypoints.
         macro_dim: dimension of a macro-action (8 in the paper's maze).
+        gamma_tf_high: weight of the high level's teacher-forcing loss.
+        gamma_roll_high: weight of the high level's rollout loss; 0 skips computing it.
     """
 
     def __init__(
@@ -91,9 +98,12 @@ class HWM(WorldModel):
         mlp_dim: int = 1024,
         dropout: float = 0.1,
         gamma_roll: float = 1.0,
+        gamma_tf_high: float = 1.0,
+        gamma_roll_high: float = 0.0,
     ):
         super().__init__()
         self.low, self.stride, self.gamma_roll = low, stride, gamma_roll
+        self.gamma_tf_high, self.gamma_roll_high = gamma_tf_high, gamma_roll_high
         self.history = low.history
         self.macro_encoder = nn.Sequential(
             MLP([stride * action_dim, 4 * embed_dim, macro_dim]), nn.BatchNorm1d(macro_dim, affine=False)
@@ -132,5 +142,10 @@ class HWM(WorldModel):
         waypoints = z.detach()[:, :: self.stride]
         macro = self.encode_macro(actions[:, : (waypoints.size(1) - 1) * self.stride])
         tf_high = self.high.distance(self.high.predict(waypoints[:, :-1], macro), waypoints[:, 1:]).mean()
-        loss = tf_low + self.gamma_roll * roll_low + self.low.lamb * sigreg + tf_high
-        return {"loss": loss, "low_loss": tf_low, "rollout_loss": roll_low, "sigreg_loss": sigreg, "high_loss": tf_high}
+        out = {"low_loss": tf_low, "rollout_loss": roll_low, "sigreg_loss": sigreg, "high_loss": tf_high}
+        loss = tf_low + self.gamma_roll * roll_low + self.low.lamb * sigreg + self.gamma_tf_high * tf_high
+        if self.gamma_roll_high:
+            roll_high = self.high.distance(self.high.rollout(waypoints[:, :1], macro)[:, 1:], waypoints[:, 1:]).mean()
+            loss = loss + self.gamma_roll_high * roll_high
+            out["high_rollout_loss"] = roll_high
+        return {"loss": loss, **out}

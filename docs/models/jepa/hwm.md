@@ -5,7 +5,7 @@
 HWM plans over long horizons with two action-conditioned world models that share one latent space. The low level predicts the next latent from a primitive action. The high level predicts the latent `stride` steps later, the next *waypoint*, from a latent macro-action $l_k = A_\psi(a_{t_k:t_{k+1}-1})$ that encodes the actions in between. Here the low level is a [`LeWM`](lewm.md), so the encoder learns from pixels with SIGReg. The high level reads the low level's latents through a stop-gradient, as HWM trains it on a frozen encoder. Each level has HWM's ℓ1 teacher-forcing loss. The low level also has the ℓ1 multi-step rollout loss $\sum_j \lVert F^{(1)}(z_1, a_{1:j}) - z_{j+1} \rVert_1$:
 
 $$
-\mathcal{L} = \mathcal{L}^{(1)}_\text{tf} + \gamma\,\mathcal{L}^{(1)}_\text{roll} + \lambda\,\operatorname{SIGReg}(z) + \mathcal{L}^{(2)}_\text{tf}
+\mathcal{L} = \mathcal{L}^{(1)}_\text{tf} + \gamma\,\mathcal{L}^{(1)}_\text{roll} + \lambda\,\operatorname{SIGReg}(z) + \gamma^{(2)}_\text{tf}\,\mathcal{L}^{(2)}_\text{tf} + \gamma^{(2)}_\text{roll}\,\mathcal{L}^{(2)}_\text{roll}
 $$
 
 Planning is top-down, and the plan is redone after every executed step:
@@ -37,10 +37,19 @@ plan = planner(model, model.encode(obs[:, None]), model.encode(goal_images[:, No
 
 The macro-action encoder ends with a BatchNorm without affine parameters, so training macro-actions are standardized. The high-level planner can then sample them from $\mathcal N(0, I)$ and clip them to ±2. The paper initializes from, and clips to, the 2–98% quantiles of training macro-actions. With `shrink_every`, [`HierarchicalPlanner`](../../api/planning.md#torch_world.planning.HierarchicalPlanner) shortens the high horizon as the episode runs, as the paper does.
 
+The high level is trained with teacher forcing by default, as in the paper's Franka and Push-T setups. On Diverse Maze, where the paper measures its largest gain over flat planning, the high level is instead trained on its own autoregressive rollouts ($\gamma_\text{tf} = 0$, $\gamma_\text{roll} = 1$, Table 8). That is the setting the planner uses: it rolls the high level out over several macro-actions from one waypoint, so a teacher-forced high level compounds its errors. Pass `gamma_tf_high=0.0, gamma_roll_high=1.0` for the maze recipe:
+
+```python
+model = HWM(low, action_dim=2, stride=4, macro_dim=8, gamma_tf_high=0.0, gamma_roll_high=1.0, ...)
+# out also has "high_rollout_loss"
+```
+
+The paper also shortens the high horizon by one every `stride` low-level steps, down to 3 on Diverse Maze: `HierarchicalPlanner(high, low, shrink_every=4, min_horizon=3)` when replanning after every step.
+
 The paper differs from this implementation in a few ways:
 - **Encoder:** frozen pre-trained encoders (V-JEPA 2, DINOv2) or PLDM's, where here a LeWM encoder learns from pixels.
 - **Waypoints:** variable spacing with a transformer macro-action encoder on Franka and Push-T. The fixed stride and MLP encoder used here are the paper's maze setup.
-- **Planner:** MPPI in the maze, where this implementation runs CEM at both levels.
+- **Planner:** MPPI in the maze, where this implementation runs CEM at both levels. The maze's low-level cost averages the last three predicted latents against the subgoal, where `HierarchicalPlanner` scores the last one; for the final 15 steps the paper drops the high level and plans flat toward the goal with a horizon of 50.
 
 Call [`recompute_batchnorm`](../../guides/training.md#batchnorm-before-evaluation) before planning, as for LeWM.
 

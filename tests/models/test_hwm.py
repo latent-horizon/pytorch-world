@@ -74,3 +74,32 @@ def test_macro_actions_are_standardized():
     macro = model.encode_macro(torch.randn(64, 6, 2)).flatten(0, 1)
     assert torch.allclose(macro.mean(0), torch.zeros(3), atol=1e-5)
     assert torch.allclose(macro.std(0, unbiased=False), torch.ones(3), atol=1e-2)
+
+
+def test_high_level_rollout_loss():
+    """The paper's Diverse Maze recipe trains the high level on its own autoregressive rollouts."""
+    torch.manual_seed(0)
+    model = hwm()
+    model.gamma_tf_high, model.gamma_roll_high = 0.0, 1.0
+    pixels, actions = batch()
+    out = model(pixels, actions)
+    total = out["low_loss"] + out["rollout_loss"] + model.low.lamb * out["sigreg_loss"] + out["high_rollout_loss"]
+    assert torch.allclose(out["loss"], total)
+    model.zero_grad()
+    out["high_rollout_loss"].backward()
+    assert model.high.proj.weight.grad.abs().sum() > 0 and model.macro_encoder[0][0].weight.grad.abs().sum() > 0
+    assert model.low.encoder[1].weight.grad is None or model.low.encoder[1].weight.grad.abs().sum() == 0
+
+
+def test_high_level_rollout_loss_feeds_back_predictions():
+    """The first rollout step is teacher forcing; later steps start from predicted waypoints, not encoded ones."""
+    torch.manual_seed(0)
+    model = hwm().eval()
+    model.gamma_roll_high = 1.0
+    pixels, actions = batch()
+    z = model.encode(pixels).detach()
+    waypoints, macro = z[:, ::STRIDE], model.encode_macro(actions[:, : HISTORY * STRIDE])
+    roll = model.high.rollout(waypoints[:, :1], macro)[:, 1:]
+    tf = model.high.predict(waypoints[:, :-1], macro)
+    assert torch.allclose(roll[:, 0], tf[:, 0], atol=1e-5) and not torch.allclose(roll[:, 1:], tf[:, 1:])
+    assert "high_rollout_loss" in model(pixels, actions) and "high_rollout_loss" not in hwm()(pixels, actions)
