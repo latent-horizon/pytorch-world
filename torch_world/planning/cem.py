@@ -85,7 +85,11 @@ def fp32_cost(model, rollout: Tensor, goal: Tensor) -> Tensor:
     with fp32 weights scores in full precision; otherwise the inputs keep their dtype and only the result is upcast.
     """
     device = rollout.device.type
-    if torch.is_autocast_enabled(device):
+    try:
+        autocast = torch.is_autocast_enabled(device)
+    except TypeError:  # torch < 2.4 takes no device
+        autocast = torch.is_autocast_cpu_enabled() if device == "cpu" else torch.is_autocast_enabled()
+    if autocast:
         with torch.autocast(device, enabled=False):
             return model.cost(rollout.float(), goal.float()).float()
     return model.cost(rollout, goal).float()
