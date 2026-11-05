@@ -69,9 +69,11 @@ actions = planner(model, z, goal)                          # (B, horizon, action
 | `noise` | std of the Gaussian noise added to the latents after each step |
 | `goal_weight` | weight of the per-step goal term |
 | `sync_every`, `sync_steps`, `sync_lr` | how often and how hard actions are refined on the full rollout (`sync_every=0` disables it) |
+| `sync` | `"gd"`: Adam steps on the actions; `"cem"`: CEM around them (`sync_samples`, `sync_elites`), exploring most where the relaxed latents and the rollout disagree |
+| `warm_start` | start each call from the previous plan shifted by this many executed steps (set it to `execute`; call `reset` between episodes) |
 | `bounds` | clamp actions to the action space |
 
-`GRASP` takes the same `past_actions`, conditioning and `generator` as `CEM`. It needs a differentiable model and runs with gradients enabled even under `torch.no_grad`, without accumulating any into the model's parameters. See [the notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/planning/grasp.ipynb) for GRASP against CEM on Two-Rooms.
+`GRASP` takes the same `past_actions`, conditioning and `generator` as `CEM`. It needs a differentiable model and runs with gradients enabled even under `torch.no_grad`, without accumulating any into the model's parameters. The authors' LeWM Push-T result (46% against CEM's 22% at horizon 15, plan executed in full) uses `sync="cem", sync_steps=5`. GRASP's advantage is at long horizons; replanning a short horizon every chunk is where CEM is strongest. See [the notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/planning/grasp.ipynb) for GRASP against CEM on Two-Rooms.
 
 ## MPPI: planning for reward
 
