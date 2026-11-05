@@ -1,6 +1,8 @@
 import copy
 import math
+import warnings
 from itertools import pairwise
+from typing import ClassVar
 
 import torch
 import torch.nn.functional as F
@@ -132,7 +134,9 @@ class TDMPC2(WorldModel):
     side, ``(..., 2 * latent_dim)``. Dynamics move the observation's half and carry the goal's, so the consistency
     loss has no reason to drop the goal, and the reward, Q-functions and policy read it, as they read the task
     embedding in the reference's multi-task agent. Train on goals relabelled in hindsight, with rewards that measure
-    progress to them.
+    progress to them. Trained offline this way, the reference weights (consistency 20, reward and value 0.1) can
+    collapse the encoder to a near-constant latent, as nothing but the weak reward and value terms keeps latents
+    apart; ``TDMPC2.offline_goal_conditioned`` builds the model with the weights that work there.
 
     Hansen et al., "TD-MPC2: Scalable, Robust World Models for Continuous Control", ICLR 2024.
     Paper: https://arxiv.org/abs/2310.16828
@@ -194,6 +198,28 @@ class TDMPC2(WorldModel):
         self.target_qs = copy.deepcopy(self.qs).requires_grad_(False).eval()
         self.register_buffer("bins", torch.linspace(vmin, vmax, num_bins))
         self.register_buffer("q_scale", torch.ones(()))
+        if goal_conditioned and (consistency_coef, reward_coef, value_coef) == (20.0, 0.1, 0.1):
+            warnings.warn(
+                "TDMPC2 with goal_conditioned=True and the reference loss weights (consistency 20, reward 0.1, "
+                "value 0.1) can collapse its encoder when trained offline; use TDMPC2.offline_goal_conditioned or "
+                "pass consistency_coef=2, reward_coef=1, value_coef=1.",
+                stacklevel=2,
+            )
+
+    OFFLINE_GOAL_COEFS: ClassVar[dict[str, float]] = {"consistency_coef": 2.0, "reward_coef": 1.0, "value_coef": 1.0}
+
+    @classmethod
+    def offline_goal_conditioned(cls, encoder: nn.Module, action_dim: int, **kwargs) -> "TDMPC2":
+        """TD-MPC2 for offline goal-conditioned training: ``goal_conditioned`` and ``episodic``, with the loss
+        weights of ``OFFLINE_GOAL_COEFS`` (consistency 2, reward 1, value 1) unless ``kwargs`` override them.
+
+        Offline, with goals relabelled in hindsight and a reward of -1 per step until the goal, the reference
+        weights let the consistency loss, which a constant encoder drives to zero, outweigh the reward and value
+        terms 200 to 1, and the encoder collapses. Pair it with temporal-distance relabelling: goals a geometric
+        number of steps ahead in the same episode, some from other episodes, and termination at the goal.
+        """
+        kwargs = {"goal_conditioned": True, "episodic": True, **cls.OFFLINE_GOAL_COEFS, **kwargs}
+        return cls(encoder, action_dim, **kwargs)
 
     @staticmethod
     def episode_discount(episode_length: int, denom: float = 5, low: float = 0.95, high: float = 0.995) -> float:

@@ -91,13 +91,8 @@ def test_pixel_encoder_latent():
 
 
 def test_goal_conditioned_latents_carry_the_goal():
-    model = TDMPC2(
-        state_encoder(6, latent_dim=32, hidden_dim=16),
-        action_dim=2,
-        latent_dim=32,
-        mlp_dim=32,
-        goal_conditioned=True,
-        episodic=True,
+    model = TDMPC2.offline_goal_conditioned(
+        state_encoder(6, latent_dim=32, hidden_dim=16), action_dim=2, latent_dim=32, mlp_dim=32
     )
     obs, actions, rewards = batch()
     goal = torch.randn(8, 1, 6).expand(-1, 4, -1)
@@ -112,6 +107,25 @@ def test_goal_conditioned_latents_carry_the_goal():
     assert model.policy[0][0].in_features == model.termination[0][0].in_features == 64
     planner = MPPI(horizon=3, action_dim=2, num_samples=32, num_elites=4, num_pi_trajs=4, iterations=2)
     assert planner(model.eval(), z[:, :1]).shape == (8, 3, 2)
+
+
+def test_offline_goal_conditioned_weights():
+    encoder = state_encoder(6, latent_dim=32, hidden_dim=16)
+    with pytest.warns(UserWarning, match="collapse"):
+        TDMPC2(encoder, action_dim=2, latent_dim=32, mlp_dim=32, goal_conditioned=True)
+    model = TDMPC2.offline_goal_conditioned(encoder, action_dim=2, latent_dim=32, mlp_dim=32)
+    assert model.goal_conditioned and model.termination is not None
+    assert (model.consistency_coef, model.reward_coef, model.value_coef) == (2.0, 1.0, 1.0)
+    obs, actions, rewards = batch()
+    out = model(torch.cat([obs, obs], dim=2), actions, rewards)
+    assert torch.allclose(
+        out["loss"],
+        2 * out["consistency_loss"] + out["reward_loss"] + out["value_loss"] + out["termination_loss"] + out["pi_loss"],
+    )
+    assert (
+        TDMPC2.offline_goal_conditioned(encoder, action_dim=2, latent_dim=32, mlp_dim=32, value_coef=0.5).value_coef
+        == 0.5
+    )
 
 
 def test_episode_discount():
