@@ -86,6 +86,12 @@ plan = planner(model, model.encode(obs[:, None]), explore=True)  # (B, horizon, 
 
 `MPPI` remembers its last mean and starts the next call from it, shifted by one step: call `planner.reset()` between episodes. `explore=True` adds noise with the final std, as when collecting data.
 
+## Mixed precision
+
+Planning under `torch.autocast("cuda", dtype=torch.bfloat16)` is safe: the rollout runs in bf16, but `CEM`, `MPPI` and `GradientPlanner` (and so `HierarchicalPlanner`) score and rank candidates in fp32 and keep their sampling distribution in fp32. bf16 keeps about three significant digits, and candidate costs often differ by less than that, mostly when a large part of the distance to the goal does not depend on the actions. Ranked in bf16, the elites become noise: PLDM on Two-Rooms fell from 94% success in fp32 to 0%.
+
+Plans come back in the context latents' dtype. Ranking in fp32 removes the cost's rounding, not the rollout's: a model whose bf16 predictions are far from its fp32 ones can still plan differently, so compare against fp32 once before relying on bf16.
+
 ## Closed loop
 
 Model-predictive control: plan, execute the first action, observe, plan again. [`run_policy`](../api/envs.md) runs any `policy(observation) -> action` in an environment and returns the visited states.
