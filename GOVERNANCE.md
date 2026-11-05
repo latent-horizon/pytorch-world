@@ -41,7 +41,14 @@ The project aims to have at least two maintainers from different organizations.
 
 ## Releases
 
-Releases follow the process in the [README](README.md#releases). Any maintainer can cut a release.
+Releases follow [semantic versioning](https://semver.org); before 1.0, a minor version (0.x) may change public APIs, and its release notes say how to migrate. A minor release ships about once a month, or sooner when a model lands; patch releases ship as soon as a fix is merged. Only the latest release gets fixes (see [SECURITY.md](SECURITY.md)). The [changelog](https://latent-horizon.github.io/pytorch-world/changelog) collects the release notes.
+
+Any maintainer can cut a release:
+
+1. bump `__version__` in `torch_world/__init__.py` on `main`, through a pull request;
+2. tag that commit `vX.Y.Z` (or `vX.Y.ZrcN` for a pre-release) and push the tag.
+
+The [release workflow](.github/workflows/release.yml) then checks that the tag matches `__version__`, runs CI, builds the wheel and sdist, publishes them to [PyPI](https://pypi.org/project/torch-world/) by trusted publishing (no stored token, with attestations), creates the GitHub release with generated notes and rebuilds the docs.
 
 ## Code of conduct
 
