@@ -22,7 +22,7 @@ Models and planners compared on one task, with one dataset and one protocol. Eac
 | TD-MPC2 † | CNN, end to end | 19% [9, 35] | 0% [0, 11] | 3.1 min | 14 |
 | random actions | | 56% [39, 72] | 3% [1, 16] | | |
 
-† Trained offline on hindsight goals with the reference loss weights, the setting in which TD-MPC2's encoder collapses; its numbers show a limitation of using the method offline, not a fair comparison. See [offline, goal-conditioned training](../models/tdmpc/tdmpc2.md#offline-goal-conditioned-training).
+† Trained offline on hindsight goals, stacked as input channels, with the reference loss weights. Offline goal-conditioned training with those weights collapses TD-MPC2's encoder ([#45](https://github.com/latent-horizon/pytorch-world/issues/45)); this run was not checked for it. Its numbers show the limit of using the method offline, not a like-for-like comparison. See [offline, goal-conditioned training](../models/tdmpc/tdmpc2.md#offline-goal-conditioned-training).
 
 32 tasks of each kind. In the same room every world model but TD-MPC2 beats random actions, which reach a nearby goal by chance half of the time. Through the door PLDM is far ahead: its open-loop multi-step objective learns where the wall stops the agent, and planning with it costs a few milliseconds a step. The frozen web encoders plan well in the same room but less well across the wall, and their larger latents make planning 15 to 35 times slower than LeWM's. TD-MPC2 is built to learn online, from its own interaction; with 5 epochs of offline data and hindsight goals its value function does not learn to reach them, so it is listed for completeness, not as a fair measure of the method.
 
