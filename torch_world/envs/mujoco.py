@@ -77,6 +77,13 @@ def add_ghost(spec, geoms: list[dict]):
     return mujoco
 
 
+def close_renderers(renderers: dict) -> None:
+    """Close every ``mujoco.Renderer`` in ``renderers`` and empty it, so no GL context waits for garbage collection."""
+    while renderers:
+        _, renderer = renderers.popitem()
+        renderer.close()
+
+
 class MujocoEnv:
     """A batch of MuJoCo simulations, simulated sequentially on the CPU, with observations as rendered images.
 
@@ -114,10 +121,7 @@ class MujocoEnv:
         ``camera`` may be a named camera or a MuJoCo ``MjvCamera`` overview.
         """
         size, camera = size or self.size, camera or self.camera
-        key = (size, camera if isinstance(camera, (str, int)) else id(camera))
-        if key not in self.renderers:
-            self.renderers[key] = self.mujoco.Renderer(self.model, size, size)
-        renderer = self.renderers[key]
+        renderer = self._renderer(size)
         data = self.data if state is None else self._posed(state)
         goals = None if goal is None else goal.double().cpu().numpy()
         images = []
@@ -129,6 +133,26 @@ class MujocoEnv:
             renderer.scene.flags[self.mujoco.mjtRndFlag.mjRND_SHADOW] = self.render_shadows
             images.append(renderer.render())
         return torch.from_numpy(np.stack(images)).to(self.device).permute(0, 3, 1, 2).float() / 255
+
+    def _renderer(self, size: int):
+        """The environment's one renderer of ``size``; cameras are chosen per frame, so they share it.
+
+        Each ``mujoco.Renderer`` owns a native GL context (EGL on headless Linux). Keying them by camera object, or
+        creating them per episode, piles up contexts that stall a long evaluation process; ``close`` frees them.
+        """
+        if size not in self.renderers:
+            self.renderers[size] = self.mujoco.Renderer(self.model, size, size)
+        return self.renderers[size]
+
+    def close(self):
+        """Free the renderers' GL contexts; rendering again creates new ones."""
+        close_renderers(self.renderers)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
 
     def _posed(self, state: Tensor) -> list:
         out = []

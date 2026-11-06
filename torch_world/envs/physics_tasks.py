@@ -3,6 +3,7 @@
 import torch
 
 from torch_world.envs.benchmark import BenchmarkEnv, Transition
+from torch_world.envs.mujoco import close_renderers
 from torch_world.envs.physics_scenes import SCENES
 
 
@@ -292,6 +293,4 @@ class MujocoTask(BenchmarkEnv):
         return target
 
     def close(self):
-        for renderer in self._renderers.values():
-            renderer.close()
-        self._renderers.clear()
+        close_renderers(self._renderers)

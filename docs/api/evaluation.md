@@ -12,6 +12,8 @@
 
 ::: torch_world.evaluation.random_policy
 
+::: torch_world.evaluation.run_episodes
+
 ## RoboDojo
 
 ::: torch_world.evaluation.RoboDojoPolicy

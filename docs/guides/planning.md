@@ -122,3 +122,21 @@ result.distances      # per policy, (B, steps + 1) distance to the goal at every
 ```
 
 `plots.distances(result.distances, radius=env.radius)` and `plots.trajectories` draw the result; see [Figures](plots.md).
+
+### Long evaluations
+
+Each MuJoCo environment keeps one renderer per image size, shared by its cameras; `env.close()`, or a `with` block, frees their GL contexts. Close environments you are done with, and reuse one environment across episodes rather than making a new one per episode: on a headless GPU server, contexts that pile up in one process can stall it inside EGL.
+
+A stall in native code cannot be interrupted from Python. For a long evaluation, [`run_episodes`](../api/evaluation.md) runs `episode(seed)` for every seed in one worker process with a time limit per episode. A stalled episode is recorded as `"timeout"`, its worker is replaced and the next seed runs; each record is appended to a JSON Lines file as it finishes, and a rerun skips the seeds already there:
+
+```python
+from torch_world.evaluation import run_episodes
+
+def episode(seed):  # at the top level of a module; the worker imports it
+    ...             # load the model and environment once (e.g. with functools.cache), run one episode
+    return {"success": success}
+
+records = run_episodes(episode, range(48), timeout=600, path="episodes.jsonl")
+```
+
+The first episode's time limit also covers the worker's start-up, such as loading the model.

@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 from torch_world.envs.benchmark import BenchmarkEnv, Transition, seed_from_generator
-from torch_world.envs.mujoco import import_mujoco
+from torch_world.envs.mujoco import close_renderers, import_mujoco
 from torch_world.envs.registry import EnvSpec, get_spec
 
 
@@ -172,8 +172,7 @@ class MujocoLanes(BenchmarkEnv):
         return "Task at reset"
 
     def close(self):
-        for renderer in getattr(self, "_renderers", {}).values():
-            renderer.close()
+        close_renderers(getattr(self, "_renderers", {}))
         self._renderers = {}
         for env in getattr(self, "envs", ()):
             env.close()

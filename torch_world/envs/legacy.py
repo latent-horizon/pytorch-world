@@ -12,6 +12,7 @@ from importlib import import_module
 import torch
 
 from torch_world.envs.benchmark import BenchmarkEnv, Transition
+from torch_world.envs.mujoco import close_renderers
 from torch_world.envs.rendering import resolve_quality
 
 _MODULES = {"PointMass": "point_mass", "Macaw": "macaw", "PushT": "push_t", "RobotCube": "robot_cube"}
@@ -76,10 +77,7 @@ class LegacyEnvironment:
 
     def close(self):
         """Release renderers without constructing a benchmark view."""
-        for renderer in getattr(self, "renderers", {}).values():
-            renderer.close()
-        if hasattr(self, "renderers"):
-            self.renderers.clear()
+        close_renderers(getattr(self, "renderers", {}))
 
     def __enter__(self):
         return self
@@ -243,7 +241,4 @@ class LegacyTask(BenchmarkEnv):
         return lambda obs: ((self.goal - self.state) / self.world.max_step).clamp(-0.35, 0.35)
 
     def close(self):
-        for renderer in getattr(self.world, "renderers", {}).values():
-            renderer.close()
-        if self._physics:
-            self.world.renderers.clear()
+        close_renderers(getattr(self.world, "renderers", {}))
