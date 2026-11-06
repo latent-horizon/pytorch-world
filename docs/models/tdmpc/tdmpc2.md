@@ -45,6 +45,27 @@ Actions are in `[-1, 1]`. `encoder` is any module mapping observations `(N, ...)
 
 `forward` returns the world-model loss and the policy loss summed. Their gradients reach disjoint parameters, so one backward pass gives the same gradients as the reference's two separate updates, except that the policy loss sees the Q-functions from before this step's update, not after. For episodic tasks, pass `episodic=True` and a `terminated` mask `(B, H)`. A termination head then cuts TD targets and imagined returns. The reference's multi-task embeddings are not included.
 
+## Offline, goal-conditioned training
+
+TD-MPC2 is built to learn online, from rewards its own interaction collects. With `goal_conditioned=True`, observations carry a goal stacked on dimension 2 and every head reads its latent, so it can be trained offline on goals relabelled in hindsight. In that setting the reference loss weights (consistency 20, reward 0.1, value 0.1) collapse the encoder: on Two-Rooms its latents become nearly constant and planning reaches almost no goal.
+
+The reason is the consistency loss. Its target is the encoding of the next observation, made by the same encoder, so a constant encoder drives it to zero. Online, rewards vary from state to state, and the reward and value heads need latents that tell states apart. Offline, with a reward of -1 per step until the goal, the reward barely varies, and at 0.1 against 20 the reward and value terms are too weak to keep the latents apart.
+
+What works:
+
+- loss weights consistency 2, reward 1, value 1, so reward and value carry as much weight as consistency;
+- `episodic=True`, with the episode terminating when the goal frame is reached;
+- temporal-distance relabelling: the goal is a frame of the same episode a geometric number of steps ahead (at least the window, with the parameter `1 - discount`), or, 30% of the time, a frame of another episode.
+
+`TDMPC2.offline_goal_conditioned(encoder, action_dim, ...)` builds the model with the first two. Constructing `TDMPC2(..., goal_conditioned=True)` with the reference weights warns. These settings avoid the collapse but don't make the setting TD-MPC2's own. Read its numbers in offline goal-reaching benchmarks as the limit of using the method offline, not as a like-for-like comparison with the JEPA world models. To watch for collapse, track `torch_world.metrics.rankme` of the encoder's latents on held-out frames during training, next to the consistency loss: a collapsing run shows the rank falling while the consistency loss goes to zero.
+
+```python
+model = TDMPC2.offline_goal_conditioned(pixel_encoder(), action_dim=2, discount=TDMPC2.episode_discount(60))
+out = model(torch.cat([obs, goal], dim=2), actions, rewards, terminated)   # goal: (B, H + 1, C, 64, 64)
+```
+
+## Planning
+
 Planning: `estimate_value(z, actions)` is the discounted sum of predicted rewards plus the mean of two Q-values at the last imagined latent. [`MPPI`](../../guides/planning.md#mppi-planning-for-reward) scores sequences with it.
 
 ## Reference
