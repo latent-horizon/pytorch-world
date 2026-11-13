@@ -11,6 +11,7 @@
   <a href="https://latent-horizon.github.io/pytorch-world/"><img alt="Docs" src="https://github.com/latent-horizon/pytorch-world/actions/workflows/docs.yml/badge.svg"></a>
   <a href="https://huggingface.co/latenthorizon"><img alt="Hugging Face checkpoints" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-checkpoints-ffd21e"></a>
   <a href="LICENSE.md"><img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue"></a>
+  <a href="PyPi Downloads"><img alt="License" src="https://img.shields.io/pypi/dm/torch-world"></a>
   <a href="https://colab.research.google.com/github/latent-horizon/pytorch-world/blob/main/examples/quickstart.ipynb"><img alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 </p>
 
