@@ -11,9 +11,11 @@ runs as a single plain process. The three steps share an output layout::
 Wan 2.1 ``VideoVAE`` and writes its own shards, so encoding scales with the number of GPUs. ``train`` streams the
 shards through a ``DistributedSampler`` and wraps ``DreamZero`` in DDP or FSDP2 (``--strategy fsdp`` shards every
 transformer block and the optimizer state across ranks, for models that do not fit one GPU), with bf16, gradient
-accumulation, warmup + cosine learning rate and resumable checkpoints. ``evaluate`` splits goal-reaching episodes
-across ranks and gathers their success. Only ``prepare`` and ``evaluate`` know the environment; a dataset from any
-other source only needs shards with ``latents``, ``actions`` and, for goal-conditioned models, ``goal``.
+accumulation, warmup + cosine learning rate and resumable checkpoints. ``--monitor tensorboard|rerun`` streams the
+logged losses to a live viewer, and ``--vis-every N`` also plays one clip's true and predicted next chunk as video.
+``evaluate`` splits goal-reaching episodes across ranks and gathers their success. Only ``prepare`` and ``evaluate``
+know the environment; a dataset from any other source only needs shards with ``latents``, ``actions`` and, for
+goal-conditioned models, ``goal``.
 """
 
 import argparse
@@ -30,6 +32,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 
 from torch_world.datasets import LatentClips, write_latent_shard
 from torch_world.models import DreamZero
+from torch_world.utils import NullMonitor, open_monitor
 
 MODEL_KEYS = (
     "patch_size",
@@ -233,6 +236,12 @@ def swapped_state(model, optimizer, weights, ema) -> dict:
 
 def train(args):
     rank, world, device = setup()
+    if args.vis_every and world > 1 and args.strategy == "fsdp":
+        raise ValueError(
+            "--vis-every is not supported with --strategy fsdp: outside forward, sharded weights are unreadable"
+        )
+    if args.vis_every and args.monitor == "none":
+        raise ValueError("--vis-every needs a monitor: --monitor tensorboard or rerun")
     torch.manual_seed(args.seed)
     data = LatentClips(args.data)
     config = json.loads((Path(args.data) / "config.json").read_text())
@@ -240,6 +249,7 @@ def train(args):
     config["goal_conditioned"] = not args.no_goal
     model = build_model(config, device)
     params = sum(p.numel() for p in model.parameters())
+    raw = model  # the unwrapped model, for --vis-every sampling on rank 0
     model = wrap(model, args.strategy, device)
     optimizer = torch.optim.AdamW(
         [p for p in model.parameters() if p.requires_grad],
@@ -283,6 +293,35 @@ def train(args):
         torch.autocast("cuda", torch.bfloat16) if device.type == "cuda" and args.strategy == "ddp" else nullcontext()
     )
     log = (output / "log.jsonl").open("a") if rank == 0 else None
+    monitor = open_monitor(args.monitor, output / "tensorboard", args.rerun) if rank == 0 else NullMonitor()
+    clip, vae = None, None
+    if rank == 0 and args.vis_every:
+        clip = data[0]  # one fixed clip, so the rollout can be compared across steps
+        if args.vis_vae == "wan":
+            from torch_world.nn import VideoVAE
+
+            vae = VideoVAE.from_pretrained().to(device)
+        else:
+            from torch_world.nn import ConvVideoAE
+
+            vae = ConvVideoAE(config["latent_channels"]).to(device).eval()
+
+    @torch.no_grad()
+    def visualize(step: int):
+        """Log the true and the predicted next chunk of ``clip`` to the monitor, decoded as video."""
+        raw.eval()
+        z, actions = clip["latents"][None].to(device), clip["actions"][None].to(device)
+        goal = clip["goal"][None].to(device) if "goal" in clip and raw.goal_conditioned else None
+        K, H = raw.chunk_frames, raw.chunk_size
+        context, past = z[:, : 1 + K], actions[:, :H]
+        true, true_actions = z[:, 1 + K : 1 + 2 * K], actions[:, H : 2 * H]
+        generator = torch.Generator(device).manual_seed(1234)
+        predicted = raw.predict_future(context, true_actions, goal, past_actions=past, generator=generator)
+        monitor.scalar(step, "vis/dynamics_latent_mse", (predicted - true).square().mean().item())
+        monitor.video(step, "rollout/true", vae.decode(true))
+        monitor.video(step, "rollout/predicted", vae.decode(predicted))
+        raw.train()
+
     tic, epoch = time.time(), step // per_epoch
     while step < args.steps:
         sampler.set_epoch(epoch)
@@ -325,9 +364,14 @@ def train(args):
                         "seconds": time.time() - tic,
                         **totals,
                     }
+                    for k, v in record.items():
+                        if k != "step":
+                            monitor.scalar(step, k, v)
                     log.write(json.dumps(record) + "\n")
                     log.flush()
                     print(json.dumps(record), flush=True)
+            if rank == 0 and args.vis_every and (step % args.vis_every == 0 or step == args.steps):
+                visualize(step)
             if step % args.save_every == 0 or step == args.steps:
                 model_state, optimizer_state = full_state(model, optimizer)
                 ema_state = model_state if ema is None else swapped_state(model, optimizer, weights, ema)
@@ -341,6 +385,7 @@ def train(args):
                 if dist.is_initialized():
                     dist.barrier()
         epoch += 1
+    monitor.close()
     teardown()
 
 
@@ -493,6 +538,30 @@ def parser() -> argparse.ArgumentParser:
     tr.add_argument("--workers", type=int, default=4)
     tr.add_argument("--log-every", type=int, default=50)
     tr.add_argument("--save-every", type=int, default=1000)
+    tr.add_argument(
+        "--monitor",
+        choices=("none", "tensorboard", "rerun"),
+        default="none",
+        help="live monitoring on rank 0: 'tensorboard' writes event files to <output>/tensorboard, 'rerun' streams to a viewer",
+    )
+    tr.add_argument(
+        "--rerun",
+        default="spawn",
+        metavar="DESTINATION",
+        help="Rerun destination: 'spawn', 'rerun+http://host:9876/proxy' for a remote viewer, or a .rrd file path",
+    )
+    tr.add_argument(
+        "--vis-every",
+        type=int,
+        default=0,
+        help="every N steps, decode the true and the predicted next chunk of one clip as video; needs --monitor",
+    )
+    tr.add_argument(
+        "--vis-vae",
+        choices=("wan", "conv"),
+        default="wan",
+        help="decoder for --vis-every: the pre-trained Wan VAE, or a small untrained ConvVideoAE for synthetic data",
+    )
     tr.add_argument("--seed", type=int, default=0)
     tr.add_argument("--patch-size", type=int, default=2)
     tr.add_argument("--dim", type=int, default=768)
