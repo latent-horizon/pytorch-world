@@ -13,6 +13,40 @@ for batch in loader:
 
 The other keys of `out` are the loss components, ready to log.
 
+## Monitoring
+
+A monitor is anything with `scalar(step, name, value)`, `video(step, name, tensor)` and `close()` — the [`Monitor`](../api/utils.md) protocol. `fit` sends every logged loss to one, and the DreamZero pipeline streams its records to one live. Two backends ship as optional extras: TensorBoard for curves, Rerun for curves *and* video.
+
+```bash
+pip install "torch-world[tensorboard]"   # curves, view with: tensorboard --logdir runs
+pip install "torch-world[rerun]"         # curves and video, view with: rerun
+```
+
+```python
+from torch_world.utils import TensorBoardMonitor, fit
+
+log = fit(model, loader, epochs=10, monitor=TensorBoardMonitor("runs/pointmass"))
+```
+
+`RerunMonitor` also plays videos, which is where watching a world model pays off. Its argument picks where the viewer is:
+
+```python
+from torch_world.utils import RerunMonitor
+
+RerunMonitor("spawn")                              # a viewer on this machine
+RerunMonitor("runs/pointmass.rrd")                 # record to file, open later with: rerun runs/pointmass.rrd
+RerunMonitor("rerun+http://laptop:9876/proxy")     # stream to the viewer on your laptop
+```
+
+The last one is the remote recipe: run `rerun` on your laptop, note the port it serves (9876 by default), and point the training process on the GPU box at it. Scalars land on the `step` timeline; every `video` call under the same name appends its frames to the `frame` timeline, so one entity plays the whole history.
+
+The DreamZero train command wires both in with `--monitor`, and `--vis-every N` makes monitoring worth opening: every `N` steps, rank 0 decodes one fixed clip's *true* and *predicted* next chunk through the video autoencoder and streams both, so a long run can be watched as the model learns to imagine.
+
+```sh
+python -m torch_world.benchmarks.dreamzero train --data runs/dz/data --output runs/dz/train \
+    --monitor rerun --rerun runs/dz/train/monitor.rrd --vis-every 500
+```
+
 ## Data from episodes
 
 [`TrajectoryDataset`](../api/datasets.md) turns episodes `(N, T, ...)` into sliding windows of `window` steps, one dict per window. World models usually train on `history + 1` frames.

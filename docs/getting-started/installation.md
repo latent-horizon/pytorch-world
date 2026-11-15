@@ -33,6 +33,8 @@ uv sync
 | `robocasa` | `pyarrow`, `av` | reading [RoboCasa demonstrations](../datasets/trajectories.md#robocasa-demonstrations); RoboCasa itself installs from source |
 | `robodojo` | `h5py` | reading [RoboDojo episodes](../datasets/trajectories.md#robodojo-episodes) |
 | `wam` | `diffusers`, `accelerate` | the pre-trained Wan 2.1 [`VideoVAE`](../models/wam/dreamzero.md) of DreamZero |
+| `tensorboard` | `tensorboard` | live [training curves](../guides/training.md#monitoring) with `TensorBoardMonitor` |
+| `rerun` | `rerun-sdk` | live [curves and rollout videos](../guides/training.md#monitoring) with `RerunMonitor` |
 | `test` | `pytest` | running the test suite |
 
 ```bash
