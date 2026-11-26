@@ -35,7 +35,7 @@ The LeWM gap is the same for the authors' checkpoint: in the reference simulator
 | Variational JEPA | toy linear system only, signal R² 0.905 at σ = 8 | [action/varjepa](../examples/action/varjepa.ipynb): variance–error correlation 0.52; planning on the mean 47%, on samples 12% | calibration of the predicted variance, and planning, which the paper does not test |
 | HWM | Diverse Maze, longest goals: 83% hierarchical against 44% flat | [action/hwm](../examples/action/hwm.ipynb): across the wall, hierarchical 22% against flat 72% | hierarchical against flat CEM on the same model |
 | H-JEPA | FourRoom: 81.3% (2 levels) against 40.7% (flat LeWM) | [action/hjepa](../examples/action/hjepa.ipynb): across the wall, hierarchical 97% against flat 91% | hierarchical against flat gradient planning |
-| GRASP | Push-T open loop, horizon 50: 43.4% against CEM 30.2% | [planning/grasp](../examples/planning/grasp.ipynb): Two-Rooms, GRASP 22% against CEM 62% | GRASP against CEM on one LeWM |
+| GRASP | Push-T open loop, horizon 50: 43.4% against CEM 30.2% | [planning/grasp](../examples/planning/grasp.ipynb): Two-Rooms, GRASP 22% against CEM 62% | GRASP against CEM on one LeWM; a different regime from the paper's, see [below](#grasp-against-cem) |
 | AdaJEPA | PointMaze unseen layouts: 53.3% frozen to 78.7% adapted with GD (Wang et al., Table 1) | [action/adajepa](../examples/action/adajepa.ipynb): Two-Rooms across the wall, frozen to adapted: clean 44% to **69%** [51, 82], tinted floor 41% to **72%** [55, 84], 3 distractors 31% to **47%** [31, 64] (random 3 to 9%) | adapting while planning; most of the gain comes in the clean rooms, and the floor tint does not hurt this model |
 | Causal-JEPA | Push-T: 88.7% (OC-JEPA 76.0%, DINO-WM 91.3%); CLEVRER counterfactual 68.8% | [action/causaljepa](../examples/action/causaljepa.ipynb): hidden pushed disc 6.5 px (copy 7.9, OC-JEPA 16.3); push tasks 6% [2, 15] (OC-JEPA 8%, LeWM 9%, random 0%) | object masking on a pushing scene with its own slot encoder; the planning gain is not reproduced |
 | CF-JEPA | Two-Room with 2 distractors: 95% (LeWM 33%) | [action/cfjepa](../examples/action/cfjepa.ipynb): Two-Rooms with 3 drifting discs, same room: 84% [74, 91] (LeWM 94%); 5 discs: **89%** [79, 95] (LeWM 77%); other room: 16% [9, 26] (LeWM 44%) | the controllable part keeps out most of the discs' variance (21% against LeWM's 62%); it helps only with 5 discs |
@@ -45,3 +45,16 @@ The LeWM gap is the same for the authors' checkpoint: in the reference simulator
 | DreamerV3 | Atari, DMC, Crafter, Minecraft and others with fixed hyperparameters | [action/dreamerv3](../examples/action/dreamerv3.ipynb): Two-Rooms goal reaching, other room: actor (hindsight goals) 41% [26, 58], CEM on the model state 16% [7, 32], random 3% [1, 16] | the RSSM and imagined actor-critic at a small size; CEM on the model state is an addition |
 
 Comparisons across models on one task are in the [benchmark results](results.md).
+
+## GRASP against CEM
+
+The paper puts GRASP ahead of CEM (43.4% against 30.2% on Push-T, open loop, horizon 50); our notebook has it behind (22% against 62% on Two-Rooms). `GRASP` was checked line by line against the authors' [pseudocode](https://github.com/michael-psenka/grasp/blob/main/grasp_pseudocode.py) and [LeWM adapter](https://github.com/michael-psenka/le-wm-grasp/blob/main/grasp_solver.py): the same loss (per-step latent MSE for the dynamics and the goal terms, summed over steps), stop-gradient on the start latents, zero actions and virtual latents on the line to the goal, Adam with the adapter's learning rates, latent noise after every step, a sync every 50 steps that restarts the joint optimizer, and the last plan returned. Two parts were missing and are now there: the adapter's CEM sync (`sync="cem"`), and stable-worldmodel's warm start from the unexecuted part of the previous plan (`warm_start`).
+
+The gap is then the setting, not the algorithm:
+
+- **Horizon and replanning.** GRASP is built for long horizons, where CEM's samples spread too thin; the paper's gain is at horizon 50, open loop, and the adapter's own LeWM result (46% against 22%) at horizon 15 with the whole plan executed, and with `sync="cem"`. The notebook plans 5 chunks and replans after every one, which is CEM's best regime: a short search, corrected every step.
+- **Greedy first steps.** The goal term pulls every predicted latent toward the goal. Across the wall in Two-Rooms that points the first action at the wall, and under replanning the first action is all that runs.
+- **Latent scale.** The learning rates and the noise are the adapter's, set for the authors' LeWM; their effect depends on the scale of the latents, which differs on this smaller model (see [results](results.md#planners)).
+
+Still to run: Push-T open loop at horizon 50 with the paper's settings, and Two-Rooms with `sync="cem"`, `warm_start=1` and a longer horizon executed in full.
+
