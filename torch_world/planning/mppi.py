@@ -1,6 +1,8 @@
 import torch
 from torch import Tensor
 
+from torch_world.planning.cem import fp32_cost
+
 
 class MPPI:
     """TD-MPC2's planner: model predictive path integral control over returns estimated in latent space.
@@ -14,7 +16,8 @@ class MPPI:
     ``model.cost`` of its rollout from the context, and no trajectories come from a policy prior. ``temperature`` then
     scales costs, so it depends on their range.
 
-    Consecutive calls start from the previous mean shifted by one step; call ``reset`` between episodes.
+    Consecutive calls start from the previous mean shifted by one step; call ``reset`` between episodes. Values are
+    ranked and weighted in fp32 even under ``torch.autocast``, where bf16 would blur close candidates.
     """
 
     def __init__(
@@ -60,26 +63,26 @@ class MPPI:
             z = z[:, -1].repeat_interleave(S, dim=0)
         else:
             z, goal = z.repeat_interleave(S, dim=0), goal.repeat_interleave(S, dim=0)
-        actions = z.new_empty(B, S, H, A)
+        actions = z.new_empty(B, S, H, A, dtype=torch.float32)
         if P:
             zp = z.view(B, S, -1)[:, :P].flatten(0, 1)
             for t in range(H):
                 actions[:, :P, t] = model.pi(zp)[0].view(B, P, A)
                 if t < H - 1:
-                    zp = model.predict(zp, actions[:, :P, t].flatten(0, 1))
+                    zp = model.predict(zp, actions[:, :P, t].flatten(0, 1).to(z.dtype))
 
-        mean = z.new_zeros(B, H, A)
+        mean = z.new_zeros(B, H, A, dtype=torch.float32)
         if self.mean is not None and self.mean.shape == mean.shape:
             mean[:, :-1] = self.mean[:, 1:]
         std = torch.full_like(mean, self.max_std)
         batch = torch.arange(B, device=z.device)[:, None]
         for _ in range(self.iterations):
-            noise = torch.randn(B, S - P, H, A, device=z.device, dtype=z.dtype, generator=generator)
+            noise = torch.randn(B, S - P, H, A, device=z.device, generator=generator)
             actions[:, P:] = (mean[:, None] + std[:, None] * noise).clamp(-1, 1)
             if goal is None:
-                value = model.estimate_value(z, actions.flatten(0, 1))
+                value = model.estimate_value(z, actions.flatten(0, 1).to(z.dtype)).float()
             else:
-                value = -model.cost(model.rollout(z, actions.flatten(0, 1)), goal)
+                value = -fp32_cost(model, model.rollout(z, actions.flatten(0, 1).to(z.dtype)), goal)
             value = value.nan_to_num(0).view(B, S)
             elite_value, idx = value.topk(self.num_elites, dim=1)
             elites = actions[batch, idx]
@@ -92,5 +95,5 @@ class MPPI:
         choice = torch.multinomial(score[..., 0, 0], 1, generator=generator)
         plan = elites[batch, choice][:, 0]
         if explore:
-            plan = plan + std * torch.randn(plan.shape, device=z.device, dtype=z.dtype, generator=generator)
-        return plan.clamp(-1, 1)
+            plan = plan + std * torch.randn(plan.shape, device=z.device, generator=generator)
+        return plan.clamp(-1, 1).to(z.dtype)

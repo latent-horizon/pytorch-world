@@ -69,3 +69,53 @@ def test_mppi_reaches_goal_latent_with_any_world_model():
     actions = plan(Integrator(), z, goal, generator=torch.Generator().manual_seed(0))
     assert actions.shape == (2, 4, 2) and actions.abs().max() <= 1
     assert (actions.sum(1) - goal).norm(dim=-1).max() < 0.1
+
+
+class LinearIntegrator(WorldModel):
+    """Actions move the first ``action_dim`` latent dims, through an ``nn.Linear`` that ``torch.autocast`` runs in bf16."""
+
+    def __init__(self, dim: int, action_dim: int):
+        super().__init__()
+        self.net = torch.nn.Linear(dim + action_dim, dim, bias=False)
+        with torch.no_grad():
+            self.net.weight.copy_(torch.cat([torch.eye(dim), torch.eye(dim, action_dim)], 1))
+
+    def predict(self, z, actions):
+        return self.net(torch.cat([z, actions], -1))
+
+
+def offset_goal_problem():
+    # Most of the distance to the goal lies in latent dims no action reaches, so every cost is ~675 plus less than 1;
+    # bf16's spacing there is 4 and all candidates tie. Context and goal are bf16, as an encoder under autocast makes them.
+    z, goal = torch.zeros(2, 1, 8), torch.full((2, 8), 30.0)
+    goal[:, :2] = torch.tensor([[1.5, -1.0], [-0.5, 2.0]])
+    return LinearIntegrator(8, 2), z, goal
+
+
+def test_cem_ranks_costs_in_fp32_under_bf16_autocast():
+    model, z, goal = offset_goal_problem()
+
+    def plan(z, goal):
+        cem = CEM(horizon=3, action_dim=2, num_samples=200, num_elites=20, iterations=8, bounds=(-1, 1))
+        return cem(model, z, goal, generator=torch.Generator().manual_seed(0))
+
+    reference = plan(z, goal)
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        mixed = plan(z.bfloat16(), goal.bfloat16())
+    assert torch.allclose(reference.sum(1), goal[:, :2], atol=0.05)
+    assert torch.allclose(mixed.float().sum(1), goal[:, :2], atol=0.05)
+
+
+def test_mppi_ranks_costs_in_fp32_under_bf16_autocast():
+    model, z, goal = offset_goal_problem()
+
+    def plan(z, goal):
+        mppi = MPPI(horizon=3, action_dim=2, num_samples=200, num_elites=20, num_pi_trajs=0, temperature=20.0)
+        mppi(model, z, goal, generator=torch.Generator().manual_seed(0))
+        return mppi.mean
+
+    reference = plan(z, goal)
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        mixed = plan(z.bfloat16(), goal.bfloat16())
+    assert torch.allclose(reference.sum(1), goal[:, :2], atol=0.1)
+    assert torch.allclose(mixed.sum(1), goal[:, :2], atol=0.1)
