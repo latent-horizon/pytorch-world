@@ -135,3 +135,83 @@ def test_warm_start_shifts_the_previous_plan():
     model = Initial()
     cold(model, z, goal)
     assert (model.first == 0).all()
+
+
+def test_cem_sync_respects_binding_bounds():
+    model, z, goal = problem()
+    goal = goal * 50
+    plan = GRASP(
+        horizon=4,
+        action_dim=2,
+        iterations=20,
+        sync_every=10,
+        sync="cem",
+        sync_steps=5,
+        lr_actions=0.1,
+        bounds=(-0.3, 0.3),
+    )
+    actions = plan(model, z, goal, generator=torch.Generator().manual_seed(0))
+    assert actions.shape == (3, 4, 2) and not actions.requires_grad
+    assert actions.abs().max() <= 0.3 + 1e-6
+
+
+def test_cem_sync_ranks_costs_in_fp32_under_bf16_autocast():
+    class OffsetIntegrator(WorldModel):
+        def __init__(self):
+            super().__init__()
+            self.net = nn.Linear(10, 8, bias=False)
+            with torch.no_grad():
+                self.net.weight.copy_(torch.cat([torch.eye(8), torch.eye(8, 2)], 1))
+
+        def predict(self, z, actions):
+            return self.net(torch.cat([z, actions], -1))
+
+    model = OffsetIntegrator()
+    z, goal = torch.zeros(2, 1, 8), torch.full((2, 8), 30.0)
+    goal[:, :2] = torch.tensor([[1.5, -1.0], [-0.5, 2.0]])
+
+    def run(z_in, goal_in):
+        plan = GRASP(
+            horizon=3,
+            action_dim=2,
+            iterations=1,
+            sync_every=1,
+            sync="cem",
+            sync_steps=8,
+            sync_samples=200,
+            sync_elites=20,
+            lr_actions=0.0,
+            lr_states=0.0,
+            noise=0.0,
+            bounds=(-1, 1),
+        )
+        return plan(model, z_in, goal_in, generator=torch.Generator().manual_seed(0))
+
+    reference = run(z, goal)
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        mixed = run(z.bfloat16(), goal.bfloat16())
+    assert mixed.dtype == torch.bfloat16
+    assert torch.allclose(reference.sum(1), goal[:, :2], atol=0.1)
+    assert torch.allclose(mixed.float().sum(1), goal[:, :2], atol=0.1)
+
+
+def test_warm_start_shifts_full_plan_and_isolates_returned_tensor():
+    class Recorder(Linear):
+        def __init__(self):
+            super().__init__()
+            self.seen = []
+
+        def rollout(self, z, actions, **cond):
+            self.seen.append(actions.detach().clone())
+            return super().rollout(z, actions, **cond)
+
+    _, z, goal = problem(batch=2)
+    plan = GRASP(horizon=4, action_dim=2, iterations=10, sync_every=0, lr_actions=0.05, noise=0.0, warm_start=1)
+    first = plan(Linear(), z, goal)
+    expected = torch.zeros_like(first)
+    expected[:, :-1] = first[:, 1:]
+    first.fill_(99.0)
+    recorder = Recorder()
+    plan(recorder, z, goal)
+    initial = torch.cat([recorder.seen[0], recorder.seen[1].view(2, 3, 2)], dim=1)
+    assert torch.equal(initial, expected)

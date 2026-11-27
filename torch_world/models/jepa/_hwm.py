@@ -141,9 +141,12 @@ class HWM(WorldModel):
         sigreg = self.low.sigreg(z.transpose(0, 1))
         waypoints = z.detach()[:, :: self.stride]
         macro = self.encode_macro(actions[:, : (waypoints.size(1) - 1) * self.stride])
-        tf_high = self.high.distance(self.high.predict(waypoints[:, :-1], macro), waypoints[:, 1:]).mean()
-        out = {"low_loss": tf_low, "rollout_loss": roll_low, "sigreg_loss": sigreg, "high_loss": tf_high}
-        loss = tf_low + self.gamma_roll * roll_low + self.low.lamb * sigreg + self.gamma_tf_high * tf_high
+        out = {"low_loss": tf_low, "rollout_loss": roll_low, "sigreg_loss": sigreg}
+        loss = tf_low + self.gamma_roll * roll_low + self.low.lamb * sigreg
+        if self.gamma_tf_high:
+            tf_high = self.high.distance(self.high.predict(waypoints[:, :-1], macro), waypoints[:, 1:]).mean()
+            loss = loss + self.gamma_tf_high * tf_high
+            out["high_loss"] = tf_high
         if self.gamma_roll_high:
             roll_high = self.high.distance(self.high.rollout(waypoints[:, :1], macro)[:, 1:], waypoints[:, 1:]).mean()
             loss = loss + self.gamma_roll_high * roll_high

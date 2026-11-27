@@ -2,7 +2,7 @@ import torch
 from torch import Tensor
 
 from torch_world.models.base import WorldModel
-from torch_world.planning.cem import _repeat
+from torch_world.planning.cem import _repeat, fp32_cost
 
 
 class GRASP:
@@ -128,8 +128,8 @@ class GRASP:
                     else:
                         self._sync(model, z, goal, past, actions, cond)
                     opt = joint_optimizer()
-        self.plan = actions.detach()
-        return self.plan
+        self.plan = actions.detach().clone()
+        return actions.detach()
 
     def _sync(self, model, z, goal, past, actions, cond):
         """Adam on the actions alone against the cost of a full rollout from the context."""
@@ -146,24 +146,25 @@ class GRASP:
     def _cem_sync(self, model, z, goal, past, actions, states, cond, generator):
         """CEM around the actions, with a first variance per step from the gap between rollout and virtual latents."""
         B, H, A, N, T0 = z.size(0), self.horizon, self.action_dim, self.sync_samples, z.size(1)
-        mean = actions.detach().clone()
-        rollout = model.rollout(z, torch.cat([past, mean], dim=1), **cond)
+        mean = actions.detach().float().clone()
+        rollout = model.rollout(z, torch.cat([past, mean.to(past.dtype)], dim=1), **cond).float()
         if H > 1:
-            gap = (rollout[:, T0 : T0 + H - 1] - states).square().flatten(2).mean(2)
+            gap = (rollout[:, T0 : T0 + H - 1] - states.float()).square().flatten(2).mean(2)
             gap = torch.cat([gap.mean(1, keepdim=True), gap], dim=1)
         else:
-            gap = (rollout[:, -1] - goal).square().flatten(1).mean(1, keepdim=True)
+            gap = (rollout[:, -1] - goal.float()).square().flatten(1).mean(1, keepdim=True)
         var = (self.sync_var_scale * gap + self.sync_var_min)[..., None]
         zs, goals, pasts = _repeat(z, N), _repeat(goal, N), _repeat(past, N)
         conds = {k: _repeat(v, N) for k, v in cond.items()}
         batch = torch.arange(B, device=z.device)[:, None]
         for _ in range(self.sync_steps):
-            noise = torch.randn(B, N, H, A, device=z.device, dtype=z.dtype, generator=generator)
+            noise = torch.randn(B, N, H, A, device=z.device, dtype=torch.float32, generator=generator)
             samples = mean[:, None] + noise * var[:, None].sqrt()
             if self.bounds is not None:
                 samples = samples.clamp(*self.bounds)
-            cost = model.cost(model.rollout(zs, torch.cat([pasts, samples.flatten(0, 1)], dim=1), **conds), goals)
+            rollouts = model.rollout(zs, torch.cat([pasts, samples.flatten(0, 1).to(pasts.dtype)], dim=1), **conds)
+            cost = fp32_cost(model, rollouts, goals)
             elites = samples[batch, cost.view(B, N).topk(self.sync_elites, largest=False).indices]
             mean = elites.mean(1)
             var = elites.var(1).mean(-1, keepdim=True) + self.sync_var_min
-        actions.copy_(mean)
+        actions.copy_(mean.to(actions.dtype))

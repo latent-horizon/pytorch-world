@@ -103,3 +103,18 @@ def test_high_level_rollout_loss_feeds_back_predictions():
     tf = model.high.predict(waypoints[:, :-1], macro)
     assert torch.allclose(roll[:, 0], tf[:, 0], atol=1e-5) and not torch.allclose(roll[:, 1:], tf[:, 1:])
     assert "high_rollout_loss" in model(pixels, actions) and "high_rollout_loss" not in hwm()(pixels, actions)
+
+
+def test_high_level_rollout_only_skips_teacher_forcing_and_supports_longer_windows():
+    torch.manual_seed(0)
+    model = hwm()
+    model.gamma_tf_high, model.gamma_roll_high = 0.0, 1.0
+    T = (HISTORY + 2) * STRIDE + 1
+    pixels, actions = torch.randn(4, T, 3, 8, 8), torch.randn(4, T, 2)
+    out = model(pixels, actions)
+    assert "high_loss" not in out and "high_rollout_loss" in out
+    assert all(v.isfinite() for v in out.values())
+    total = out["low_loss"] + out["rollout_loss"] + model.low.lamb * out["sigreg_loss"] + out["high_rollout_loss"]
+    assert torch.allclose(out["loss"], total)
+    out["loss"].backward()
+    assert model.high.proj.weight.grad.abs().sum() > 0 and model.macro_encoder[0][0].weight.grad.abs().sum() > 0
