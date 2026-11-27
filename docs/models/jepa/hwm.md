@@ -37,12 +37,14 @@ plan = planner(model, model.encode(obs[:, None]), model.encode(goal_images[:, No
 
 The macro-action encoder ends with a BatchNorm without affine parameters, so training macro-actions are standardized. The high-level planner can then sample them from $\mathcal N(0, I)$ and clip them to ±2. The paper initializes from, and clips to, the 2–98% quantiles of training macro-actions. With `shrink_every`, [`HierarchicalPlanner`](../../api/planning.md#torch_world.planning.HierarchicalPlanner) shortens the high horizon as the episode runs, as the paper does.
 
-The high level is trained with teacher forcing by default, as in the paper's Franka and Push-T setups. On Diverse Maze, where the paper measures its largest gain over flat planning, the high level is instead trained on its own autoregressive rollouts ($\gamma_\text{tf} = 0$, $\gamma_\text{roll} = 1$, Table 8). That is the setting the planner uses: it rolls the high level out over several macro-actions from one waypoint, so a teacher-forced high level compounds its errors. Pass `gamma_tf_high=0.0, gamma_roll_high=1.0` for the maze recipe:
+The high level is trained with teacher forcing by default, as in the paper's Franka and Push-T setups. On Diverse Maze, where the paper measures its largest gain over flat planning, the high level is instead trained on its own autoregressive rollouts ($\gamma_\text{tf} = 0$, $\gamma_\text{roll} = 1$, Table 8). That is the setting the planner uses: it rolls the high level out over several macro-actions from one waypoint, so a teacher-forced high level compounds its errors. Pass `gamma_tf_high=0.0, gamma_roll_high=1.0` for the maze recipe; setting `gamma_tf_high=0.0` skips the teacher-forcing forward pass, so training windows can span more macro steps than `high.history`:
 
 ```python
 model = HWM(low, action_dim=2, stride=4, macro_dim=8, gamma_tf_high=0.0, gamma_roll_high=1.0, ...)
-# out also has "high_rollout_loss"
+# out has "high_rollout_loss" instead of "high_loss"
 ```
+
+At small training budgets on a jointly trained SIGReg encoder, keeping both terms (`gamma_tf_high=1.0, gamma_roll_high=1.0`) can outperform pure rollout (45% against 27% on Two-Rooms opposite room; see [benchmark results](../../guides/results.md#flat-vs-hierarchical)).
 
 The paper also shortens the high horizon by one every `stride` low-level steps, down to 3 on Diverse Maze: `HierarchicalPlanner(high, low, shrink_every=4, min_horizon=3)` when replanning after every step.
 

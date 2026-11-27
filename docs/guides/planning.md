@@ -70,10 +70,10 @@ actions = planner(model, z, goal)                          # (B, horizon, action
 | `goal_weight` | weight of the per-step goal term |
 | `sync_every`, `sync_steps`, `sync_lr` | how often and how hard actions are refined on the full rollout (`sync_every=0` disables it) |
 | `sync` | `"gd"`: Adam steps on the actions; `"cem"`: CEM around them (`sync_samples`, `sync_elites`), exploring most where the relaxed latents and the rollout disagree |
-| `warm_start` | start each call from the previous plan shifted by this many executed steps (set it to `execute`; call `reset` between episodes) |
+| `warm_start` | start each call from the previous plan shifted by this many executed steps (set it to `execute`; call `planner.reset()` between episodes) |
 | `bounds` | clamp actions to the action space |
 
-`GRASP` takes the same `past_actions`, conditioning and `generator` as `CEM`. It needs a differentiable model and runs with gradients enabled even under `torch.no_grad`, without accumulating any into the model's parameters. The authors' LeWM Push-T result (46% against CEM's 22% at horizon 15, plan executed in full) uses `sync="cem", sync_steps=5`. GRASP's advantage is at long horizons; replanning a short horizon every chunk is where CEM is strongest. See [the notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/planning/grasp.ipynb) for GRASP against CEM on Two-Rooms.
+`GRASP` takes the same `past_actions`, conditioning and `generator` as `CEM`. It needs a differentiable model and runs with gradients enabled even under `torch.no_grad`, without accumulating any into the model's parameters. The authors' LeWM Push-T result (46% against CEM's 22% at horizon 15, plan executed in full) uses `sync="cem", sync_steps=5`. GRASP's advantage is at long horizons; replanning a short horizon every chunk is where CEM is strongest. See [the notebook](https://github.com/latent-horizon/pytorch-world/blob/main/examples/planning/grasp.ipynb) and the [reproduction report](reproduction.md#grasp-against-cem) for GRASP against CEM on Two-Rooms and Push-T.
 
 ## MPPI: planning for reward
 
@@ -90,7 +90,7 @@ plan = planner(model, model.encode(obs[:, None]), explore=True)  # (B, horizon, 
 
 ## Mixed precision
 
-Planning under `torch.autocast("cuda", dtype=torch.bfloat16)` is safe: the rollout runs in bf16, but `CEM`, `MPPI` and `GradientPlanner` (and so `HierarchicalPlanner`) score and rank candidates in fp32 and keep their sampling distribution in fp32. bf16 keeps about three significant digits, and candidate costs often differ by less than that, mostly when a large part of the distance to the goal does not depend on the actions. Ranked in bf16, the elites become noise: PLDM on Two-Rooms fell from 94% success in fp32 to 0%.
+Planning under `torch.autocast("cuda", dtype=torch.bfloat16)` is safe: the rollout runs in bf16, but `CEM`, `MPPI`, `GradientPlanner` (and so `HierarchicalPlanner`) and `GRASP`'s CEM sync score and rank candidates in fp32 and keep their sampling distribution in fp32. bf16 keeps about three significant digits, and candidate costs often differ by less than that, mostly when a large part of the distance to the goal does not depend on the actions. Ranked in bf16, the elites become noise: PLDM on Two-Rooms fell from 94% success in fp32 to 0%.
 
 Plans come back in the context latents' dtype. Ranking in fp32 removes the cost's rounding, not the rollout's: a model whose bf16 predictions are far from its fp32 ones can still plan differently, so compare against fp32 once before relying on bf16.
 

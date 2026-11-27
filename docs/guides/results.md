@@ -87,7 +87,17 @@ The subgoal hand-off in `HierarchicalPlanner` matches the reference implementati
 - **Planning schedule.** The paper shortens the high horizon as the episode runs (`shrink_every=4, min_horizon=3`), scores the last three low-level latents, plans with MPPI, and switches to flat planning toward the goal for the last 15 steps. The notebooks keep a fixed horizon of 5 macro-actions and plan both levels with CEM.
 - **Encoder.** HWM's upper level never shapes the latent space; on these small, SIGReg-trained encoders a 4-step jump is harder to predict than on the paper's PLDM encoder, which was trained with an inverse-dynamics term. H-JEPA's upper level trains its own encoder end to end, which is why it does not have the problem.
 
-The notebooks have not yet been rerun with the maze recipe ([#48](https://github.com/latent-horizon/pytorch-world/issues/48)).
+A controlled ablation on 64 other-room tasks (6 epochs, same architecture and data as the notebook, [#48](https://github.com/latent-horizon/pytorch-world/issues/48)) tests the high-level loss and shrinking horizon against flat `H=20` CEM on the same model:
+
+| HWM variant | fixed `H=5` | `shrink_every=4, min_horizon=3` |
+|---|---|---|
+| teacher forcing (`gamma_tf_high=1, gamma_roll_high=0`) | 22% [14, 33] | 38% [27, 50] |
+| rollout only (`gamma_tf_high=0, gamma_roll_high=1`) | 23% [15, 35] | 27% [17, 38] |
+| rollout only, 6-step windows (`history=6`) | 16% [9, 26] | 30% [20, 42] |
+| both (`gamma_tf_high=1, gamma_roll_high=1`) | 31% [21, 43] | **45% [34, 57]** |
+| flat CEM (`H=20`, same baseline model) | 61% [49, 72] | |
+
+Shrinking the high horizon gave the largest single gain (+14 to +16 points, cutting planning time from 2,020 to 1,390 ms/step). Keeping teacher forcing alongside the rollout loss (`gamma_tf_high=1, gamma_roll_high=1`) outperformed pure rollout at this 6-epoch budget and more than doubled hierarchical success (22% to 45%) at 4.4× faster planning than flat `H=20` CEM (6,160 ms/step), though it still trails flat CEM on this SIGReg encoder.
 
 ## Deterministic vs stochastic
 
