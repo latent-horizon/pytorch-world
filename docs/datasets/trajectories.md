@@ -41,6 +41,30 @@ dataset = TrajectoryDataset(data, window=4, frameskip=5)
 
 Every OGBench dataset stores episodes of one length; a file that does not is rejected rather than padded. Single-task names are relabelled goal-conditioned data, so load their base name. The matching environments are [`OGBench`](../guides/benchmark-environments.md#ogbench).
 
+## OCBench datasets
+
+`load_ocbench` reads an [OCBench](https://github.com/seohongpark/ocbench) dataset into a list of variable-length episodes `(1, T, ...)`, downloading shards with OCBench into `~/.cache/ocbench/datasets` on first use (or reading local `.npz` files directly). Downloading by environment name needs the `ocbench` extra.
+
+```python
+from torch.utils.data import ConcatDataset
+
+from torch_world.datasets import TrajectoryDataset, load_ocbench
+
+episodes = load_ocbench("block-lite-single-task1-v0", max_episodes=500)
+dataset = ConcatDataset([TrajectoryDataset(ep, window=4) for ep in episodes if ep["observations"].shape[1] >= 4])
+
+visual = load_ocbench("visual-block-single-task1-v0", split="val", num_shards=1, camera="front", size=64)
+```
+
+| key | shape | |
+|---|---|---|
+| `observations` | `(1, T, D)`, or `(1, T, 3, H, W)` | float32 state vectors, or uint8 images from `camera` (`"front"` by default; also `"side"`, `"ur5e/wrist"`, an integer index, or `None` for all views `(1, T, V, 3, H, W)`); `size` resizes frames while keeping uint8 |
+| `actions` | `(1, T, interval * action_dim)` | `observation_interval` control steps packed between consecutive observations (`action_dim` when `interval == 1`); partial final chunks and the trailing step are zero-padded |
+| `rewards` | `(1, T)` | reward summed over each observation interval; zero on the trailing step |
+| `terminated`, `truncated` | `(1, T)` | boolean flags separating environment termination (`masks == 0`) from time-limit truncation |
+
+Pass `split="val"` for validation shards, `num_shards` to cap downloads on multi-shard releases, `dataset_root` for a custom cache directory, `success_only=True` to keep only episodes reaching reward `1`, and `max_episodes` to stop early. The matching environments are [`OCBench`](../guides/benchmark-environments.md#ocbench).
+
 ## RoboDojo episodes
 
 `load_robodojo` reads one [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo) demonstration, an HDF5 file in XPolicyLab's trajectory format (download them with RoboDojo's `scripts/RoboDojo/download_data.sh huggingface hdf5`). It needs the `robodojo` extra, and XPolicyLab on the Python path when the frames are JPEG-encoded, since only its `decode_image_bit` decodes both of its byte formats correctly.

@@ -1,5 +1,6 @@
 from torch_world.datasets.latents import LatentClips, write_latent_shard
 from torch_world.datasets.medmnist import MedicalVQA, MedMNIST
+from torch_world.datasets.ocbench import load_ocbench
 from torch_world.datasets.ogbench import load_ogbench
 from torch_world.datasets.robocasa import load_robocasa, load_robocasa_scene
 from torch_world.datasets.robodojo import load_robodojo
@@ -11,6 +12,7 @@ __all__ = [
     "MedMNIST",
     "MedicalVQA",
     "TrajectoryDataset",
+    "load_ocbench",
     "load_ogbench",
     "load_robocasa",
     "load_robocasa_scene",
