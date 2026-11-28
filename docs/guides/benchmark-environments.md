@@ -113,7 +113,7 @@ With `sim_backend="auto"` (the default), names without `-cpu-` run all lanes in 
 
 Observations are OCBench's state vectors `(B, D)`, or with `observation="rgb"` (automatic for `visual-` names) RGB frames `(B, 3, size, size)` in `[0, 1]` from `camera` (`"front"` by default; also `"front_pixels"`, `"side"`, `"ur5e/wrist"`). `state` is always the state vector and is not a restorable simulator checkpoint (`reset(state)` and `render(state)` are not supported). Actions are the 7 continuous arm and gripper joint deltas in `[-1, 1]`, and finished lanes are absorbing.
 
-Task rewards are sparse (`1` on success, `0` otherwise), except `bowling-task1-v0`, which pays `0.1` per newly knocked pin and has no binary success condition (`transition.success` is `None`). Episodes end on success (unless `terminate_on_success=False`), task failure, leaving the workspace, or at OCBench's registered step limit. `render_frame()` and `render_goal_frame()` render `camera` at `render_size`, restoring the exact reset scene without stepping physics.
+Task rewards are sparse (`1` on success, `0` otherwise), except `bowling-task1-v0`, which pays `0.1` per newly knocked pin and has no binary success condition (`transition.success` is `None`). Episodes end on success (unless `terminate_on_success=False`), task failure, leaving the workspace, or at OCBench's registered step limit. `render_frame()` and `render_goal_frame()` render `camera` at `render_size`, restoring the exact reset scene without stepping physics. Train offline from OCBench datasets with [`load_ocbench`](../datasets/trajectories.md#ocbench-datasets); the [OCBench notebook](../examples/envs/ocbench.ipynb) trains an offline TD-MPC2 baseline on `block-lite-single-task1-v0`.
 
 ## External suites
 

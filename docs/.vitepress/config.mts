@@ -110,6 +110,7 @@ function site(key: string) {
     ),
     group('Benchmark suites', [
       page('OGBench', l('/examples/envs/ogbench')),
+      page('OCBench', l('/examples/envs/ocbench')),
       page('DMControl', l('/examples/envs/dmcontrol')),
       page('Meta-World', l('/examples/envs/metaworld')),
       page('ManiSkill', l('/examples/envs/maniskill')),

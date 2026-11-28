@@ -8,6 +8,8 @@
 
 ::: torch_world.datasets.load_ogbench
 
+::: torch_world.datasets.load_ocbench
+
 ::: torch_world.datasets.load_robocasa
 
 ::: torch_world.datasets.load_robocasa_scene

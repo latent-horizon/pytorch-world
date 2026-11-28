@@ -282,6 +282,108 @@ def test_catalog_lists_all_ocbench_tasks(fake_ocbench, monkeypatch):
         assert fake_ocbench[0].name == "chamber-cpu-easy-task1-v0"
 
 
+def test_load_ocbench_variable_length_state_and_filtering(tmp_path):
+    from torch.utils.data import ConcatDataset
+
+    from torch_world.datasets import TrajectoryDataset, load_ocbench
+
+    path = tmp_path / "state.npz"
+    np.savez(
+        path,
+        observation_interval=np.asarray(1, dtype=np.int32),
+        observations=np.arange(9 * 2, dtype=np.float32).reshape(9, 2),
+        actions=np.arange(7 * 3, dtype=np.float32).reshape(7, 3),
+        rewards=np.array([0, 0, 1, 0, 0, 0, 0], dtype=np.float32),
+        masks=np.array([1, 1, 0, 1, 1, 1, 1], dtype=np.float32),
+        terminals=np.array([0, 0, 1, 0, 0, 0, 1], dtype=bool),
+    )
+    episodes = load_ocbench(path)
+    assert len(episodes) == 2
+    assert episodes[0]["observations"].shape == (1, 4, 2) and episodes[0]["actions"].shape == (1, 4, 3)
+    assert episodes[1]["observations"].shape == (1, 5, 2) and episodes[1]["actions"].shape == (1, 5, 3)
+    assert episodes[0]["actions"][0, -1].tolist() == [0, 0, 0]
+    assert episodes[0]["rewards"][0].tolist() == [0, 0, 1, 0]
+    assert episodes[0]["terminated"][0].tolist() == [False, False, True, False]
+    assert not episodes[0]["truncated"].any()
+    assert not episodes[1]["terminated"].any()
+    assert episodes[1]["truncated"][0].tolist() == [False, False, False, True, False]
+    windows = ConcatDataset([TrajectoryDataset(ep, window=2) for ep in episodes])
+    assert len(windows) == 7
+
+    only_success = load_ocbench(path, success_only=True)
+    assert len(only_success) == 1 and only_success[0]["observations"].shape == (1, 4, 2)
+    capped = load_ocbench([path, path], max_episodes=3)
+    assert len(capped) == 3
+
+
+def test_load_ocbench_sparse_multicamera_and_downloads(tmp_path, monkeypatch):
+    from torch_world.datasets import TrajectoryDataset, load_ocbench
+
+    path = tmp_path / "visual.npz"
+    obs = np.zeros((8, 3, 8, 8, 3), dtype=np.uint8)
+    obs[:, 0] = 10
+    obs[:, 1] = 20
+    obs[:, 2] = 30
+    np.savez(
+        path,
+        observation_interval=np.asarray(2, dtype=np.int32),
+        observations=obs,
+        actions=np.arange(10 * 2, dtype=np.float32).reshape(10, 2),
+        rewards=np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0], dtype=np.float32),
+        masks=np.array([1, 1, 1, 1, 0, 1, 1, 1, 1, 1], dtype=np.float32),
+        terminals=np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 1], dtype=bool),
+    )
+    front = load_ocbench(path, camera="front", size=4)
+    assert len(front) == 2
+    assert front[0]["observations"].shape == (1, 4, 3, 4, 4) and front[0]["observations"].dtype == torch.uint8
+    assert (front[0]["observations"] == 10).all()
+    assert front[0]["actions"].shape == (1, 4, 4)
+    assert front[0]["actions"][0, 0].tolist() == [0, 1, 2, 3]
+    assert front[0]["actions"][0, 2].tolist() == [8, 9, 0, 0]
+    assert front[0]["actions"][0, 3].tolist() == [0, 0, 0, 0]
+    assert front[0]["rewards"][0].tolist() == [0, 0, 1, 0]
+    assert front[0]["terminated"][0].tolist() == [False, False, True, False]
+    assert front[1]["truncated"][0].tolist() == [False, False, True, False]
+    assert len(TrajectoryDataset(front[0], window=2)) == 3
+
+    side = load_ocbench(path, camera="side")
+    assert side[0]["observations"].shape == (1, 4, 3, 8, 8) and (side[0]["observations"] == 20).all()
+    all_views = load_ocbench(path, camera=None, size=4)
+    assert all_views[0]["observations"].shape == (1, 4, 3, 3, 4, 4)
+    assert (all_views[0]["observations"][:, :, 2] == 30).all()
+
+    calls = []
+
+    def download_datasets(name, dataset_root=None, num_shards=None):
+        calls.append((name, dataset_root, num_shards))
+        return [str(path)], [str(path)]
+
+    monkeypatch.setitem(sys.modules, "ocbench", SimpleNamespace(download_datasets=download_datasets))
+    loaded = load_ocbench("visual-block-single-task1-v0", split="val", dataset_root=tmp_path, num_shards=1)
+    assert len(loaded) == 2 and calls == [("visual-block-single-task1-v0", tmp_path, 1)]
+
+    with pytest.raises(ValueError, match="split"):
+        load_ocbench(path, split="test")
+    with pytest.raises(ValueError, match="camera"):
+        load_ocbench(path, camera="top")
+    with pytest.raises(ValueError, match="out of range"):
+        load_ocbench(path, camera=5)
+    with pytest.raises(FileNotFoundError):
+        load_ocbench(tmp_path / "missing.npz")
+    bad = tmp_path / "bad.npz"
+    np.savez(
+        bad,
+        observation_interval=np.asarray(1, dtype=np.int32),
+        observations=np.zeros((2, 2), dtype=np.float32),
+        actions=np.zeros((3, 1), dtype=np.float32),
+        rewards=np.zeros(3, dtype=np.float32),
+        masks=np.ones(3, dtype=np.float32),
+        terminals=np.array([0, 0, 1], dtype=bool),
+    )
+    with pytest.raises(ValueError, match="observation boundaries"):
+        load_ocbench(bad)
+
+
 @pytest.mark.skipif(not HAS_OCBENCH, reason="requires the ocbench extra")
 @pytest.mark.parametrize(
     ("name", "has_success"),
