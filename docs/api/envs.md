@@ -39,6 +39,8 @@
 
 ::: torch_world.envs.ogbench.OGBench
 
+::: torch_world.envs.ocbench.OCBench
+
 ::: torch_world.envs.dmcontrol.DMControl
 
 ::: torch_world.envs.metaworld.MetaWorld

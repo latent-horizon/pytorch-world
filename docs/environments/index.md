@@ -1,6 +1,6 @@
 # Environments
 
-`torch_world` works with **190 environments** for training and evaluating world models: 33 built-in tasks in four categories, 13 from [OGBench](#ogbench), 20 from the [DeepMind Control Suite](#deepmind-control-suite), 10 from [Meta-World](#meta-world), 12 from [ManiSkill](#maniskill), 10 from [MyoSuite](#myosuite), 50 from [RoboCasa](#robocasa) and 42 from [RoboDojo](#robodojo). The 148 registered tasks are batched in `torch_world.envs` behind the same `reset` / `step` / `collect` interface, and each external suite's class builds any of its other tasks; RoboDojo's tasks run in RoboDojo's own evaluation client, which a torch-world policy serves. Each built-in task has a notebook that trains LeWM and plans with CEM; OGBench, RoboCasa and RoboDojo each have one that trains a RoboJEPA baseline, and DMControl, Meta-World, ManiSkill and MyoSuite one that trains TD-MPC2 online.
+`torch_world` works with **218 environments** for training and evaluating world models: 33 built-in tasks in four categories, 13 from [OGBench](#ogbench), 28 from [OCBench](#ocbench), 20 from the [DeepMind Control Suite](#deepmind-control-suite), 10 from [Meta-World](#meta-world), 12 from [ManiSkill](#maniskill), 10 from [MyoSuite](#myosuite), 50 from [RoboCasa](#robocasa) and 42 from [RoboDojo](#robodojo). The 176 registered tasks are batched in `torch_world.envs` behind the same `reset` / `step` / `collect` interface, and each external suite's class builds any of its other tasks; RoboDojo's tasks run in RoboDojo's own evaluation client, which a torch-world policy serves. Each built-in task has a notebook that trains LeWM and plans with CEM; OGBench, RoboCasa and RoboDojo each have one that trains a RoboJEPA baseline, and DMControl, Meta-World, ManiSkill and MyoSuite one that trains TD-MPC2 online.
 
 The **Success** column shows a verified reference episode from `world.show_success()`: real simulator steps that end in the task's success condition. These references are privileged controllers or search, not model results.
 
@@ -11,13 +11,14 @@ The **Success** column shows a verified reference episode from `world.show_succe
 | [Navigation and locomotion](#navigation-and-locomotion) | `"navigation"` | 6 | PyTorch, MuJoCo |
 | [Manipulation](#manipulation) | `"manipulation"` | 16 | MuJoCo, Isaac Lab |
 | [OGBench](#ogbench) | `"navigation"`, `"manipulation"` | 13 | MuJoCo (OGBench) |
+| [OCBench](#ocbench) | `"manipulation"` | 28 | MuJoCo / MJWarp (OCBench) |
 | [DeepMind Control Suite](#deepmind-control-suite) | `"control"`, `"navigation"` | 20 | MuJoCo (dm_control) |
 | [Meta-World](#meta-world) | `"manipulation"` | 10 | MuJoCo (Meta-World) |
 | [ManiSkill](#maniskill) | `"manipulation"` | 12 | SAPIEN (ManiSkill) |
 | [MyoSuite](#myosuite) | `"control"`, `"manipulation"`, `"navigation"` | 10 | MuJoCo (MyoSuite) |
 | [RoboCasa](#robocasa) | `"manipulation"` | 50 | MuJoCo (robosuite) |
 | [RoboDojo](#robodojo) | evaluated by RoboDojo | 42 | Isaac Sim (RoboDojo) |
-| **Total** | | **190** | |
+| **Total** | | **218** | |
 
 ## Use an environment
 
@@ -125,6 +126,49 @@ from torch_world.envs import OGBench, list_envs, make
 [spec.id for spec in list_envs(backend="ogbench")]
 world = make("OGBench/visual-cube-single-play-v0", task_id=2, batch_size=8)
 world = OGBench("visual-cube-triple-play-v0", task_id=2)   # any OGBench dataset name
+```
+
+## OCBench
+
+[OCBench](https://github.com/seohongpark/ocbench) is a controllable robotic manipulation benchmark with 28 UR5e + Robotiq 2F-85 tasks across five families. All 28 tasks are registered under `OCBench/<name>` in the manipulation category; `OCBench(name)` also builds any `-lite-`, `-cpu-`, or `visual-` variant. They need `pip install "torch-world[ocbench]"` on Python 3.12 or earlier, and automatically use GPU-parallel MJWarp when CUDA and `mujoco_warp` are available. See [OCBench](../guides/benchmark-environments.md#ocbench).
+
+| Environment | Observation | Actions | Steps | Task |
+|---|---|---:|---:|---|
+| `OCBench/block-single-task1-v0` | state or RGB | 7 | 1250 | Move a single block to a fixed target with a UR5e arm |
+| `OCBench/block-double-task1-v0` | state or RGB | 7 | 2500 | Move two blocks to fixed targets with a UR5e arm |
+| `OCBench/block-double-task2-v0` | state or RGB | 7 | 2500 | Stack two blocks anywhere on the table |
+| `OCBench/block-triple-task1-v0` | state or RGB | 7 | 3750 | Move three blocks to fixed targets with a UR5e arm |
+| `OCBench/block-triple-task2-v0` | state or RGB | 7 | 3750 | Stack three blocks anywhere on the table |
+| `OCBench/block-quadruple-task1-v0` | state or RGB | 7 | 5000 | Move four blocks to fixed targets with a UR5e arm |
+| `OCBench/block-quadruple-task2-v0` | state or RGB | 7 | 5000 | Stack four blocks anywhere on the table |
+| `OCBench/block-quadruple-task3-v0` | state or RGB | 7 | 5000 | Arrange four blocks into a vertical 2x2 grid |
+| `OCBench/chamber-easy-task1-v0` | state or RGB | 7 | 4000 | Open the drawer and window with one block on the table |
+| `OCBench/chamber-easy-task2-v0` | state or RGB | 7 | 4000 | Place one block inside the drawer and open the window |
+| `OCBench/chamber-easy-task3-v0` | state or RGB | 7 | 4000 | Take one block out of the drawer and close the chamber |
+| `OCBench/chamber-medium-task1-v0` | state or RGB | 7 | 5000 | Place two blocks inside the drawer and open the window |
+| `OCBench/chamber-medium-task2-v0` | state or RGB | 7 | 5000 | Retrieve and stack two blocks on the table and close the chamber |
+| `OCBench/chamber-hard-task1-v0` | state or RGB | 7 | 5500 | Place three blocks inside the drawer and open the window |
+| `OCBench/chamber-hard-task2-v0` | state or RGB | 7 | 5500 | Retrieve and stack three blocks on the table and close the chamber |
+| `OCBench/switch-3x3-task1-v0` | state or RGB | 7 | 1500 | Match all buttons on a 3x3 lights-out grid |
+| `OCBench/switch-3x3-task2-v0` | state or RGB | 7 | 1500 | Match active buttons on a 3x3 lights-out grid with missing buttons |
+| `OCBench/switch-4x4-task1-v0` | state or RGB | 7 | 1500 | Match all buttons on a 4x4 lights-out grid |
+| `OCBench/switch-4x4-task2-v0` | state or RGB | 7 | 1500 | Match active buttons on a 4x4 lights-out grid with missing buttons |
+| `OCBench/switch-5x5-task1-v0` | state or RGB | 7 | 4000 | Match all buttons on a 5x5 lights-out grid |
+| `OCBench/switch-5x5-task2-v0` | state or RGB | 7 | 4000 | Match active buttons on a 5x5 lights-out grid with missing buttons |
+| `OCBench/hanoi-single-task1-v0` | state or RGB | 7 | 1000 | Move one disk to a goal peg on fixed pegs |
+| `OCBench/hanoi-single-task2-v0` | state or RGB | 7 | 1000 | Move one disk to a goal peg on randomized pegs |
+| `OCBench/hanoi-double-task1-v0` | state or RGB | 7 | 3000 | Solve a two-disk Tower of Hanoi on fixed pegs |
+| `OCBench/hanoi-double-task2-v0` | state or RGB | 7 | 3000 | Solve a two-disk Tower of Hanoi on randomized pegs |
+| `OCBench/hanoi-triple-task1-v0` | state or RGB | 7 | 7000 | Solve a three-disk Tower of Hanoi on fixed pegs |
+| `OCBench/hanoi-triple-task2-v0` | state or RGB | 7 | 7000 | Solve a three-disk Tower of Hanoi on randomized pegs |
+| `OCBench/bowling-task1-v0` | state or RGB | 7 | 500 | Roll a ball with the UR5e arm to knock down ten pins |
+
+```python
+from torch_world.envs import OCBench, list_envs, make
+
+[spec.id for spec in list_envs(backend="ocbench")]
+world = make("OCBench/block-single-task1-v0", batch_size=8)
+world = OCBench("visual-block-lite-single-task1-v0", size=64, camera="front")
 ```
 
 ## DeepMind Control Suite

@@ -52,6 +52,7 @@ __all__ = [
     "ManiSkill",
     "MetaWorld",
     "MyoSuite",
+    "OCBench",
     "OGBench",
     "PointMass",
     "PushT",
@@ -91,7 +92,13 @@ def __getattr__(name):
         from torch_world.envs.robot_cube import RobotCube
 
         return RobotCube
-    external = {"DMControl": "dmcontrol", "MetaWorld": "metaworld", "ManiSkill": "maniskill", "MyoSuite": "myosuite"}
+    external = {
+        "DMControl": "dmcontrol",
+        "MetaWorld": "metaworld",
+        "ManiSkill": "maniskill",
+        "MyoSuite": "myosuite",
+        "OCBench": "ocbench",
+    }
     if name in external:
         from importlib import import_module
 

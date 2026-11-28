@@ -67,7 +67,7 @@ jobs:
         # CPU wheels of torch: a fraction of the size of the default CUDA build.
         run: |
           uv venv
-          uv pip install --torch-backend cpu "torch==${{ matrix.torch }}.*" -e ".[test,examples,action,benchmark,newton,ogbench,robodojo,robocasa,notebooks,dmcontrol,metaworld,maniskill]"
+          uv pip install --torch-backend cpu "torch==${{ matrix.torch }}.*" -e ".[test,examples,action,benchmark,newton,ogbench,ocbench,robodojo,robocasa,notebooks,dmcontrol,metaworld,maniskill]"
       - name: Check the PyTorch version
         run: uv run --no-sync python -c "import torch; assert torch.__version__.startswith('${{ matrix.torch }}.'), torch.__version__"
       - name: Test

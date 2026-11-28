@@ -1,6 +1,6 @@
 # Benchmark experiments
 
-`torch_world` works with 190 environments: 33 built-in tasks, 13 from OGBench, 52 from the DeepMind Control Suite, Meta-World, ManiSkill and MyoSuite, 50 from RoboCasa and 42 from RoboDojo. `torch_world.envs` registers the 33 built-in tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. It also registers 13 [OGBench](#ogbench) tasks, 52 tasks from four [external suites](#external-suites) and 50 [RoboCasa](#robocasa) tasks, and serves policies to [RoboDojo](#robodojo). Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
+`torch_world` works with 218 environments: 33 built-in tasks, 13 from OGBench, 28 from OCBench, 52 from the DeepMind Control Suite, Meta-World, ManiSkill and MyoSuite, 50 from RoboCasa and 42 from RoboDojo. `torch_world.envs` registers the 33 built-in tasks: 28 original task implementations (five planning puzzles, 18 MuJoCo scenes, two Newton control systems and three Isaac Lab tabletop tasks) and benchmark recipes for the five original environments. It also registers 13 [OGBench](#ogbench) tasks, 28 [OCBench](#ocbench) tasks, 52 tasks from four [external suites](#external-suites) and 50 [RoboCasa](#robocasa) tasks, and serves policies to [RoboDojo](#robodojo). Every task runs through one experiment protocol: `run_experiment` trains a world model on random-action data and compares model-based planning with random actions. The [Environments](../environments/index.md) page lists every task by category; to add one, see [Bring your own environment](custom-environment.md).
 
 Scene geometry, observations, reward and success logic live in this repository. Isaac Lab supplies the Franka asset and simulation primitives; no upstream task configurations or task wrappers are used.
 
@@ -94,6 +94,26 @@ Observations follow OGBench: state vectors `(B, D)`, or `visual-` images `(B, 3,
 `state` is the observation: OGBench defines goals and success inside the simulator, so states are neither restorable nor scored from tensors, and `reset(state)` is not supported. OGBench draws some randomness from NumPy's global generator; each lane keeps its own stream, so `reset(seed=...)` is reproducible and leaves the caller's generator untouched. The one exception is upstream: manipulation goals settle under two random actions from an unseeded action space, so the arm pose in the goal varies between resets while the object targets that define success do not.
 
 One task per OGBench family and observation type is registered as `OGBench/<name>` (`list_envs(backend="ogbench")`, listed on the [Environments](../environments/index.md#ogbench) page), so `make("OGBench/cube-single-play-v0")` works like any registered task. OGBench names are not Python identifiers, so these tasks have no named classes; `OGBench(name)` builds them and any other OGBench task, which carries its own `OGBench/<name>` spec, so runs are saved and summarized the same way. Discrete-action powderworld tasks are not supported. Train offline from the OGBench datasets with [`load_ogbench`](../datasets/trajectories.md#ogbench-datasets); the [OGBench notebook](../examples/envs/ogbench.ipynb) trains a RoboJEPA baseline.
+
+## OCBench
+
+[OCBench](https://github.com/seohongpark/ocbench) provides 28 UR5e + Robotiq 2F-85 manipulation tasks across five families (`block`, `chamber`, `switch`, `hanoi` and `bowling`), each registered as `OCBench/<name>` (`list_envs(backend="ocbench")`, listed on the [Environments](../environments/index.md#ocbench) page). `OCBench(name)` also builds any OCBench variant, including `-lite-` (shorter horizons), `-cpu-` (CPU MuJoCo), and `visual-` names. Install the extra with `pip install "torch-world[ocbench]"` on Python 3.12 or earlier (OCBench depends on `dm_control`); install `ocbench[mjwarp]` in an environment without the `benchmark` MuJoCo pin to enable GPU-parallel MJWarp simulation.
+
+```python
+from torch_world.envs import OCBench, make
+
+with make("OCBench/block-single-task1-v0", batch_size=8) as world:
+    observation = world.reset(seed=7)
+
+with OCBench("visual-block-lite-single-task1-v0", size=64, camera="front") as world:
+    observation = world.reset(seed=7)    # (1, 3, 64, 64)
+```
+
+With `sim_backend="auto"` (the default), names without `-cpu-` run all lanes in one GPU-parallel MJWarp environment when CUDA and `mujoco_warp` are available, and fall back to one CPU MuJoCo environment per lane otherwise; pass `sim_backend="cpu"` or `sim_backend="mjwarp"` to choose explicitly.
+
+Observations are OCBench's state vectors `(B, D)`, or with `observation="rgb"` (automatic for `visual-` names) RGB frames `(B, 3, size, size)` in `[0, 1]` from `camera` (`"front"` by default; also `"front_pixels"`, `"side"`, `"ur5e/wrist"`). `state` is always the state vector and is not a restorable simulator checkpoint (`reset(state)` and `render(state)` are not supported). Actions are the 7 continuous arm and gripper joint deltas in `[-1, 1]`, and finished lanes are absorbing.
+
+Task rewards are sparse (`1` on success, `0` otherwise), except `bowling-task1-v0`, which pays `0.1` per newly knocked pin and has no binary success condition (`transition.success` is `None`). Episodes end on success (unless `terminate_on_success=False`), task failure, leaving the workspace, or at OCBench's registered step limit. `render_frame()` and `render_goal_frame()` render `camera` at `render_size`, restoring the exact reset scene without stepping physics.
 
 ## External suites
 

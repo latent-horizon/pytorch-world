@@ -26,6 +26,7 @@ uv sync
 | `examples` | `matplotlib` | [`torch_world.plots`](../guides/plots.md) and the notebooks |
 | `action` | `mujoco` | the [`RobotCube`](../guides/environments.md#robotcube) and `PushT` environments |
 | `ogbench` | `ogbench`, on Python 3.12 or earlier | [OGBench tasks](../guides/benchmark-environments.md#ogbench) and [datasets](../datasets/trajectories.md#ogbench-datasets) |
+| `ocbench` | `ocbench`, on Python 3.12 or earlier | [OCBench manipulation tasks](../guides/benchmark-environments.md#ocbench) |
 | `dmcontrol` | `dm_control`, on Python 3.12 or earlier | [DeepMind Control Suite tasks](../guides/benchmark-environments.md#external-suites) |
 | `metaworld` | `metaworld` | [Meta-World tasks](../guides/benchmark-environments.md#external-suites) |
 | `maniskill` | `mani_skill`; on Linux, x86_64 with Python 3.12 or earlier | [ManiSkill tasks](../guides/benchmark-environments.md#external-suites); needs a Vulkan driver |
