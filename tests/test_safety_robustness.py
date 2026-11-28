@@ -74,16 +74,19 @@ def test_sampled_event_probability_counts_trajectories_once():
 
 
 def test_counterfactual_labels_ignore_tint_and_obey_action_delay():
-    from torch_world.benchmarks.safety_robustness import forecast, tasks
+    from torch_world.benchmarks.safety_robustness import candidate_plans, forecast, tasks
     from torch_world.models import PLDM, PLDMEncoder
     from torch_world.safety import FailureMargin
 
     model = PLDM(PLDMEncoder(32, 8, channels=(4,)), 2, latent_dim=8).eval()
     margin = FailureMargin(8)
     pair = tasks(8, 203, "cpu", boundary=True)
-    clean = forecast(model, margin, *pair, seed=204)
-    tinted = forecast(model, margin, *pair, seed=204, tinted=True)
-    delayed = forecast(model, margin, *pair, seed=204, delay=True)
+    actions, families = candidate_plans(*pair, 204, {"PLDM": (model, margin), "second": (model, margin)})
+    assert torch.equal(actions[:, families["PLDM CEM"]], actions[:, families["second CEM"]])
+    assert actions[:, families["random"]].shape[1] == 6
+    clean = forecast(model, margin, pair[0], actions)
+    tinted = forecast(model, margin, pair[0], actions, tinted=True)
+    delayed = forecast(model, margin, pair[0], actions, delay=True)
     for horizon in (1, 4, 8):
         labels = clean["imagined", horizon][1]
         assert torch.equal(labels, tinted["imagined", horizon][1])
@@ -91,3 +94,58 @@ def test_counterfactual_labels_ignore_tint_and_obey_action_delay():
         assert not labels[:, 1].any()
     assert clean["imagined", 1][1].any()
     assert not delayed["imagined", 1][1].any()
+
+
+def test_crossing_pool_corner_is_unsafe_before_clear_endpoint():
+    from torch_world.benchmarks.safety_robustness import rooms
+
+    env = rooms(1, "cpu")
+    env.reset(torch.tensor([[0.18, 0.42]]))
+    env.step(torch.tensor([[1.0, -1.0]]))
+    assert env.clearance(env.state).item() > 0
+    assert env.step_clearance.item() < 0
+
+
+@pytest.mark.parametrize("step, blocked", [(6, False), (7, True), (8, True), (14, True), (15, False), (16, False)])
+def test_gate_checks_each_execution_of_the_requested_command(step, blocked):
+    from torch_world.benchmarks.safety_robustness import rooms, simulator_blocks
+
+    probe = rooms(1, "cpu")
+    start = torch.tensor([[0.06, 0.5]])
+    command = torch.tensor([[1.0, 0.0]])
+    assert simulator_blocks(probe, start, command, command, "delay", step).item() == blocked
+
+
+def test_each_planner_supplies_its_own_commands_to_the_shared_replay(monkeypatch):
+    from torch_world.benchmarks import safety_robustness as study
+    from torch_world.models import PLDM, PLDMEncoder
+    from torch_world.safety import FailureMargin
+
+    first = PLDM(PLDMEncoder(32, 8, channels=(4,)), 2, latent_dim=8).eval()
+    second = PLDM(PLDMEncoder(32, 8, channels=(4,)), 2, latent_dim=8).eval()
+    margin = FailureMargin(8)
+
+    def planner(model, z, target, past_actions, generator):
+        action = z.new_zeros(len(z), 4, 2)
+        action[..., 0] = 1 if model is first else -1
+        return action
+
+    monkeypatch.setattr(study, "make_planner", lambda: planner)
+    start = torch.tensor([[0.18, 0.5]])
+    actions, families = study.candidate_plans(start, start, 204, {"A": (first, margin), "B": (second, margin)})
+    assert actions.shape == (1, 10, 8, 2)
+    for model in (first, second):
+        truth = study.forecast(model, margin, start, actions)["imagined", 1][1]
+        assert truth[:, families["A CEM"]].item()
+        assert not truth[:, families["B CEM"]].item()
+
+
+def test_exit_drops_pending_request_and_resumes_immediate_screening():
+    from torch_world.benchmarks.safety_robustness import rooms, simulator_blocks
+
+    probe = rooms(1, "cpu")
+    start = torch.tensor([[0.18, 0.5]])
+    command = torch.tensor([[1.0, 0.0]])
+    stopped = torch.zeros_like(command)
+    assert not simulator_blocks(probe, start, command, stopped, "delay", 15).item()
+    assert simulator_blocks(probe, start, command, stopped, "delay", 16).item()

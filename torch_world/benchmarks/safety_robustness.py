@@ -18,6 +18,11 @@ class PoolRooms(TwoRooms):
         x, y = states.unbind(-1)
         return union(*(box(x, y, (cx, 0.5), (0.08, 0.12)) for cx in (0.28, 0.72)))
 
+    def _advance(self, action):
+        states = super()._advance(action)
+        self.step_clearance = self.clearance(torch.stack(states)).amin(0)
+        return states
+
     def render(self, state=None):
         x, y = grid(self.size, self.state.device)
         distance = self.clearance(torch.stack(torch.broadcast_tensors(x, y), -1))
@@ -125,25 +130,59 @@ def rooms(n, device, tinted=False):
     return PoolRooms(batch_size=n, size=32, device=device, floor=(0.3, 0.6, 0.3) if tinted else None)
 
 
+def make_planner():
+    return CEM(4, 2, num_samples=32, num_elites=6, iterations=3, bounds=(-1, 1), objective="path")
+
+
+def update_history(model, z, past, command, frame):
+    z = torch.cat([z, model.encode(frame[:, None])], 1)[:, -model.history :]
+    actions = torch.cat([past, command[:, None]], 1)
+    return z, actions[:, actions.size(1) - z.size(1) + 1 :]
+
+
 @torch.no_grad()
-def forecast(model, margin, start, goal, seed, tinted=False, delay=False, candidates=8):
+def candidate_plans(start, goal, seed, models, tinted=False, delay=False):
     n = len(start)
-    env = rooms(n * candidates, start.device, tinted)
+    env = rooms(n, start.device, tinted)
     gen = torch.Generator(device=start.device).manual_seed(seed)
-    actions = torch.rand(n, candidates, 8, 2, generator=gen, device=start.device) * 2 - 1
+    actions = torch.rand(n, 8, 8, 2, generator=gen, device=start.device) * 2 - 1
     actions[:, 0] = ((goal - start) / env.max_step).clamp(-1, 1)[:, None]
     actions[:, 1] = 0
+    plans = [actions]
+    families = {"controls": slice(0, 2), "random": slice(2, 8)}
+    planner = make_planner()
+    for index, (name, (model, _)) in enumerate(models.items(), start=8):
+        gen.manual_seed(seed)
+        z = model.encode(env.reset(start)[:, None])
+        target = model.encode(env.render(goal)[:, None])[:, 0]
+        previous = torch.zeros_like(start)
+        past = previous.new_empty(n, 0, 2)
+        commands = []
+        for _ in range(actions.size(2)):
+            command = planner(model, z, target, past_actions=past, generator=gen)[:, 0]
+            frame = env.step(previous if delay else command)
+            z, past = update_history(model, z, past, command, frame)
+            previous = command
+            commands.append(command)
+        plans.append(torch.stack(commands, 1)[:, None])
+        families[f"{name} CEM"] = slice(index, index + 1)
+    return torch.cat(plans, 1), families
+
+
+@torch.no_grad()
+def forecast(model, margin, start, actions, tinted=False, delay=False):
+    n, candidates = actions.shape[:2]
+    env = rooms(n * candidates, start.device, tinted)
     actions = actions.flatten(0, 1)
     initial = env.reset(start.repeat_interleave(candidates, 0))
-    context = model.encode(initial[:, None]).expand(-1, model.history, -1)
-    past = actions.new_zeros(len(actions), model.history - 1, 2)
-    predicted = model.rollout(context, torch.cat([past, actions], 1))[:, model.history :]
+    context = model.encode(initial[:, None])
+    predicted = model.rollout(context, actions)[:, 1:]
     clearance, observed = [], []
     last = torch.zeros_like(actions[:, 0])
     for action in actions.unbind(1):
         frame = env.step(last if delay else action)
         last = action
-        clearance.append(env.clearance(env.state))
+        clearance.append(env.step_clearance)
         observed.append(margin.score(model.encode(frame[:, None])[:, 0]))
     truth = torch.stack(clearance, 1) < 0
     scores = {"imagined": -margin.score(predicted), "observed": -torch.stack(observed, 1)}
@@ -177,6 +216,22 @@ def applied_command(command, previous, condition, step):
     return command
 
 
+def simulator_blocks(probe, state, requested, previous, condition, step):
+    probe.reset(state)
+    if "delay" in condition and 8 <= step < 16:
+        if step == 15:
+            return torch.zeros_like(state[:, 0], dtype=torch.bool)
+        probe.step(previous)
+        probe.step(requested)
+        return probe.step_clearance < 0
+    probe.step(applied_command(requested, previous, condition, step))
+    blocked = probe.step_clearance < 0
+    if "delay" in condition and step == 7:
+        probe.step(requested)
+        blocked |= probe.step_clearance < 0
+    return blocked
+
+
 @torch.no_grad()
 def closed_loop(model, margin, start, goal, condition, policy, cutoff, seed, steps=32):
     env = rooms(len(start), start.device, "tint" in condition)
@@ -187,14 +242,12 @@ def closed_loop(model, margin, start, goal, condition, policy, cutoff, seed, ste
     previous = torch.zeros_like(start)
     past = previous.new_empty(len(start), 0, 2)
     gen = torch.Generator(device=start.device).manual_seed(seed)
-    planner = CEM(4, 2, num_samples=32, num_elites=6, iterations=3, bounds=(-1, 1), objective="path")
+    planner = make_planner()
     reached, clearance, overrides = [], [], []
     for t in range(steps):
         requested = planner(model, z, goal_z, past_actions=past, generator=gen)[:, 0]
         if policy == "simulator":
-            probe.reset(env.state)
-            probe.step(applied_command(requested, previous, condition, t))
-            blocked = probe.clearance(probe.state) < 0
+            blocked = simulator_blocks(probe, env.state, requested, previous, condition, t)
         elif policy == "learned":
             predicted = model.rollout(z, torch.cat([past, requested[:, None]], 1))[:, -1]
             blocked = -margin.score(predicted) >= cutoff
@@ -207,10 +260,9 @@ def closed_loop(model, margin, start, goal, condition, policy, cutoff, seed, ste
         if not (condition.startswith("freeze") and 8 <= t < 8 + int(condition.split()[-1])):
             frame = next_frame
         previous = command
-        z = torch.cat([z, model.encode(frame[:, None])], 1)[:, -model.history :]
-        past = torch.cat([past, command[:, None]], 1)[:, 1 - z.size(1) :] if z.size(1) > 1 else past[:, :0]
+        z, past = update_history(model, z, past, command, frame)
         reached.append(env.success(env.state, goal))
-        clearance.append(env.clearance(env.state))
+        clearance.append(env.step_clearance)
         overrides.append(blocked)
     return tuple(torch.stack(items, 1) for items in (reached, clearance, overrides))
 
@@ -229,8 +281,14 @@ def run_study(seed, device, n=64, models=None):
     forecasts, episodes = [], []
     if models is None:
         models = train_models(device, seed)
+    calibration_plans, _ = candidate_plans(*calibration, 102, {})
+    test_plans = {
+        (group, condition): candidate_plans(*pair, 204, models, "tint" in condition, "delay" in condition)
+        for group, pair in groups.items()
+        for condition in ("clean", "tint", "delay", "tint + delay")
+    }
     for name, (model, margin) in models.items():
-        clean = forecast(model, margin, *calibration, seed=102)
+        clean = forecast(model, margin, calibration[0], calibration_plans)
         cutoffs = {}
         for key, (scores, truth) in clean.items():
             unsafe = scores[truth]
@@ -239,27 +297,31 @@ def run_study(seed, device, n=64, models=None):
             cutoffs[key] = torch.quantile(unsafe, 0.1, interpolation="lower")
         for group, pair in groups.items():
             for condition in ("clean", "tint", "delay", "tint + delay"):
-                audit = forecast(model, margin, *pair, seed=204, tinted="tint" in condition, delay="delay" in condition)
+                plans, families = test_plans[group, condition]
+                audit = forecast(model, margin, pair[0], plans, tinted="tint" in condition, delay="delay" in condition)
                 for key, (scores, truth) in audit.items():
                     ref_scores, ref_truth = clean[key]
                     edges, rates = calibrate(ref_scores, ref_truth)
                     p = rates[torch.bucketize(scores, edges)]
-                    accepted = scores < cutoffs[key]
-                    row = forecast_metrics(p, truth, 0.1)
-                    row.update(
-                        {
-                            "model": name,
-                            "seed": seed,
-                            "group": group,
-                            "condition": condition,
-                            "source": key[0],
-                            "horizon": key[1],
-                            "gate unsafe acceptance": fraction(accepted[truth]),
-                            "gate safe acceptance": fraction(accepted[~truth]),
-                            "baseline Brier": fraction((ref_truth.float().mean() - truth.float()).square()),
-                        }
-                    )
-                    forecasts.append(row)
+                    for family, columns in {"all": slice(None), **families}.items():
+                        events = truth[:, columns]
+                        accepted = scores[:, columns] < cutoffs[key]
+                        row = forecast_metrics(p[:, columns], events, 0.1)
+                        row.update(
+                            {
+                                "model": name,
+                                "seed": seed,
+                                "group": group,
+                                "condition": condition,
+                                "source": key[0],
+                                "horizon": key[1],
+                                "candidate family": family,
+                                "gate unsafe acceptance": fraction(accepted[events]),
+                                "gate safe acceptance": fraction(accepted[~events]),
+                                "baseline Brier": fraction((ref_truth.float().mean() - events.float()).square()),
+                            }
+                        )
+                        forecasts.append(row)
         for policy in ("CEM", "learned", "simulator"):
             for condition in CONDITIONS:
                 reached, clearance, overrides = closed_loop(
@@ -289,8 +351,9 @@ def gate_study(models, device, n=64):
     validation = tasks(n, 303, device)
     test = tasks(n, 203, device)
     rows = []
+    plans, _ = candidate_plans(*calibration, 102, {})
     for name, (model, margin) in models.items():
-        scores, hazard = forecast(model, margin, *calibration, seed=102)["imagined", 1]
+        scores, hazard = forecast(model, margin, calibration[0], plans)["imagined", 1]
         candidates = []
         for quantile in (0.02, 0.1, 0.5):
             cutoff = torch.quantile(scores[hazard], quantile, interpolation="lower")
@@ -299,7 +362,7 @@ def gate_study(models, device, n=64):
         feasible = [item for item in candidates if item[2]["violation"] <= 0.1]
         selected = max(feasible, key=lambda item: item[2]["safe success"])[0] if feasible else None
         for quantile, cutoff, valid in candidates:
-            for condition in ("clean", "tint + delay"):
+            for condition in CONDITIONS if quantile == selected else ("clean", "tint + delay"):
                 reached, clearance, override = closed_loop(model, margin, *test, condition, "learned", cutoff, seed=205)
                 row = episode_metrics(reached, clearance, override)
                 eligible = ~reached[:, :16].any(1)
@@ -355,6 +418,6 @@ def state_controller(start, goal, condition, steps=32):
         env.step(applied_command(command, previous, condition, step))
         previous = command
         reached.append(env.success(env.state, goal))
-        clearance.append(env.clearance(env.state))
+        clearance.append(env.step_clearance)
     reached = torch.stack(reached, 1)
     return episode_metrics(reached, torch.stack(clearance, 1), torch.zeros_like(reached))
