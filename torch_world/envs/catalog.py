@@ -136,6 +136,38 @@ MYOSUITE = (
 """MyoSuite tasks in the catalog, from finger to leg; `MyoSuite` takes any other registered environment."""
 
 
+OCBENCH = (
+    ("block-single-task1-v0", "Move a single block to a fixed target with a UR5e arm"),
+    ("block-double-task1-v0", "Move two blocks to fixed targets with a UR5e arm"),
+    ("block-double-task2-v0", "Stack two blocks anywhere on the table"),
+    ("block-triple-task1-v0", "Move three blocks to fixed targets with a UR5e arm"),
+    ("block-triple-task2-v0", "Stack three blocks anywhere on the table"),
+    ("block-quadruple-task1-v0", "Move four blocks to fixed targets with a UR5e arm"),
+    ("block-quadruple-task2-v0", "Stack four blocks anywhere on the table"),
+    ("block-quadruple-task3-v0", "Arrange four blocks into a vertical 2x2 grid"),
+    ("chamber-easy-task1-v0", "Open the drawer and window with one block on the table"),
+    ("chamber-easy-task2-v0", "Place one block inside the drawer and open the window"),
+    ("chamber-easy-task3-v0", "Take one block out of the drawer and close the chamber"),
+    ("chamber-medium-task1-v0", "Place two blocks inside the drawer and open the window"),
+    ("chamber-medium-task2-v0", "Retrieve and stack two blocks on the table and close the chamber"),
+    ("chamber-hard-task1-v0", "Place three blocks inside the drawer and open the window"),
+    ("chamber-hard-task2-v0", "Retrieve and stack three blocks on the table and close the chamber"),
+    ("switch-3x3-task1-v0", "Match all buttons on a 3x3 lights-out grid"),
+    ("switch-3x3-task2-v0", "Match active buttons on a 3x3 lights-out grid with missing buttons"),
+    ("switch-4x4-task1-v0", "Match all buttons on a 4x4 lights-out grid"),
+    ("switch-4x4-task2-v0", "Match active buttons on a 4x4 lights-out grid with missing buttons"),
+    ("switch-5x5-task1-v0", "Match all buttons on a 5x5 lights-out grid"),
+    ("switch-5x5-task2-v0", "Match active buttons on a 5x5 lights-out grid with missing buttons"),
+    ("hanoi-single-task1-v0", "Move one disk to a goal peg on fixed pegs"),
+    ("hanoi-single-task2-v0", "Move one disk to a goal peg on randomized pegs"),
+    ("hanoi-double-task1-v0", "Solve a two-disk Tower of Hanoi on fixed pegs"),
+    ("hanoi-double-task2-v0", "Solve a two-disk Tower of Hanoi on randomized pegs"),
+    ("hanoi-triple-task1-v0", "Solve a three-disk Tower of Hanoi on fixed pegs"),
+    ("hanoi-triple-task2-v0", "Solve a three-disk Tower of Hanoi on randomized pegs"),
+    ("bowling-task1-v0", "Roll a ball with the UR5e arm to knock down ten pins"),
+)
+
+
 def _sentence(name):
     words = re.findall(r"[A-Z][a-z]*", name)
     return " ".join([words[0]] + [w.lower() for w in words[1:]])
@@ -273,6 +305,7 @@ def register_builtins():
         ("MetaWorld", "metaworld", "https://github.com/Farama-Foundation/Metaworld", METAWORLD),
         ("ManiSkill", "maniskill", "https://github.com/haosulab/ManiSkill", MANISKILL),
         ("MyoSuite", "myosuite", "https://github.com/MyoHub/myosuite", MYOSUITE),
+        ("OCBench", "ocbench", "https://github.com/seohongpark/ocbench", OCBENCH),
     )
     for prefix, backend, reference, tasks in suites:
         for name, *category, description in tasks:
