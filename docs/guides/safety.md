@@ -103,3 +103,7 @@ The notebook traces the cause to the world model. One step from the edge of a po
 - **Margin details.** The paper does not report $\delta$; the default is the reference code's 0.75. The reference computes the backup with the margin of the next latent as the per-step reward; this follows the paper's equation, with $\ell(z)$ of the current latent.
 - **Value function.** DDPG only (the paper's continuous-action setting); the DDQN variant for discrete actions is not included, and neither is the SQRL baseline. The paper's DDPG uses four hidden layers of 512 (the default here); the reference code's configuration uses three of 128. The world model is treated as deterministic: for stochastic models, the expectation over $\hat z'$ is estimated with one sample per transition.
 - **Filter.** The paper's rule. `rule="q"` is an addition.
+
+## Evaluate safety under shift
+
+The [safety and robustness notebook](../examples/safety/safety_robustness.ipynb) compares PLDM and LeWM on matched action sequences and closed-loop tasks. It reports unsafe action acceptance, hazard calibration, safe goal completion and paired changes under observation and execution shifts. A second audit uses MuJoCo link-to-obstacle clearance on ObstacleArm. Run from a checkout installed with the notebook and benchmark extras.

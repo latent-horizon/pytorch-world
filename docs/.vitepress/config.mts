@@ -173,7 +173,10 @@ function site(key: string) {
     ]),
     group('Vision-language', [page('VL-JEPA', l('/examples/vqa/vljepa'))]),
     group('Planning', [page('GRASP', l('/examples/planning/grasp'))]),
-    group('Safety', [page('Latent safety filter', l('/examples/safety/latent_safety_filter'))]),
+    group('Safety', [
+      page('Latent safety filter', l('/examples/safety/latent_safety_filter')),
+      page('Safety and robustness', l('/examples/safety/safety_robustness')),
+    ]),
     group('Environments', [page('Custom model', l('/examples/envs/custom_model_three_envs'))])
   ]
 

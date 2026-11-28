@@ -28,11 +28,17 @@ class Rooms:
         """``0`` left of the wall and ``1`` right of it, for positions ``(..., 2)``."""
         return (state[..., 0] > 0.5).long()
 
-    def step(self, action: Tensor) -> Tensor:
+    def _advance(self, action: Tensor) -> list[Tensor]:
+        states = []
         delta = self.max_step * action.clamp(-1, 1).to(self.state) / self.substeps
         for _ in range(self.substeps):
             moved = (self.state + delta).clamp(self.low, self.high)
             self.state = torch.where(self.blocked(moved)[:, None], self.state, moved)
+            states.append(self.state)
+        return states
+
+    def step(self, action: Tensor) -> Tensor:
+        self._advance(action)
         return self.render()
 
     def free(self, n: int, room: Tensor | None = None, generator: torch.Generator | None = None) -> Tensor:
